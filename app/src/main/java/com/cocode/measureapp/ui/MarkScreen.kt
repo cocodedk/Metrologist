@@ -19,9 +19,11 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -49,9 +51,14 @@ fun MarkScreen(
     val corners = remember { mutableStateListOf<Vec2>() }
     val stick = remember { mutableStateListOf<Vec2>() }
     var markingStick by remember { mutableStateOf(false) }
-    var scale by remember { mutableStateOf(1f) }
-    var offsetX by remember { mutableStateOf(0f) }
-    var offsetY by remember { mutableStateOf(0f) }
+    var canvasSize by remember { mutableStateOf(Size.Zero) }
+
+    // Derived layout values — computed from remembered canvasSize, not inside DrawScope
+    val scale = if (canvasSize.width > 0f && canvasSize.height > 0f) {
+        minOf(canvasSize.width / bmp.width, canvasSize.height / bmp.height)
+    } else 1f
+    val offsetX = if (canvasSize.width > 0f) (canvasSize.width - bmp.width * scale) / 2f else 0f
+    val offsetY = if (canvasSize.height > 0f) (canvasSize.height - bmp.height * scale) / 2f else 0f
 
     Column(Modifier.fillMaxSize()) {
         Text(
@@ -61,31 +68,36 @@ fun MarkScreen(
         )
         Box(Modifier.weight(1f).fillMaxWidth()) {
             Canvas(
-                Modifier.fillMaxSize().pointerInput(markingStick) {
-                    detectTapGestures { tap ->
-                        val ix = (tap.x - offsetX) / scale
-                        val iy = (tap.y - offsetY) / scale
-                        if (ix < 0f || iy < 0f || ix > bmp.width || iy > bmp.height) return@detectTapGestures
-                        val p = Vec2(ix.toDouble(), iy.toDouble())
-                        if (!markingStick) {
-                            if (corners.size < 4) corners.add(p)
-                        } else if (stick.size < 2) {
-                            stick.add(p)
-                        }
+                Modifier
+                    .fillMaxSize()
+                    .onSizeChanged { size ->
+                        canvasSize = Size(size.width.toFloat(), size.height.toFloat())
                     }
-                },
+                    .pointerInput(markingStick, canvasSize) {
+                        detectTapGestures { tap ->
+                            val ix = (tap.x - offsetX) / scale
+                            val iy = (tap.y - offsetY) / scale
+                            if (ix < 0f || iy < 0f || ix >= bmp.width || iy >= bmp.height) return@detectTapGestures
+                            val p = Vec2(ix.toDouble(), iy.toDouble())
+                            if (!markingStick) {
+                                if (corners.size < 4) corners.add(p)
+                            } else if (stick.size < 2) {
+                                stick.add(p)
+                            }
+                        }
+                    },
             ) {
-                val s = minOf(size.width / bmp.width, size.height / bmp.height)
-                scale = s
-                offsetX = (size.width - bmp.width * s) / 2f
-                offsetY = (size.height - bmp.height * s) / 2f
                 drawImage(
                     bmp.asImageBitmap(),
                     dstOffset = IntOffset(offsetX.toInt(), offsetY.toInt()),
-                    dstSize = IntSize((bmp.width * s).toInt(), (bmp.height * s).toInt()),
+                    dstSize = IntSize((bmp.width * scale).toInt(), (bmp.height * scale).toInt()),
                 )
-                corners.forEach { drawCircle(Color.Cyan, 14f, Offset((it.x.toFloat() * s) + offsetX, (it.y.toFloat() * s) + offsetY)) }
-                stick.forEach { drawCircle(Color.Red, 14f, Offset((it.x.toFloat() * s) + offsetX, (it.y.toFloat() * s) + offsetY)) }
+                corners.forEach {
+                    drawCircle(Color.Cyan, 14f, Offset((it.x.toFloat() * scale) + offsetX, (it.y.toFloat() * scale) + offsetY))
+                }
+                stick.forEach {
+                    drawCircle(Color.Red, 14f, Offset((it.x.toFloat() * scale) + offsetX, (it.y.toFloat() * scale) + offsetY))
+                }
             }
         }
         Row(Modifier.padding(12.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {

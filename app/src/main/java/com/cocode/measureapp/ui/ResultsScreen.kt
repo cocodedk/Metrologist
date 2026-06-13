@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,7 +31,7 @@ fun ResultsScreen(view: MeasurementView, onExport: () -> Unit, onDone: () -> Uni
         LabeledValue("Height", view.height)
         LabeledValue("Area", view.area)
         LabeledValue("Diagonal", view.diagonal)
-        Divider()
+        HorizontalDivider()
         Text("Confidence: ${view.confidenceLabel} (${view.confidencePercent}%)")
         Text("Method: ${view.solverName}")
         if (view.cornerAngles.isNotEmpty()) {

@@ -1,6 +1,7 @@
 package com.cocode.measureapp.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -12,6 +13,7 @@ import com.cocode.measureapp.core.LengthUnit
 import com.cocode.measureapp.core.MeasurementView
 import com.cocode.measureapp.data.SettingsRepository
 import com.cocode.measureapp.export.AnnotatedExporter
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 private enum class Step { Capture, Mark, Results, Settings }
@@ -20,7 +22,7 @@ private enum class Step { Capture, Mark, Results, Settings }
 @Composable
 fun MeasureApp() {
     val context = LocalContext.current
-    val repo = remember { SettingsRepository(context) }
+    val repo = remember { SettingsRepository(context.applicationContext) }
     val scope = rememberCoroutineScope()
     val stickLength by repo.stickLengthMeters.collectAsState(initial = SettingsRepository.DEFAULT_LENGTH_M)
     val unit by repo.unit.collectAsState(initial = LengthUnit.METERS)
@@ -38,7 +40,7 @@ fun MeasureApp() {
         Step.Mark -> {
             val img = captured
             if (img == null) {
-                step = Step.Capture
+                LaunchedEffect(Unit) { step = Step.Capture }
             } else {
                 MarkScreen(
                     image = img,
@@ -54,11 +56,15 @@ fun MeasureApp() {
             val v = view
             val img = captured
             if (v == null) {
-                step = Step.Capture
+                LaunchedEffect(Unit) { step = Step.Capture }
             } else {
                 ResultsScreen(
                     view = v,
-                    onExport = { if (img != null) AnnotatedExporter.shareAnnotated(context, img.bitmap, v) },
+                    onExport = {
+                        if (img != null) scope.launch(Dispatchers.IO) {
+                            AnnotatedExporter.shareAnnotated(context, img.bitmap, v)
+                        }
+                    },
                     onDone = { step = Step.Capture },
                 )
             }

@@ -18,7 +18,7 @@ object IntrinsicsExtractor {
     ): CameraIntrinsics {
         val calib = characteristics.get(CameraCharacteristics.LENS_INTRINSIC_CALIBRATION)
         val activeArray = characteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE)
-        if (calib != null && calib.size >= 4 && activeArray != null &&
+        if (calib != null && calib.size >= 5 && activeArray != null &&
             activeArray.width() > 0 && activeArray.height() > 0
         ) {
             val sx = imageWidth.toDouble() / activeArray.width()
