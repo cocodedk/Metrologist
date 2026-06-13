@@ -1,6 +1,7 @@
 package com.cocode.measureapp.geometry
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertThrows
 import org.junit.Test
 
 class VecTest {
@@ -20,5 +21,19 @@ class VecTest {
 
     @Test fun vec2DistanceIsEuclidean() {
         assertEquals(5.0, Vec2(0.0, 0.0).distanceTo(Vec2(3.0, 4.0)), 1e-9)
+    }
+
+    @Test fun normalizeThrowsOnZeroVector() {
+        assertThrows(IllegalArgumentException::class.java) {
+            Vec3(0.0, 0.0, 0.0).normalized()
+        }
+    }
+
+    @Test fun vec3DotProduct() {
+        assertEquals(32.0, Vec3(1.0, 2.0, 3.0).dot(Vec3(4.0, 5.0, 6.0)), 1e-9)
+    }
+
+    @Test fun vec2DotProduct() {
+        assertEquals(7.0, Vec2(1.0, 2.0).dot(Vec2(3.0, 2.0)), 1e-9)
     }
 }
