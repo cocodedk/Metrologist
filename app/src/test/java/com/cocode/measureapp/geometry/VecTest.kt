@@ -42,4 +42,12 @@ class VecTest {
         assertEquals(4.5, r.x, 1e-9)
         assertEquals(-6.0, r.y, 1e-9)
     }
+
+    @Test fun vec2PlusAddsComponentwise() {
+        assertEquals(Vec2(4.0, 6.0), Vec2(1.0, 2.0) + Vec2(3.0, 4.0))
+    }
+
+    @Test fun vec3MinusSubtractsComponentwise() {
+        assertEquals(Vec3(-3.0, -3.0, -3.0), Vec3(1.0, 2.0, 3.0) - Vec3(4.0, 5.0, 6.0))
+    }
 }
