@@ -37,6 +37,19 @@ class VecTest {
         assertEquals(7.0, Vec2(1.0, 2.0).dot(Vec2(3.0, 2.0)), 1e-9)
     }
 
+    @Test fun vec2NormalizedHasUnitLength() {
+        val r = Vec2(3.0, 4.0).normalized()
+        assertEquals(1.0, r.norm(), 1e-9)
+        assertEquals(0.6, r.x, 1e-9)
+        assertEquals(0.8, r.y, 1e-9)
+    }
+
+    @Test fun vec2NormalizeThrowsOnZeroVector() {
+        assertThrows(IllegalArgumentException::class.java) {
+            Vec2(0.0, 0.0).normalized()
+        }
+    }
+
     @Test fun vec2ScalarMultiply() {
         val r = Vec2(1.5, -2.0) * 3.0
         assertEquals(4.5, r.x, 1e-9)

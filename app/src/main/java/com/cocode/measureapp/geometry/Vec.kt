@@ -8,6 +8,11 @@ data class Vec2(val x: Double, val y: Double) {
     operator fun times(s: Double) = Vec2(x * s, y * s)
     fun dot(o: Vec2) = x * o.x + y * o.y
     fun norm() = sqrt(x * x + y * y)
+    fun normalized(): Vec2 {
+        val n = norm()
+        require(n > Tolerances.NORM_EPS) { "cannot normalize zero-length vector" }
+        return Vec2(x / n, y / n)
+    }
     fun distanceTo(o: Vec2) = (this - o).norm()
 }
 
