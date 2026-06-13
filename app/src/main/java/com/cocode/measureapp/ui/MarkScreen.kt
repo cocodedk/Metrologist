@@ -60,10 +60,12 @@ fun MarkScreen(
     var canvasSize by remember { mutableStateOf(Size.Zero) }
     var autoDetected by remember { mutableStateOf(false) }
     var autoConfidence by remember { mutableStateOf(0.0) }
+    var detectGeneration by remember { mutableStateOf(0) }
 
     LaunchedEffect(image) {
+        val gen = detectGeneration
         val result = withContext(Dispatchers.Default) { detector.detect(bmp) }
-        if (result != null && stick.isEmpty()) {
+        if (result != null && stick.isEmpty() && detectGeneration == gen) {
             stick.addAll(result.points)
             autoConfidence = result.confidence
             autoDetected = true
@@ -121,7 +123,7 @@ fun MarkScreen(
             }
         }
         Row(Modifier.padding(12.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Button(onClick = { corners.clear(); stick.clear(); markingStick = false; autoDetected = false }) { Text("Reset") }
+            Button(onClick = { corners.clear(); stick.clear(); markingStick = false; autoDetected = false; detectGeneration++ }) { Text("Reset") }
             Button(onClick = onBack) { Text("Retake") }
             if (!markingStick) {
                 Button(enabled = corners.size == 4, onClick = { markingStick = true }) { Text("Next: stick") }

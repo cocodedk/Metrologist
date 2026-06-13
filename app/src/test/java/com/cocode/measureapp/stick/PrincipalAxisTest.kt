@@ -73,6 +73,17 @@ class PrincipalAxisTest {
         assertEquals(0.0, axis.direction.y, 1e-9)
     }
 
+    // ---- identical points (Sxx == Syy == Sxy == 0) takes horizontal branch ------
+
+    @Test fun `two identical points does not throw and returns unit direction (1,0)`() {
+        val pts = listOf(Vec2(1.0, 2.0), Vec2(1.0, 2.0))
+        val axis = PrincipalAxis.fit(pts)
+        assertEquals(1.0, axis.direction.norm(), 1e-9)
+        assertEquals(1.0, axis.direction.x, 1e-9)
+        assertEquals(0.0, axis.direction.y, 1e-9)
+        assertEquals(Vec2(1.0, 2.0), axis.origin)
+    }
+
     // ---- minimum case -----------------------------------------------------------
 
     @Test fun `two points give direction equal to connecting vector normalised`() {

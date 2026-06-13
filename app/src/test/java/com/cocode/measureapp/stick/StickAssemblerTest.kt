@@ -223,7 +223,9 @@ class StickAssemblerTest {
         val boundary = listOf(A, B)  // fractions exactly 0 and 1
         // Should not throw; boundary reds fall in bands 0 and (bandCount-1) respectively.
         val result = StickAssembler.assemble(stickBody(), boundary)
-        // Result depends on score, but no exception must be thrown.
+        // Both boundary reds are kept (one in band 0, one in band 3 → split even/odd → redScore = 0.5).
+        assertNotNull(result)
+        assertEquals(BAND_COUNT + 1, result!!.points.size)
     }
 
     // ---- red points outside stick range are dropped (covers both out-of-range branches) ------

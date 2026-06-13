@@ -6,7 +6,9 @@ import com.cocode.measureapp.stick.StickAssembler
 import com.cocode.measureapp.stick.StickPoints
 import org.opencv.android.Utils
 import org.opencv.core.Core
+import org.opencv.core.CvType
 import org.opencv.core.Mat
+import org.opencv.core.MatOfPoint
 import org.opencv.core.Scalar
 import org.opencv.imgproc.Imgproc
 
@@ -29,6 +31,10 @@ class OpenCvStickDetector(private val targetSamples: Int = 220) : StickDetector 
         val redMask = Mat()
         val whiteMask = Mat()
         val stickMask = Mat()
+        val hierarchy = Mat()
+        val contourMask = Mat()
+        val redInStick = Mat()
+        val contours = ArrayList<MatOfPoint>()
         return try {
             Utils.bitmapToMat(image, rgba)
             Imgproc.cvtColor(rgba, rgb, Imgproc.COLOR_RGBA2RGB)
@@ -40,14 +46,23 @@ class OpenCvStickDetector(private val targetSamples: Int = 220) : StickDetector 
             Core.inRange(hsv, Scalar(0.0, 0.0, 180.0), Scalar(179.0, 40.0, 255.0), whiteMask)
             Core.bitwise_or(redMask, whiteMask, stickMask)
 
-            val stride = maxOf(1, minOf(stickMask.rows(), stickMask.cols()) / targetSamples)
-            val stickPoints = sampleMask(stickMask, stride)
-            val redPoints = sampleMask(redMask, stride)
+            Imgproc.findContours(stickMask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE)
+            val largest = contours.maxByOrNull { Imgproc.contourArea(it) } ?: return null
+
+            Mat.zeros(stickMask.size(), CvType.CV_8UC1).copyTo(contourMask)
+            Imgproc.drawContours(contourMask, listOf(largest), -1, Scalar(255.0), -1)
+
+            val stride = maxOf(1, minOf(contourMask.rows(), contourMask.cols()) / targetSamples)
+            val stickPoints = sampleMask(contourMask, stride)
+            Core.bitwise_and(redMask, contourMask, redInStick)
+            val redPoints = sampleMask(redInStick, stride)
             StickAssembler.assemble(stickPoints, redPoints)
         } catch (t: Throwable) {
             null
         } finally {
-            listOf(rgba, rgb, hsv, red1, red2, redMask, whiteMask, stickMask).forEach { it.release() }
+            listOf(rgba, rgb, hsv, red1, red2, redMask, whiteMask, stickMask, hierarchy, contourMask, redInStick)
+                .forEach { it.release() }
+            contours.forEach { it.release() }
         }
     }
 
