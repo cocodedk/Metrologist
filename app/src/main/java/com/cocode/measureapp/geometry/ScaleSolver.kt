@@ -54,7 +54,12 @@ object ScaleSolver {
         val agreement = if (estimates.size == 1) {
             0.0
         } else {
-            estimates.maxOf { abs(it - scale) } / scale
+            var maxDev = 0.0
+            for (e in estimates) {
+                val dev = abs(e - scale)
+                if (dev > maxDev) maxDev = dev
+            }
+            maxDev / scale
         }
         return ScaleResult(scale, agreement)
     }

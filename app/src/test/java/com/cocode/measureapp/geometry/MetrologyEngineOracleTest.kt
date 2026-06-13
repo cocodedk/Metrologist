@@ -3,6 +3,7 @@ package com.cocode.measureapp.geometry
 import org.junit.Assert.assertTrue
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import kotlin.math.sqrt
 
 /**
  * Synthetic ground-truth oracle for [MetrologyEngine] — the correctness backbone.
@@ -37,6 +38,11 @@ class MetrologyEngineOracleTest {
         assertEquals("$name height", h, result.measurement.height, h * tol)
         assertEquals("$name area", w * h, result.measurement.area, w * h * tol)
         assertTrue("$name confidence > 0.7 (was ${result.confidence})", result.confidence > 0.7)
+        val trueDiagonal = sqrt(w * w + h * h)
+        assertEquals("$name diagonal", trueDiagonal, result.measurement.diagonal, trueDiagonal * tol)
+        for ((i, angle) in result.measurement.cornerAngles.withIndex()) {
+            assertEquals("$name corner[$i] angle ~90°", 90.0, angle, 1.0)
+        }
     }
 
     @Test fun recoversTruthSmallYaw() =
