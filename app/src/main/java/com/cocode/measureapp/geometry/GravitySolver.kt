@@ -60,11 +60,15 @@ object GravitySolver {
 
     /**
      * A deterministic unit vector orthogonal to [up]: take a fixed reference axis, remove
-     * its [up] component, and normalize. The reference is swapped when it is (near) parallel
-     * to [up] so the subtraction never yields the zero vector.
+     * its [up] component, and normalize.
+     *
+     * Both call sites (the VERTICAL degenerate fallback and the HORIZONTAL fwd-collapse
+     * path) are reached only when [up] is (anti)parallel to the optical axis. The fixed
+     * reference `(1,0,0)` is therefore always perpendicular-ish to [up] (near the z-axis),
+     * so the residual is non-degenerate and a conditional swap would be dead code.
      */
     private fun stableHorizontal(up: Vec3): Vec3 {
-        val ref = if (abs(up.dot(AXIS)) < 0.9) AXIS else Vec3(1.0, 0.0, 0.0)
+        val ref = Vec3(1.0, 0.0, 0.0)
         return (ref - up * ref.dot(up)).normalized()
     }
 }

@@ -37,7 +37,9 @@ class GravitySolverTest {
     @Test
     fun topDownHorizontal_normalIsWorldUpWithOrthonormalFrame() {
         // Camera looking straight down the floor: world "down" aligns with the optical
-        // axis (+z), so gravity = (0,0,1) and worldUp = (0,0,-1).
+        // axis (+z), so gravity = (0,0,1) and worldUp = (0,0,-1). worldUp is then parallel
+        // to the optical axis, so the projected forward `fwd` collapses to zero and e2
+        // falls back to the deterministic stableHorizontal direction (NOT fwd.normalized()).
         val sol = GravitySolver.solve(Vec3(0.0, 0.0, 1.0), SurfaceOrientation.HORIZONTAL)
 
         assertEquals(SolverKind.GRAVITY, sol.solver)
@@ -46,6 +48,39 @@ class GravitySolverTest {
         assertOrthonormal(sol.frame)
         // Looking straight down the optical axis => maximal confidence.
         assertEquals(1.0, sol.confidence, 1e-9)
+    }
+
+    @Test
+    fun horizontalTiltedDown_followsProjectedForwardWithPartialConfidence() {
+        // Camera tilted down at the floor (not straight down): worldUp is NOT parallel to
+        // the optical axis, so the projected forward `fwd` is non-degenerate and e2 takes
+        // the fwd.normalized() TRUE branch. gravity=(0,0.7071,0.7071) -> worldUp=(0,-0.7071,
+        // -0.7071); fwd = axis - worldUp*(axis·worldUp) = (0,-0.5,0.5), norm = 0.7071.
+        val g = Vec3(0.0, 0.70710678, 0.70710678)
+        val sol = GravitySolver.solve(g, SurfaceOrientation.HORIZONTAL)
+
+        assertEquals(SolverKind.GRAVITY, sol.solver)
+        val worldUp = (g * -1.0).normalized()
+        assertVec(worldUp, sol.frame.normal)
+        // e2 must equal the normalized projected camera-forward direction.
+        val fwd = Vec3(0.0, 0.0, 1.0) - worldUp * Vec3(0.0, 0.0, 1.0).dot(worldUp)
+        assertVec(fwd.normalized(), sol.frame.e2)
+        assertOrthonormal(sol.frame)
+        // Tilted (not straight down) => partial confidence strictly inside (0,1).
+        assertTrue("confidence in (0,1)", sol.confidence > 0.0 && sol.confidence < 1.0)
+        assertEquals(0.70710678, sol.confidence, 1e-6)
+    }
+
+    @Test
+    fun stableHorizontalFallback_isDeterministicUnitVectorOrthogonalToUp() {
+        // Drive the HORIZONTAL fwd-collapse path (worldUp ∥ optical axis) to reach the
+        // stableHorizontal fallback. With up=(0,0,1), the fixed (1,0,0) reference has no
+        // up-component to remove, so e2 must come out as exactly (1,0,0).
+        val sol = GravitySolver.solve(Vec3(0.0, 0.0, -1.0), SurfaceOrientation.HORIZONTAL)
+
+        assertVec(Vec3(1.0, 0.0, 0.0), sol.frame.e2)
+        assertEquals("|e2|", 1.0, sol.frame.e2.norm(), 1e-9)
+        assertEquals("e2·up", 0.0, sol.frame.e2.dot(Vec3(0.0, 0.0, 1.0)), 1e-9)
     }
 
     @Test
