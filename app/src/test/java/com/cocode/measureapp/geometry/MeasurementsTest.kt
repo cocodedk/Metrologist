@@ -85,6 +85,30 @@ class MeasurementsTest {
     }
 
     /**
+     * Degenerate quad where the PREVIOUS edge is zero-length at corner 0: BL == TL,
+     * so at corner TL (i=0) prev = BL-TL = 0 (pn <= NORM_EPS) and the guard's first
+     * operand is already false, short-circuiting before nn is ever tested.
+     *
+     * This is the only arrangement that exercises the `pn > NORM_EPS` == false branch
+     * in isolation. A single other duplicated-corner pair instead trips the SECOND
+     * operand (nn <= NORM_EPS) at the earlier index first: e.g. TR == BR throws at
+     * corner TR via the next edge before corner BR's prev edge is reached. Putting the
+     * duplicate at BL == TL forces corner 0 to fail on its prev edge before any corner
+     * with a zero next edge runs.
+     */
+    @Test(expected = IllegalArgumentException::class)
+    fun rejectsDegenerateQuadWithZeroLengthPrevEdge() {
+        Measurements.compute(
+            listOf(
+                Vec2(0.0, 0.0), // TL
+                Vec2(3.0, 0.0), // TR
+                Vec2(3.0, 2.0), // BR
+                Vec2(0.0, 0.0), // BL == TL  (zero-length prev edge at TL, i=0)
+            ),
+        )
+    }
+
+    /**
      * Near-collinear corners: TL, TR, BR almost lie on a straight line, so the raw
      * dot/(norm*norm) ratio at TR rounds just outside [-1, 1]. The coerceIn clamp
      * must execute and keep the angle finite (~180 deg) instead of acos(NaN) = NaN.
