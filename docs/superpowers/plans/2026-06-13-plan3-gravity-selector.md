@@ -68,7 +68,9 @@ build confidence" logic is a shared private function. Keep the existing `measure
 `sel = SolverSelector.select(rect, grav)`; run the shared logic with `sel.solution`; attach
 `MeasurementDiagnostics(sel.solution.solver, confidence, cameraTiltDeg, scale, scaleAgreement)`.
 `cameraTiltDeg = Math.toDegrees(asin((Vec3(0,0,1).dot((gravity*-1.0).normalized())).coerceIn(-1.0,1.0)))`
-(camera pitch above horizontal; document sign).
+(camera pitch relative to horizontal; **sign**: positive when the optical axis tips UP / above
+the horizon, negative when looking DOWN toward the floor, `0` when level — looking down makes
+`gravity.z > 0` so the `asin` is negative).
 
 ## Test strategy (TDD)
 

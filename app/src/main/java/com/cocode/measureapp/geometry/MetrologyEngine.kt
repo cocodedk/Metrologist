@@ -5,8 +5,9 @@ import kotlin.math.min
 
 /**
  * Per-pass summary of which solver was used and how the result was conditioned: the chosen
- * [solver], the overall [confidence], the camera pitch above horizontal in degrees
- * ([cameraTiltDeg]), the recovered metric-to-real [scale], and the stick [scaleAgreement].
+ * [solver], the overall [confidence], the camera pitch in degrees ([cameraTiltDeg], positive
+ * looking up / negative looking down), the recovered metric-to-real [scale], and the stick
+ * [scaleAgreement].
  */
 data class MeasurementDiagnostics(
     val solver: SolverKind,
@@ -116,7 +117,12 @@ object MetrologyEngine {
         return EngineResult(measurement, solution, scale, confidence)
     }
 
-    /** Camera pitch above horizontal (degrees): positive when the optical axis tips downward. */
+    /**
+     * Camera pitch relative to horizontal (degrees), from `asin(opticalAxis·worldUp)`:
+     * **positive when the optical axis tips UP, above the horizon**, and **negative when the
+     * camera looks DOWN toward the floor**; exactly `0` for a level camera. (Looking down makes
+     * `gravity.z > 0`, so `worldUp.z < 0` and the `asin` is negative — see [CameraTiltSignTest].)
+     */
     private fun cameraTiltDeg(gravity: Vec3): Double {
         val worldUp = (gravity * -1.0).normalized()
         return Math.toDegrees(asin(Vec3(0.0, 0.0, 1.0).dot(worldUp).coerceIn(-1.0, 1.0)))
