@@ -343,3 +343,13 @@ git commit -m "feat(geometry): add projective line/intersection/vanishing-point 
 - **Placeholder scan:** None — every step has runnable code and an exact command.
 - **Type consistency:** `Vec2`, `Vec3`, `Mat3`, `CameraIntrinsics`, `Projective` are used identically across tasks. `Mat3 * Vec3`, `CameraIntrinsics.inverseMatrix()`, and `Projective.vanishingPoint(...)` signatures match their definitions and the Plan 2 entry points.
 - **Note for Plan 2:** the rectangle solver consumes `Projective.vanishingPoint(...)` and `CameraIntrinsics.inverseMatrix()`; `vanishingPoint` returning `null` (fronto-parallel) must be handled there as "fall back / low confidence."
+
+## Carry-forward to Plan 2 (from final review)
+
+Foundation is merge-ready (16 tests green). These items surfaced in review and belong at the **start of Plan 2 (rectangle metrology)**, not Plan 1:
+
+- **Add `Vec2.times(Double)`** — `Vec3` has scalar multiply, `Vec2` doesn't; the solver will need it when mapping bearings back to pixels.
+- **Add `Mat3 * Mat3`** (matrix–matrix product) — needed to compose the rectifying homography.
+- **Unify numeric tolerances as named constants** — `Projective` uses `1e-9` (image/pixel scale), the `normalize`/`inverse` guards use `1e-12` (unit scale). Intentional, but make it explicit (e.g. `PROJ_EPS` vs `NORM_EPS`) with a one-line rationale to avoid tolerance sprawl.
+- **Treat `vanishingPoint == null` as a confidence penalty → gravity-solver fallback**, never an unhandled path.
+- **Optional polish:** strengthen `ProjectiveTest.vanishingPointOfConvergingEdges` to use non-coincident edges (e.g. `(0,0)→(10,0.5)` and `(0,2)→(10,1.5)` meeting at `(20,1)`); consider caching `CameraIntrinsics.matrix()`/`inverseMatrix()` if queried in a hot loop.
