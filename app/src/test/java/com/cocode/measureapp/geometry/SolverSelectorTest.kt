@@ -103,6 +103,37 @@ class SolverSelectorTest {
     }
 
     @Test
+    fun gravityNull_picksRectangle() {
+        // Defensive path: rectangle below threshold (branch 1 fails) and gravity null
+        // (branch 2 fails) reaches betterNonNull. There gravConf is NEGATIVE_INFINITY,
+        // so the non-null rectangle wins via the rectConf >= gravConf true-branch.
+        // This is the only invocation passing a null gravity; it covers L27's
+        // `gravity != null` FALSE side, L37's elvis null side, and L38's rectangle-chosen
+        // path when gravConf == NEGATIVE_INFINITY.
+        val rectangle = rect(0.1)
+        val sel = SolverSelector.select(rectangle, null)
+
+        assertSame(rectangle, sel.solution)
+        assertEquals(SolverKind.RECTANGLE, sel.solution.solver)
+        assertTrue("reason notes low overall confidence", sel.reason.contains("low"))
+    }
+
+    @Test
+    fun bothUnusable_rectangleLowerThanGravity_picksGravity() {
+        // Reaches betterNonNull (branch 1 fails: rect < threshold; branch 2 fails:
+        // gravity confidence == 0). Here the rectangle is non-null but its confidence
+        // (-0.1) is below gravity's (0.0), so `rectConf >= gravConf` is FALSE and the
+        // `else gravity!!` arm of L38 is taken. This pins the last betterNonNull branch.
+        val rectangle = rect(-0.1)
+        val gravity = grav(0.0)
+        val sel = SolverSelector.select(rectangle, gravity)
+
+        assertSame(gravity, sel.solution)
+        assertEquals(SolverKind.GRAVITY, sel.solution.solver)
+        assertTrue("reason notes low overall confidence", sel.reason.contains("low"))
+    }
+
+    @Test
     fun customThreshold_isRespected() {
         // Raise the threshold so a 0.5 rectangle is no longer "well-conditioned".
         val gravity = grav(0.8)
