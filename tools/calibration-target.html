@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Measure App — Screen Calibration Target</title>
+<style>
+  * { margin: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body { background: #2b2b2b; color: #eee; overflow: hidden; user-select: none;
+    font: 14px/1.45 system-ui, -apple-system, sans-serif; }
+
+  /* Step 1 — measure the screen by matching a real card */
+  #cal { position: fixed; inset: 0; z-index: 30; background: #1c1c1c; padding: 20px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 16px; text-align: center; }
+  #cal.done { display: none; }
+  .card { background: linear-gradient(135deg, #3a6ea5, #2b4d72); border-radius: 10px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, .5); position: relative; }
+  .card::after { content: ""; position: absolute; left: 12%; top: 38%; width: 18%; height: 24%;
+    background: #d8c06a; border-radius: 4px; }
+  /* inward-pointing edge markers, just outside the card template, to align a real card */
+  .arr { position: absolute; width: 0; height: 0; pointer-events: none; }
+  .arr-t { left: 50%; top: -18px; transform: translateX(-50%);
+    border-left: 9px solid transparent; border-right: 9px solid transparent; border-top: 13px solid #ffd24d; }
+  .arr-b { left: 50%; bottom: -18px; transform: translateX(-50%);
+    border-left: 9px solid transparent; border-right: 9px solid transparent; border-bottom: 13px solid #ffd24d; }
+  .arr-l { top: 50%; left: -18px; transform: translateY(-50%);
+    border-top: 9px solid transparent; border-bottom: 9px solid transparent; border-left: 13px solid #ffd24d; }
+  .arr-r { top: 50%; right: -18px; transform: translateY(-50%);
+    border-top: 9px solid transparent; border-bottom: 9px solid transparent; border-right: 13px solid #ffd24d; }
+  .crow { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: center; }
+  input[type=range] { width: min(80vw, 420px); }
+  input[type=number] { width: 92px; padding: 5px; }
+  button { padding: 8px 14px; border: 0; border-radius: 7px; cursor: pointer; font-weight: 600; }
+  .muted { color: #aaa; font-size: 13px; max-width: 460px; }
+
+  /* Step 2 — the measured target */
+  #app { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
+  .wall { position: relative; background: #d6d6d6; border: 2px solid #111; }
+  .corner { position: absolute; width: 30px; height: 30px; margin: -15px 0 0 -15px;
+    background: linear-gradient(#111, #111) center / 100% 2px no-repeat,
+                linear-gradient(#111, #111) center / 2px 100% no-repeat; }
+  .corner.tl { top: 0; left: 0; }    .corner.tr { top: 0; left: 100%; }
+  .corner.br { top: 100%; left: 100%; } .corner.bl { top: 100%; left: 0; }
+  .stick { position: absolute; left: 50%; bottom: 11%; transform: translateX(-50%);
+    display: flex; border: 3px solid #000; }
+  .stick > div { flex: 1 1 0; }
+  .r { background: #ff0000; } .w { background: #ffffff; }
+
+  #panel { position: fixed; top: 12px; left: 12px; z-index: 20; max-width: 350px;
+    background: rgba(0, 0, 0, .66); padding: 12px 14px; border-radius: 10px; }
+  #panel.hidden { display: none; }
+  .row { display: flex; gap: 8px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
+  .vals { margin-top: 8px; } .vals b { color: #7fe0c0; }
+  .hint { margin-top: 8px; font-size: 12px; color: #bbb; }
+</style>
+</head>
+<body>
+  <div id="cal">
+    <h2>Calibrate this screen</h2>
+    <p class="muted">Hold a bank / credit card (any ID-1 card, 85.6&nbsp;mm wide) flat against the
+      screen and resize the blue card until it matches exactly. This measures your display, so every
+      value below becomes a real, on-screen measurement.</p>
+    <div class="card" id="card">
+      <span class="arr arr-t"></span><span class="arr arr-r"></span>
+      <span class="arr arr-b"></span><span class="arr arr-l"></span>
+    </div>
+    <div class="crow">
+      <label for="cardW">Size</label>
+      <input type="range" id="cardW" min="120" max="1000" step="1" value="320">
+    </div>
+    <div class="crow">
+      <button id="setCard">Set from card</button>
+      <span class="muted">or, if you know it,</span>
+      <input type="number" id="ppi" placeholder="screen PPI" min="50" max="900">
+      <button id="setPpi">Use PPI</button>
+    </div>
+    <div class="muted" id="calLive"></div>
+  </div>
+
+  <div id="app">
+    <div class="wall" id="wall">
+      <div class="corner tl"></div><div class="corner tr"></div>
+      <div class="corner br"></div><div class="corner bl"></div>
+      <div class="stick" id="stick">
+        <div class="r"></div><div class="w"></div><div class="r"></div><div class="w"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="panel" class="hidden">
+    <strong>Measured on this screen</strong>
+    <div class="vals">
+      Screen: <b id="vScreen"></b> (<span id="vPpcm"></span> px/cm)<br>
+      Wall (target): <b id="vWall"></b><br>
+      Diagonal: <b id="vDiag"></b> &middot; Area: <b id="vArea"></b><br>
+      Stick: <b id="vStick"></b> (band <span id="vBand"></span> cm)
+    </div>
+    <div class="row">
+      <button id="fs">Fullscreen</button>
+      <button id="hide">Hide UI (h)</button>
+      <button id="recal">Recalibrate</button>
+    </div>
+    <div class="hint">Hide the UI, photograph the target at a moderate angle with the app, then mark
+      the 4 corner crosshairs + the 2 stick ends and compare the app's numbers to these.</div>
+  </div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const ID1_W = 85.6;        // ISO/IEC 7810 ID-1 card width in mm
+  const STICK_FRAC = 0.45;   // stick length as a fraction of wall width
+  let pxPerMm = parseFloat(localStorage.getItem('pxPerMm')) || 0;
+
+  const card = $('card'), cardW = $('cardW');
+  function drawCard() {
+    const w = +cardW.value;
+    card.style.width = w + 'px';
+    card.style.height = (w * 53.98 / ID1_W) + 'px';
+    $('calLive').textContent = `Card box: ${w} px  →  ${(w / ID1_W).toFixed(2)} px/mm`;
+  }
+  cardW.addEventListener('input', drawCard);
+  $('setCard').onclick = () => calibrate(+cardW.value / ID1_W);
+  $('setPpi').onclick = () => { const p = +$('ppi').value; if (p > 0) calibrate(p / 25.4); };
+  function calibrate(ppm) {
+    pxPerMm = ppm;
+    localStorage.setItem('pxPerMm', String(ppm));
+    $('cal').classList.add('done');
+    $('panel').classList.remove('hidden');
+    layout();
+  }
+
+  const wall = $('wall'), stick = $('stick');
+  function layout() {
+    const wpx = Math.round(innerWidth * 0.94), hpx = Math.round(innerHeight * 0.86);
+    wall.style.width = wpx + 'px';
+    wall.style.height = hpx + 'px';
+    const spx = Math.round(wpx * STICK_FRAC);
+    stick.style.width = spx + 'px';
+    stick.style.height = Math.max(14, Math.round(spx * 0.11)) + 'px';
+    if (pxPerMm > 0) report(wpx, hpx, spx);
+  }
+  function report(wpx, hpx, spx) {
+    const cm = px => px / pxPerMm / 10;
+    const W = cm(wpx), H = cm(hpx), L = cm(spx);
+    $('vScreen').textContent = `${cm(screen.width).toFixed(1)} × ${cm(screen.height).toFixed(1)} cm`;
+    $('vPpcm').textContent = (pxPerMm * 10).toFixed(1);
+    $('vWall').textContent = `${W.toFixed(1)} × ${H.toFixed(1)} cm`;
+    $('vDiag').textContent = `${Math.hypot(W, H).toFixed(1)} cm`;
+    $('vArea').textContent = `${(W * H).toFixed(0)} cm²`;
+    $('vStick').textContent = `${L.toFixed(1)} cm`;
+    $('vBand').textContent = (L / 4).toFixed(2);
+  }
+  addEventListener('resize', layout);
+  $('fs').onclick = () =>
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  $('hide').onclick = () => $('panel').classList.add('hidden');
+  $('recal').onclick = () => { $('cal').classList.remove('done'); $('panel').classList.add('hidden'); };
+  addEventListener('keydown', e => { if (e.key === 'h') $('panel').classList.toggle('hidden'); });
+
+  drawCard();
+  if (pxPerMm > 0) { $('cal').classList.add('done'); $('panel').classList.remove('hidden'); }
+  layout();
+</script>
+</body>
+</html>
