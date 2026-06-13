@@ -66,4 +66,42 @@ class MeasurementsTest {
     fun rejectsWrongCornerCount() {
         Measurements.compute(listOf(Vec2(0.0, 0.0), Vec2(1.0, 0.0), Vec2(1.0, 1.0)))
     }
+
+    /**
+     * Degenerate quad: TR coincides with TL, so the TL->TR edge has zero length.
+     * The interior-angle denominator (prev.norm() * next.norm()) would be 0.0,
+     * yielding 0.0/0.0 = NaN. The guard must reject this rather than emit NaN angles.
+     */
+    @Test(expected = IllegalArgumentException::class)
+    fun rejectsDegenerateQuadWithDuplicateAdjacentCorner() {
+        Measurements.compute(
+            listOf(
+                Vec2(0.0, 0.0), // TL
+                Vec2(0.0, 0.0), // TR == TL  (zero-length edge)
+                Vec2(3.0, 2.0), // BR
+                Vec2(0.0, 2.0), // BL
+            ),
+        )
+    }
+
+    /**
+     * Near-collinear corners: TL, TR, BR almost lie on a straight line, so the raw
+     * dot/(norm*norm) ratio at TR rounds just outside [-1, 1]. The coerceIn clamp
+     * must execute and keep the angle finite (~180 deg) instead of acos(NaN) = NaN.
+     */
+    @Test fun clampsNearCollinearCornerToFiniteAngle() {
+        // TL, TR, BR are exactly collinear (BR = 2*TR), so at TR the two edges point in
+        // opposite directions. The raw dot/(norm*norm) ratio rounds to -1.0000000000000002,
+        // i.e. just outside [-1, 1], forcing the coerceIn clamp to fire. Without the clamp
+        // acos(-1.0000000000000002) = NaN; with it the angle is a finite 180 deg.
+        val collinearAtTr = listOf(
+            Vec2(0.0, 0.0),  // TL
+            Vec2(3.0, 0.5),  // TR
+            Vec2(6.0, 1.0),  // BR (collinear with TL, TR)
+            Vec2(0.0, 2.0),  // BL
+        )
+        val angleAtTr = Measurements.compute(collinearAtTr).cornerAngles[1]
+        assertEquals(true, angleAtTr.isFinite())
+        assertEquals(180.0, angleAtTr, 1e-3)
+    }
 }

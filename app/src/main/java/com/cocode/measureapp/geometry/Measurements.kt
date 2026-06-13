@@ -55,12 +55,24 @@ object Measurements {
         return abs(sum) / 2.0
     }
 
-    /** Interior angle (degrees) at corner [i] between edges to its previous and next corners. */
+    /**
+     * Interior angle (degrees) at corner [i] between edges to its previous and next corners.
+     *
+     * Rejects degenerate quads where an adjacent corner coincides with corner [i]
+     * (zero-length edge). Without this guard the denominator `prev.norm() * next.norm()`
+     * is 0.0, the ratio is 0.0/0.0 = NaN (which `coerceIn` leaves unchanged), and
+     * `acos(NaN)` = NaN would silently poison the result.
+     */
     private fun interiorAngleDeg(p: List<Vec2>, i: Int): Double {
         val n = p.size
         val prev = p[(i - 1 + n) % n] - p[i]
         val next = p[(i + 1) % n] - p[i]
-        val cos = (prev.dot(next) / (prev.norm() * next.norm())).coerceIn(-1.0, 1.0)
+        val pn = prev.norm()
+        val nn = next.norm()
+        require(pn > Tolerances.NORM_EPS && nn > Tolerances.NORM_EPS) {
+            "degenerate quad: zero-length edge at corner $i"
+        }
+        val cos = (prev.dot(next) / (pn * nn)).coerceIn(-1.0, 1.0)
         return acos(cos) * 180.0 / PI
     }
 }
