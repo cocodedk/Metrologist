@@ -36,4 +36,10 @@ class VecTest {
     @Test fun vec2DotProduct() {
         assertEquals(7.0, Vec2(1.0, 2.0).dot(Vec2(3.0, 2.0)), 1e-9)
     }
+
+    @Test fun vec2ScalarMultiply() {
+        val r = Vec2(1.5, -2.0) * 3.0
+        assertEquals(4.5, r.x, 1e-9)
+        assertEquals(-6.0, r.y, 1e-9)
+    }
 }

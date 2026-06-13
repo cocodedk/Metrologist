@@ -5,6 +5,7 @@ import kotlin.math.sqrt
 data class Vec2(val x: Double, val y: Double) {
     operator fun plus(o: Vec2) = Vec2(x + o.x, y + o.y)
     operator fun minus(o: Vec2) = Vec2(x - o.x, y - o.y)
+    operator fun times(s: Double) = Vec2(x * s, y * s)
     fun dot(o: Vec2) = x * o.x + y * o.y
     fun norm() = sqrt(x * x + y * y)
     fun distanceTo(o: Vec2) = (this - o).norm()
