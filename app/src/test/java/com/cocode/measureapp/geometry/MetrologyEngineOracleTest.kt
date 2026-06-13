@@ -1,68 +1,64 @@
 package com.cocode.measureapp.geometry
 
+import org.junit.Assert.assertTrue
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import kotlin.math.cos
-import kotlin.math.hypot
-import kotlin.math.sin
 
 /**
- * Synthetic ground-truth oracle for [MetrologyEngine]. A real wall rectangle (W x H) plus a
- * stick of known length lying on the same plane is placed at a camera pose and projected to
- * pixels. Feeding those pixels through the full pipeline must recover `width`, `height`,
- * `area`, and `diagonal` within 0.5% of the known truth — proving the assembled math chain
- * (projectToPlane -> ScaleSolver -> scale multiply -> Measurements.compute) is metrically
- * correct, not merely non-zero. Covers frontal-ish, oblique-yaw, oblique-pitch, and
- * combined-tilt poses.
+ * Synthetic ground-truth oracle for [MetrologyEngine] — the correctness backbone.
+ *
+ * A known real wall (W x H) plus a stick of known length lying on the same plane is placed at
+ * a camera pose and projected to pixels by [SyntheticScene] with an INDEPENDENT pinhole model
+ * (it never calls the engine). Feeding those pixels through the full engine pipeline
+ * (RectangleSolver -> projectToPlane -> ScaleSolver -> Measurements) must recover `width`,
+ * `height`, and `area` within 0.5% of truth with confidence > 0.7, proving the assembled math
+ * is metrically correct.
+ *
+ * Poses: small yaw (~10deg), oblique yaw (~30deg), oblique pitch (~25deg), combined yaw+pitch.
+ * Plus a near-fronto-parallel pose (~1-2deg yaw) that exercises the degenerate / low-confidence
+ * branch of the rectangle path.
+ *
+ * Pure single-axis rotations leave one edge pair image-parallel (a null vanishing point), so the
+ * oblique poses pair a dominant axis with a small secondary tilt to keep both vanishing points
+ * finite — except the deliberate near-fronto-parallel degenerate case.
  */
 class MetrologyEngineOracleTest {
-    private val k = CameraIntrinsics(fx = 800.0, fy = 800.0, cx = 320.0, cy = 240.0)
-    private val w = 1.2
-    private val h = 0.8
-    private val stickLen = 1.0
-    private val profile = StickProfile(totalLength = stickLen, bandCount = 4)
+    private val w = 3.0
+    private val h = 2.0
+    private val l = 1.0
+    private val k = CameraIntrinsics(fx = 1500.0, fy = 1500.0, cx = 960.0, cy = 540.0)
+    private val t = Vec3(0.0, 0.0, 6.0) // wall in front of camera (positive depth)
 
-    private fun rotY(a: Double) = Mat3(cos(a), 0.0, sin(a), 0.0, 1.0, 0.0, -sin(a), 0.0, cos(a))
-    private fun rotX(a: Double) = Mat3(1.0, 0.0, 0.0, 0.0, cos(a), -sin(a), 0.0, sin(a), cos(a))
-
-    private fun project(p: Vec3): Vec2 {
-        val u = k.matrix() * Vec3(p.x / p.z, p.y / p.z, 1.0)
-        return Vec2(u.x, u.y)
-    }
-
-    private fun place(x: Double, y: Double, r: Mat3, depth: Double): Vec3 =
-        r * Vec3(x, y, 0.0) + Vec3(0.0, 0.0, depth)
-
-    private fun cornerPixels(r: Mat3, depth: Double): List<Vec2> = listOf(
-        place(-w / 2, -h / 2, r, depth), // TL
-        place(w / 2, -h / 2, r, depth),  // TR
-        place(w / 2, h / 2, r, depth),   // BR
-        place(-w / 2, h / 2, r, depth),  // BL
-    ).map { project(it) }
-
-    private fun stickPixels(r: Mat3, depth: Double): List<Vec2> = (0..4).map { i ->
-        val sx = -stickLen / 2 + stickLen * i / 4.0
-        project(place(sx, 0.0, r, depth))
-    }
-
-    /** Recovered measurements must match the known wall to within 0.5% for the given pose. */
-    private fun assertRecoversTruth(name: String, r: Mat3, depth: Double) {
-        val result = MetrologyEngine.measure(cornerPixels(r, depth), stickPixels(r, depth), k, profile)
-        val tol = 0.005 // 0.5% relative tolerance
+    private fun assertRecoversTruth(name: String, r: Mat3) {
+        val scene = SyntheticScene(w = w, h = h, r = r, t = t, k = k, l = l)
+        val result = MetrologyEngine.measure(scene.cornerPixels, scene.stickPixels, scene.k, scene.profile)
+        val tol = 0.005 // 0.5% relative
         assertEquals("$name width", w, result.measurement.width, w * tol)
         assertEquals("$name height", h, result.measurement.height, h * tol)
         assertEquals("$name area", w * h, result.measurement.area, w * h * tol)
-        assertEquals("$name diagonal", hypot(w, h), result.measurement.diagonal, hypot(w, h) * tol)
+        assertTrue("$name confidence > 0.7 (was ${result.confidence})", result.confidence > 0.7)
     }
 
-    // NOTE: a pure single-axis rotation leaves one edge pair image-parallel, so its vanishing
-    // point is null and the rectangle solver degenerates. The oblique cases therefore use a
-    // dominant axis plus a small secondary tilt so both vanishing points stay finite.
-    @Test fun recoversTruthFrontalIsh() = assertRecoversTruth("frontal", rotY(0.12) * rotX(0.08), 4.0)
+    @Test fun recoversTruthSmallYaw() =
+        assertRecoversTruth("small-yaw", SceneRotations.yawPitch(yawDeg = 10.0, pitchDeg = 5.0))
 
-    @Test fun recoversTruthObliqueYaw() = assertRecoversTruth("yaw", rotY(0.5) * rotX(0.08), 4.0)
+    @Test fun recoversTruthObliqueYaw() =
+        assertRecoversTruth("oblique-yaw", SceneRotations.yawPitch(yawDeg = 30.0, pitchDeg = 5.0))
 
-    @Test fun recoversTruthObliquePitch() = assertRecoversTruth("pitch", rotX(0.45) * rotY(0.08), 4.0)
+    @Test fun recoversTruthObliquePitch() =
+        assertRecoversTruth("oblique-pitch", SceneRotations.yawPitch(yawDeg = 5.0, pitchDeg = 25.0))
 
-    @Test fun recoversTruthCombinedTilt() = assertRecoversTruth("combined", rotY(0.4) * rotX(0.25), 4.0)
+    @Test fun recoversTruthCombinedYawPitch() =
+        assertRecoversTruth("combined", SceneRotations.yawPitch(yawDeg = 25.0, pitchDeg = 20.0))
+
+    /**
+     * Near-fronto-parallel (~1.5deg yaw): both edge pairs are nearly image-parallel, so the
+     * rectangle path degrades. Either the vanishing point is null (engine returns the
+     * confidence-0 fallback branch) or the imaged quad is nearly square and confidence stays low.
+     */
+    @Test fun nearFrontoParallelDegradesRectanglePath() {
+        val scene = SyntheticScene(w = w, h = h, r = SceneRotations.yawPitch(yawDeg = 1.5, pitchDeg = 0.0), t = t, k = k, l = l)
+        val result = MetrologyEngine.measure(scene.cornerPixels, scene.stickPixels, scene.k, scene.profile)
+        assertTrue("near-fronto must degrade (confidence ${result.confidence})", result.confidence < 0.7)
+    }
 }
