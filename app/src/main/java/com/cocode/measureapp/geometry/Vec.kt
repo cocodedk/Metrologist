@@ -20,7 +20,7 @@ data class Vec3(val x: Double, val y: Double, val z: Double) {
     fun norm() = sqrt(x * x + y * y + z * z)
     fun normalized(): Vec3 {
         val n = norm()
-        require(n > 1e-12) { "cannot normalize zero-length vector" }
+        require(n > Tolerances.NORM_EPS) { "cannot normalize zero-length vector" }
         return Vec3(x / n, y / n, z / n)
     }
 }

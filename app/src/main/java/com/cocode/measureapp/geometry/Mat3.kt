@@ -33,7 +33,7 @@ data class Mat3(
 
     fun inverse(): Mat3 {
         val det = determinant()
-        require(abs(det) > 1e-12) { "matrix not invertible" }
+        require(abs(det) > Tolerances.NORM_EPS) { "matrix not invertible" }
         val s = 1.0 / det
         return Mat3(
             (m11 * m22 - m12 * m21) * s, (m02 * m21 - m01 * m22) * s, (m01 * m12 - m02 * m11) * s,

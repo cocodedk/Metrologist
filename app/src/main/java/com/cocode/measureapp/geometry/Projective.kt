@@ -11,7 +11,7 @@ object Projective {
     /** Intersection of two homogeneous lines; null when parallel in the image. */
     fun intersection(l1: Vec3, l2: Vec3): Vec2? {
         val p = l1.cross(l2)
-        if (abs(p.z) < 1e-9) return null
+        if (abs(p.z) < Tolerances.PROJ_EPS) return null
         return Vec2(p.x / p.z, p.y / p.z)
     }
 
