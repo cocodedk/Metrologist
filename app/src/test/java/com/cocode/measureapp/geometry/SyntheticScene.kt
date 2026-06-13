@@ -49,6 +49,14 @@ class SyntheticScene(
     /** Stick profile matching the 5 markers / 4 equal bands the scene emits. */
     val profile: StickProfile = StickProfile(totalLength = l, bandCount = 4)
 
+    /**
+     * Camera-frame gravity for this pose: world **down** `(0,1,0)` rotated into the camera by
+     * the SAME world->camera rotation [r] used for projection, then normalized. This is the
+     * ground-truth gravity an IMU would report; it is derived purely from the pose and NEVER
+     * from any solver, so feeding it through the gravity pipeline is a genuine round-trip check.
+     */
+    val gravityCam: Vec3 = (r * Vec3(0.0, 1.0, 0.0)).normalized()
+
     /** Independent pinhole projection of a world point: `pixel = K * ((R*X + t) / z)`. */
     private fun project(x: Vec3): Vec2 {
         val xc = r * x + t
