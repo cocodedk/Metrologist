@@ -17,13 +17,20 @@ converts/formats for display.
 Take 4 image points tapped in arbitrary order and return them as `[TL, TR, BR, BL]` (clockwise,
 image coordinates with y pointing **down**). `require(points.size == 4)`.
 
-- `TL` = point with the smallest `x + y`; `BR` = largest `x + y`.
-- `TR` = smallest `y - x`; `BL` = largest `y - x`.
-- Return `[TL, TR, BR, BL]`.
+Order by sorting the 4 points around their centroid by `atan2(y - cy, x - cx)` (a guaranteed
+clockwise cycle in y-down image coordinates), then rotate the cycle to start at the top-left-most
+vertex (smallest `x + y`; ties broken by smallest `y`, then smallest `x`). Return `[TL, TR, BR, BL]`.
+A simple sum/diff rule (`TL = min(x+y)`, `BR = max(x+y)`, `TR = min(y-x)`, `BL = max(y-x)`) is
+**not** used: it collapses two corners on diamond-oriented (~45°) quads and is order-dependent on
+ties — the centroid-angle method is tie-stable and keeps the 4 corners distinct.
+
+Degenerate input (duplicate/collinear points that do not yield 4 distinct corners) throws
+`IllegalArgumentException` rather than silently returning a duplicated corner.
 
 Tests: every permutation/shuffle of a known rectangle's corners returns the same `[TL,TR,BR,BL]`;
-a rotated/perspective quad; a non-axis-aligned quad; `size != 4` throws. (For convex,
-non-degenerate quads this sum/diff rule is exact.)
+a rotated/perspective quad; a non-axis-aligned quad; a diamond-oriented (~45°) quad returns 4
+distinct corners; a quad with a 45° edge stays permutation-invariant; a strongly sheared convex
+quad keeps 4 distinct corners; degenerate input throws; `size != 4` throws.
 
 ### Units — `enum class LengthUnit { METERS, CENTIMETERS, FEET_INCHES }` + `object Units`
 

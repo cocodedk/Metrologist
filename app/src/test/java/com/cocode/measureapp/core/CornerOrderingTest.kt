@@ -3,6 +3,7 @@ package com.cocode.measureapp.core
 import com.cocode.measureapp.geometry.Vec2
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class CornerOrderingTest {
@@ -47,6 +48,63 @@ class CornerOrderingTest {
         for (perm in permutations(exp)) {
             assertEquals(exp, CornerOrdering.order(perm))
         }
+    }
+
+    @Test fun everyFixtureReturnsFourDistinctCorners() {
+        val fixtures = listOf(
+            listOf(tl, tr, br, bl),
+            listOf(Vec2(2.0, 0.0), Vec2(8.0, 3.0), Vec2(6.0, 9.0), Vec2(0.0, 5.0)),
+            listOf(Vec2(3.0, 1.0), Vec2(7.0, 1.0), Vec2(9.0, 8.0), Vec2(1.0, 8.0)),
+        )
+        for (quad in fixtures) {
+            val result = CornerOrdering.order(quad)
+            assertEquals(4, result.toSet().size)
+            assertEquals(quad.toSet(), result.toSet())
+        }
+    }
+
+    // Finding: diamond-oriented (~45deg) square must NOT collapse two corners.
+    // Square rotated 45deg, image coords y-down: top, right, bottom, left.
+    @Test fun diamondOrientedQuadReturnsFourDistinctCornersClockwise() {
+        val top = Vec2(5.0, 0.0)
+        val right = Vec2(10.0, 5.0)
+        val bottom = Vec2(5.0, 10.0)
+        val left = Vec2(0.0, 5.0)
+        val diamond = listOf(top, right, bottom, left)
+        // Clockwise (y-down) starting from the topmost vertex.
+        val exp = listOf(top, right, bottom, left)
+        for (perm in permutations(diamond)) {
+            val result = CornerOrdering.order(perm)
+            assertEquals(4, result.toSet().size)
+            assertEquals(exp, result)
+        }
+    }
+
+    // Finding: tie on a 45deg edge (two points share x+y) must stay permutation-invariant.
+    @Test fun quadWith45DegEdgeIsPermutationInvariant() {
+        // (1,3) and (3,1) both have x+y == 4 (an edge along the -45deg diagonal).
+        val quad = listOf(Vec2(1.0, 3.0), Vec2(3.0, 1.0), Vec2(8.0, 2.0), Vec2(5.0, 8.0))
+        val results = permutations(quad).map { CornerOrdering.order(it) }.toSet()
+        assertEquals(1, results.size)
+        assertEquals(4, results.first().toSet().size)
+    }
+
+    // Finding: strongly sheared but convex quad keeps all four corners distinct.
+    @Test fun stronglyShearedConvexQuadKeepsFourDistinctCorners() {
+        val quad = listOf(Vec2(0.0, 0.0), Vec2(20.0, 1.0), Vec2(25.0, 5.0), Vec2(2.0, 4.0))
+        for (perm in permutations(quad)) {
+            val result = CornerOrdering.order(perm)
+            assertEquals(4, result.toSet().size)
+            assertEquals(quad.toSet(), result.toSet())
+        }
+    }
+
+    // Finding: genuinely degenerate input (duplicate / collapsed corner) fails loudly.
+    @Test fun degenerateQuadWithDuplicatePointThrows() {
+        val ex = assertThrows(IllegalArgumentException::class.java) {
+            CornerOrdering.order(listOf(Vec2(0.0, 0.0), Vec2(0.0, 0.0), Vec2(10.0, 4.0), Vec2(0.0, 4.0)))
+        }
+        assertTrue(ex.message!!.contains("distinct"))
     }
 
     @Test fun sizeNotFourThrows() {
