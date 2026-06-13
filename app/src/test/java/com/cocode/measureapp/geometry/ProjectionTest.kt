@@ -49,4 +49,36 @@ class ProjectionTest {
         )
         projectToPlane(listOf(Vec2(50.0, 50.0)), k, frame)
     }
+
+    @Test fun emptyInputReturnsEmptyList() {
+        val frame = PlaneFrame(
+            e1 = Vec3(1.0, 0.0, 0.0),
+            e2 = Vec3(0.0, 1.0, 0.0),
+            normal = Vec3(0.0, 0.0, 1.0),
+        )
+        assertEquals(0, projectToPlane(emptyList(), k, frame).size)
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun denomGuardThrowsWhenRayNearlyParallelToPlane() {
+        // Pixel (50,50) -> ray=(0,0,1), so denom = normal.z. Pick a tiny but
+        // nonzero z (5e-10) inside the PROJ_EPS=1e-9 band: 0 < |denom| <= PROJ_EPS.
+        val frame = PlaneFrame(
+            e1 = Vec3(0.0, 1.0, 0.0),
+            e2 = Vec3(0.0, 0.0, 1.0),
+            normal = Vec3(1.0, 0.0, 5e-10),
+        )
+        projectToPlane(listOf(Vec2(50.0, 50.0)), k, frame)
+    }
+
+    @Test fun denomJustAboveToleranceDoesNotThrow() {
+        // denom = normal.z = 2e-9 > PROJ_EPS=1e-9 -> the guard must pass.
+        val frame = PlaneFrame(
+            e1 = Vec3(0.0, 1.0, 0.0),
+            e2 = Vec3(0.0, 0.0, 1.0),
+            normal = Vec3(1.0, 0.0, 2e-9),
+        )
+        val result = projectToPlane(listOf(Vec2(50.0, 50.0)), k, frame)
+        assertEquals(1, result.size)
+    }
 }
