@@ -52,13 +52,23 @@ class MetrologyEngineOracleTest {
         assertRecoversTruth("combined", SceneRotations.yawPitch(yawDeg = 25.0, pitchDeg = 20.0))
 
     /**
-     * Near-fronto-parallel (~1.5deg yaw): both edge pairs are nearly image-parallel, so the
-     * rectangle path degrades. Either the vanishing point is null (engine returns the
-     * confidence-0 fallback branch) or the imaged quad is nearly square and confidence stays low.
+     * Pure-yaw near-fronto-parallel (~1.5deg yaw, 0 pitch): the left/right edges (TL->BL, TR->BR)
+     * stay exactly image-parallel, so their vanishing point `vp2 = vanishingPoint(TL,BL, TR,BR)`
+     * is null. [RectangleSolver.solve] therefore returns null and [MetrologyEngine.measure] takes
+     * its confidence-0 fallback branch. This exercises that specific null-second-vanishing-point
+     * fallback — not a "nearly square but finite" path: with any tiny finite pitch both vanishing
+     * points become finite, the solver succeeds, and the imaged quad's confidence is ~0.997 (a
+     * near-square quad has HIGH, not low, confidence), so that alternative would not be degenerate.
      */
-    @Test fun nearFrontoParallelDegradesRectanglePath() {
-        val scene = SyntheticScene(w = w, h = h, r = SceneRotations.yawPitch(yawDeg = 1.5, pitchDeg = 0.0), t = t, k = k, l = l)
+    @Test fun nearFrontoParallelNullVanishingPointFallback() {
+        val r = SceneRotations.yawPitch(yawDeg = 1.5, pitchDeg = 0.0)
+        val scene = SyntheticScene(w = w, h = h, r = r, t = t, k = k, l = l)
+        val (tl, tr, br, bl) = scene.cornerPixels
+        // The branch under test: pure yaw keeps the vertical edges image-parallel -> null vp2.
+        assertEquals("vertical-edge vanishing point must be null under pure yaw", null, Projective.vanishingPoint(tl, bl, tr, br))
+        assertEquals("solver must return null on the null-vanishing-point path", null, RectangleSolver.solve(scene.cornerPixels, scene.k))
         val result = MetrologyEngine.measure(scene.cornerPixels, scene.stickPixels, scene.k, scene.profile)
-        assertTrue("near-fronto must degrade (confidence ${result.confidence})", result.confidence < 0.7)
+        assertEquals("engine must take the confidence-0 fallback", 0.0, result.confidence, 0.0)
+        assertTrue("fallback confidence is below the 0.7 acceptance bar", result.confidence < 0.7)
     }
 }
