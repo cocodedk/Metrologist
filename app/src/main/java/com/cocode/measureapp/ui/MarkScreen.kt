@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,6 +34,10 @@ import com.cocode.measureapp.core.MeasurementView
 import com.cocode.measureapp.geometry.StickProfile
 import com.cocode.measureapp.geometry.SurfaceOrientation
 import com.cocode.measureapp.geometry.Vec2
+import com.cocode.measureapp.detect.DeferredStickDetector
+import com.cocode.measureapp.detect.StickDetector
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
  * Lets the user place the 4 wall corners and the 2 stick ends on the captured photo, then
@@ -44,6 +49,7 @@ fun MarkScreen(
     image: CapturedImage,
     stickLengthMeters: Double,
     unit: LengthUnit,
+    detector: StickDetector = DeferredStickDetector,
     onMeasured: (MeasurementView) -> Unit,
     onBack: () -> Unit,
 ) {
@@ -52,6 +58,17 @@ fun MarkScreen(
     val stick = remember { mutableStateListOf<Vec2>() }
     var markingStick by remember { mutableStateOf(false) }
     var canvasSize by remember { mutableStateOf(Size.Zero) }
+    var autoDetected by remember { mutableStateOf(false) }
+    var autoConfidence by remember { mutableStateOf(0.0) }
+
+    LaunchedEffect(image) {
+        val result = withContext(Dispatchers.Default) { detector.detect(bmp) }
+        if (result != null && stick.isEmpty()) {
+            stick.addAll(result.points)
+            autoConfidence = result.confidence
+            autoDetected = true
+        }
+    }
 
     // Derived layout values — computed from remembered canvasSize, not inside DrawScope
     val scale = if (canvasSize.width > 0f && canvasSize.height > 0f) {
@@ -62,8 +79,11 @@ fun MarkScreen(
 
     Column(Modifier.fillMaxSize()) {
         Text(
-            if (!markingStick) "Tap the 4 corners (${corners.size}/4)"
-            else "Tap the 2 stick ends (${stick.size}/2)",
+            when {
+                !markingStick -> "Tap the 4 corners (${corners.size}/4)"
+                autoDetected -> "Stick auto-detected (${(autoConfidence * 100).toInt()}%). Tap Reset to mark manually."
+                else -> "Tap the 2 stick ends (${stick.size}/2)"
+            },
             Modifier.padding(12.dp),
         )
         Box(Modifier.weight(1f).fillMaxWidth()) {
@@ -81,7 +101,7 @@ fun MarkScreen(
                             val p = Vec2(ix.toDouble(), iy.toDouble())
                             if (!markingStick) {
                                 if (corners.size < 4) corners.add(p)
-                            } else if (stick.size < 2) {
+                            } else if (!autoDetected && stick.size < 2) {
                                 stick.add(p)
                             }
                         }
@@ -101,12 +121,12 @@ fun MarkScreen(
             }
         }
         Row(Modifier.padding(12.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Button(onClick = { corners.clear(); stick.clear(); markingStick = false }) { Text("Reset") }
+            Button(onClick = { corners.clear(); stick.clear(); markingStick = false; autoDetected = false }) { Text("Reset") }
             Button(onClick = onBack) { Text("Retake") }
             if (!markingStick) {
                 Button(enabled = corners.size == 4, onClick = { markingStick = true }) { Text("Next: stick") }
             } else {
-                Button(enabled = stick.size == 2, onClick = {
+                Button(enabled = autoDetected || stick.size == 2, onClick = {
                     onMeasured(
                         MeasurementPresenter.present(
                             corners = corners.toList(),

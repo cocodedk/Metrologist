@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.cocode.measureapp.core.LengthUnit
 import com.cocode.measureapp.core.MeasurementView
 import com.cocode.measureapp.data.SettingsRepository
+import com.cocode.measureapp.detect.OpenCvStickDetector
 import com.cocode.measureapp.export.AnnotatedExporter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -23,6 +24,7 @@ private enum class Step { Capture, Mark, Results, Settings }
 fun MeasureApp() {
     val context = LocalContext.current
     val repo = remember { SettingsRepository(context.applicationContext) }
+    val detector = remember { OpenCvStickDetector() }
     val scope = rememberCoroutineScope()
     val stickLength by repo.stickLengthMeters.collectAsState(initial = SettingsRepository.DEFAULT_LENGTH_M)
     val unit by repo.unit.collectAsState(initial = LengthUnit.METERS)
@@ -46,6 +48,7 @@ fun MeasureApp() {
                     image = img,
                     stickLengthMeters = stickLength,
                     unit = unit,
+                    detector = detector,
                     onMeasured = { v -> view = v; step = Step.Results },
                     onBack = { step = Step.Capture },
                 )
