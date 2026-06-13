@@ -26,6 +26,11 @@ object ScaleSolver {
      * - exactly 2 points (ends only): one segment of real length `totalLength`.
      * - any other count: treat the polyline as a single end-to-end span (first..last) of
      *   real length `totalLength`; intermediate points are ignored for scale.
+     *
+     * `scale` is the median of the per-segment estimates. For an even number of segments
+     * the lower median (a true order statistic) is used, so the returned scale is always a
+     * value some segment actually produced — never the mean of two estimates, which could be
+     * biased by one-directional corruption toward a scale no segment supports.
      */
     fun solve(stickMetric: List<Vec2>, profile: StickProfile): ScaleResult {
         require(stickMetric.size >= 2) {
@@ -59,18 +64,24 @@ object ScaleSolver {
         (0 until points.size - 1).map { segmentDistance(points[it], points[it + 1]) }
 
     private fun segmentDistance(a: Vec2, b: Vec2): Double {
+        // Contract: each consecutive distance must be strictly positive. The up-to-scale
+        // metric magnitude is arbitrary (can be far below 1.0 for distant/oblique scenes),
+        // so a unit-scale epsilon would wrongly reject legitimate tiny segments.
         val d = a.distanceTo(b)
-        require(d > Tolerances.NORM_EPS) { "zero-length stick segment" }
+        require(d > 0.0) { "zero-length stick segment" }
         return d
     }
 
+    /**
+     * Robust central estimate: always returns an actually-observed estimate (a true order
+     * statistic), never a fabricated mean of two values. For odd-length lists this is the
+     * exact median; for even-length lists it is the lower median `sorted[(n-1)/2]`. Using a
+     * single order statistic preserves the single-outlier robustness even for the common
+     * even-count default (4 bands), where averaging the two central estimates could be
+     * pulled by one-directional (correlated) corruption toward a value no segment produced.
+     */
     private fun median(values: List<Double>): Double {
         val sorted = values.sorted()
-        val mid = sorted.size / 2
-        return if (sorted.size % 2 == 1) {
-            sorted[mid]
-        } else {
-            (sorted[mid - 1] + sorted[mid]) / 2.0
-        }
+        return sorted[(sorted.size - 1) / 2]
     }
 }

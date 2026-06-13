@@ -1,7 +1,11 @@
 package com.cocode.measureapp.geometry
 
 /** Stick of known real-world length divided into equal bands (engine is unit-agnostic). */
-data class StickProfile(val totalLength: Double, val bandCount: Int = 4)
+data class StickProfile(val totalLength: Double, val bandCount: Int = 4) {
+    init {
+        require(bandCount >= 1) { "bandCount must be >= 1, got $bandCount" }
+    }
+}
 
 /** Orthonormal camera-frame triad: `e1`,`e2` span the plane, `normal` is perpendicular. */
 data class PlaneFrame(val e1: Vec3, val e2: Vec3, val normal: Vec3)
