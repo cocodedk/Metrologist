@@ -21,7 +21,7 @@ import com.cocode.measureapp.export.AnnotatedExporter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-private enum class Step { Capture, Mark, Results, Settings }
+private enum class Step { Capture, Mark, Results, Settings, Help }
 
 /** Top-level flow: capture -> mark -> results, with a settings side-screen. */
 @Composable
@@ -43,7 +43,10 @@ fun MeasureApp() {
         Step.Capture -> CameraScreen(
             onCaptured = { img -> captured = img; step = Step.Mark },
             onSettings = { step = Step.Settings },
+            onHelp = { step = Step.Help },
         )
+
+        Step.Help -> HelpScreen(onBack = { step = Step.Capture })
 
         Step.Mark -> {
             val img = captured

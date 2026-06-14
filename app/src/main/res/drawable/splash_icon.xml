@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Splash-screen icon: Metrologist survey staff (red-white-red-white) + gold crosshair.
+  108×108 dp viewport; artwork centred in the safe zone (x=30..78, y=14..94).
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Staff body: four alternating bands -->
+    <!-- Band 1 (top): red  — y 14..34 -->
+    <path
+        android:fillColor="#FFD42B2B"
+        android:pathData="M42,14 L66,14 Q67,14 67,15 L67,34 L42,34 Q41,34 41,33 L41,15 Q41,14 42,14 Z" />
+
+    <!-- Band 2: white — y 34..54 -->
+    <path
+        android:fillColor="#FFF2F2EE"
+        android:pathData="M41,34 L67,34 L67,54 L41,54 Z" />
+
+    <!-- Band 3: red  — y 54..74 -->
+    <path
+        android:fillColor="#FFD42B2B"
+        android:pathData="M41,54 L67,54 L67,74 L41,74 Z" />
+
+    <!-- Band 4 (bottom): white — y 74..94 -->
+    <path
+        android:fillColor="#FFF2F2EE"
+        android:pathData="M41,74 L67,74 L67,93 Q67,94 66,94 L42,94 Q41,94 41,93 L41,74 Z" />
+
+    <!-- Tick marks on left edge -->
+    <path
+        android:fillColor="#FFD42B2B"
+        android:pathData="M34,33 L41,33 L41,35 L34,35 Z" />
+
+    <path
+        android:fillColor="#FFF2F2EE"
+        android:pathData="M34,53 L41,53 L41,55 L34,55 Z" />
+
+    <path
+        android:fillColor="#FFD42B2B"
+        android:pathData="M34,73 L41,73 L41,75 L34,75 Z" />
+
+    <!-- Golden crosshair centred at (54, 54) -->
+    <!-- Vertical arm -->
+    <path
+        android:fillColor="#FFE8A020"
+        android:pathData="M53,44 L55,44 L55,64 L53,64 Z" />
+
+    <!-- Horizontal arm -->
+    <path
+        android:fillColor="#FFE8A020"
+        android:pathData="M44,53 L64,53 L64,55 L44,55 Z" />
+
+    <!-- Centre dot -->
+    <path
+        android:fillColor="#FFE8A020"
+        android:pathData="M51,52 A3,3 0 1 1 57,52 A3,3 0 1 1 51,52 Z" />
+
+</vector>

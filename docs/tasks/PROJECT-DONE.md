@@ -107,3 +107,65 @@ calibration target already in `tools/calibration-target.html`.
   (length + width).
 - Vivid pure red / white bands for reliable detection; available on both the EN
   and FA pages.
+
+---
+id: 2026-06-14-splash-screen
+title: "Add a branded splash screen"
+status: completed
+finished: 2026-06-14T11:50:09+02:00
+priority: medium
+area: ux
+created: 2026-06-14
+source: "user request"
+---
+
+## Context
+
+The app cold-starts straight into the capture screen with no branded moment. A
+clean splash screen should show the Metrologist mark briefly on launch, reusing
+the stick/logo motif from task `2026-06-14-app-logo-icon` so launch, icon, and
+site all share one identity. Use the AndroidX `core-splashscreen` API (native on
+Android 12+, backported below). Keep it fast — a splash that lingers is worse
+than none.
+
+## Acceptance
+
+- Splash implemented with `androidx.core:core-splashscreen` (`installSplashScreen`
+  in `MainActivity`), themed with the brand colors and the stick/logo motif.
+- Native on Android 12+ and graceful on minSdk 24 via the compat library.
+- No artificial delay — dismisses as soon as the first frame is ready (optional
+  brief hold only while content loads).
+- Visual identity matches the launcher icon and the website (shared stick mark).
+
+---
+id: 2026-06-14-in-app-user-manual
+title: "Add a built-in user manual / help"
+status: completed
+finished: 2026-06-14T11:50:09+02:00
+priority: medium
+area: ux
+created: 2026-06-14
+source: "user request"
+---
+
+## Context
+
+A first-time user has no in-app guidance and won't know the essentials: that a
+known-length red-white-red-white stick is required, that it must lie on the same
+flat plane as the surface, how to mark the corners and stick ends, or how to read
+the confidence/accuracy. A built-in, offline user manual (a Help screen reachable
+from the app, plus an optional first-run walkthrough) should explain the workflow
+with simple diagrams. Keep it concise and consistent with the "How it works"
+section on the website so the app and site tell the same story.
+
+## Acceptance
+
+- A Help / Manual screen reachable in-app (e.g. a "?" in the top bar or from
+  Settings), covering: the stick (known length, flat on the same surface),
+  capturing at a moderate angle, marking 4 corners + 2 stick ends with
+  zoom/magnifier, entering stick length + units, and reading
+  width/height/area/diagonal + the confidence/caveats.
+- Content is bundled (offline), concise, with at least simple illustrative
+  diagrams or annotated screenshots.
+- Optional: a short first-run walkthrough that links into the manual.
+- Mirrors the website's "How it works" content for consistency.

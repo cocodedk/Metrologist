@@ -47,7 +47,11 @@ import java.util.concurrent.Executors
 /** In-app CameraX capture. Records the photo plus the camera intrinsics and gravity. */
 @OptIn(androidx.camera.camera2.interop.ExperimentalCamera2Interop::class)
 @Composable
-fun CameraScreen(onCaptured: (CapturedImage) -> Unit, onSettings: () -> Unit) {
+fun CameraScreen(
+    onCaptured: (CapturedImage) -> Unit,
+    onSettings: () -> Unit,
+    onHelp: () -> Unit,
+) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     var hasPermission by remember {
@@ -102,7 +106,9 @@ fun CameraScreen(onCaptured: (CapturedImage) -> Unit, onSettings: () -> Unit) {
 
         Row(Modifier.align(Alignment.BottomCenter).padding(24.dp)) {
             Button(onClick = onSettings) { Text("Settings") }
-            Spacer(Modifier.width(16.dp))
+            Spacer(Modifier.width(8.dp))
+            Button(onClick = onHelp) { Text("?") }
+            Spacer(Modifier.width(8.dp))
             Button(
                 enabled = hasPermission,
                 onClick = {
