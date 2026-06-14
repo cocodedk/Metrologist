@@ -2,27 +2,35 @@ package com.cocode.measureapp.ui
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
-import android.hardware.camera2.CameraCharacteristics
-import android.hardware.camera2.CameraManager
-import android.widget.Toast
+import android.net.Uri
+import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.camera2.interop.Camera2CameraInfo
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -39,9 +47,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.cocode.measureapp.capture.GravityProvider
-import com.cocode.measureapp.capture.IntrinsicsExtractor
-import com.cocode.measureapp.geometry.CameraIntrinsics
-import com.cocode.measureapp.model.CapturedScene
+import com.cocode.measureapp.ui.theme.StaffRed
 import java.util.concurrent.Executors
 
 /** In-app CameraX capture. Records the photo plus the camera intrinsics and gravity. */
@@ -76,6 +82,7 @@ fun CameraScreen(
     }
     val imageCapture = remember { ImageCapture.Builder().build() }
     val boundCameraId = remember { mutableStateOf<String?>(null) }
+    var capturing by remember { mutableStateOf(false) }
 
     Box(Modifier.fillMaxSize()) {
         if (hasPermission) {
@@ -101,64 +108,66 @@ fun CameraScreen(
                 modifier = Modifier.fillMaxSize(),
             )
         } else {
-            Text("Camera permission is needed to capture.", Modifier.align(Alignment.Center))
-        }
-
-        Row(Modifier.align(Alignment.BottomCenter).padding(24.dp)) {
-            Button(onClick = onSettings) { Text("Settings") }
-            Spacer(Modifier.width(8.dp))
-            Button(onClick = onHelp) { Text("?") }
-            Spacer(Modifier.width(8.dp))
-            Button(
-                enabled = hasPermission,
-                onClick = {
-                    capture(context, imageCapture, gravity, captureExecutor, boundCameraId.value, onCaptured)
+            PermissionDeniedPanel(
+                onGrant = { permLauncher.launch(Manifest.permission.CAMERA) },
+                onOpenSettings = {
+                    context.startActivity(
+                        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                            data = Uri.fromParts("package", context.packageName, null)
+                        },
+                    )
                 },
-            ) { Text("Capture") }
+                modifier = Modifier.align(Alignment.Center),
+            )
+        }
+
+        Row(
+            Modifier.align(Alignment.BottomCenter).padding(24.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            OutlinedButton(onClick = onSettings) {
+                Icon(Icons.Default.Settings, contentDescription = "Settings", Modifier.size(18.dp))
+                Spacer(Modifier.width(4.dp))
+                Text("Settings")
+            }
+            OutlinedButton(onClick = onHelp) {
+                Icon(Icons.Default.Info, contentDescription = "Help", Modifier.size(18.dp))
+                Spacer(Modifier.width(4.dp))
+                Text("Help")
+            }
+            Button(
+                enabled = hasPermission && !capturing,
+                onClick = {
+                    capturing = true
+                    takePicture(context, imageCapture, gravity, captureExecutor, boundCameraId.value) { img ->
+                        capturing = false
+                        onCaptured(img)
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = StaffRed),
+                modifier = Modifier.height(48.dp),
+            ) {
+                Text(if (capturing) "Capturing…" else "Capture")
+            }
         }
     }
 }
 
-private fun capture(
-    context: Context,
-    imageCapture: ImageCapture,
-    gravity: GravityProvider,
-    executor: java.util.concurrent.Executor,
-    cameraId: String?,
-    onCaptured: (CapturedImage) -> Unit,
+@Composable
+private fun PermissionDeniedPanel(
+    onGrant: () -> Unit,
+    onOpenSettings: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    imageCapture.takePicture(executor, object : ImageCapture.OnImageCapturedCallback() {
-        override fun onCaptureSuccess(image: ImageProxy) {
-            val bitmap = image.toBitmap()
-            image.close()
-            val intrinsics = readIntrinsics(context, cameraId, bitmap.width, bitmap.height)
-            val scene = CapturedScene(bitmap.width, bitmap.height, intrinsics, gravity.current())
-            ContextCompat.getMainExecutor(context).execute {
-                onCaptured(CapturedImage(bitmap, scene))
-            }
-        }
-
-        override fun onError(exception: ImageCaptureException) {
-            ContextCompat.getMainExecutor(context).execute {
-                Toast.makeText(context, "Capture failed", Toast.LENGTH_SHORT).show()
-            }
-        }
-    })
-}
-
-private fun readIntrinsics(context: Context, boundId: String?, w: Int, h: Int): CameraIntrinsics {
-    val cm = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
-    if (boundId != null) {
-        return IntrinsicsExtractor.extract(cm.getCameraCharacteristics(boundId), w, h)
-    }
-    val id = cm.cameraIdList.firstOrNull {
-        cm.getCameraCharacteristics(it).get(CameraCharacteristics.LENS_FACING) ==
-            CameraCharacteristics.LENS_FACING_BACK
-    } ?: cm.cameraIdList.firstOrNull()
-    return if (id != null) {
-        IntrinsicsExtractor.extract(cm.getCameraCharacteristics(id), w, h)
-    } else {
-        val f = maxOf(w, h).toDouble()
-        CameraIntrinsics(f, f, w / 2.0, h / 2.0)
+    Column(
+        modifier = modifier.padding(32.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text("Camera permission is needed to capture.")
+        Button(onClick = onGrant) { Text("Grant permission") }
+        OutlinedButton(onClick = onOpenSettings) { Text("Open settings") }
     }
 }
+

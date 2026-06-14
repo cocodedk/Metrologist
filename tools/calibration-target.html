@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Measure App — Screen Calibration Target</title>
 <style>
   * { margin: 0; box-sizing: border-box; }
@@ -62,12 +62,12 @@
     <p class="muted">Hold a bank / credit card (any ID-1 card, 85.6&nbsp;mm wide) flat against the
       screen and resize the blue card until it matches exactly. This measures your display, so every
       value below becomes a real, on-screen measurement.</p>
-    <div class="card" id="card">
+    <div class="card" id="card" role="img" aria-label="Bank-card outline — resize to match a real ID-1 card (85.6 mm wide)">
       <span class="arr arr-t"></span><span class="arr arr-r"></span>
       <span class="arr arr-b"></span><span class="arr arr-l"></span>
     </div>
     <div class="crow">
-      <label for="cardW">Size</label>
+      <label for="cardW">Card width (pixels)</label>
       <input type="range" id="cardW" min="120" max="1000" step="1" value="320">
     </div>
     <div class="crow">
@@ -76,7 +76,7 @@
       <input type="number" id="ppi" placeholder="screen PPI" min="50" max="900">
       <button id="setPpi">Use PPI</button>
     </div>
-    <div class="muted" id="calLive"></div>
+    <div class="muted" id="calLive" aria-live="polite" aria-atomic="true"></div>
   </div>
 
   <div id="app">
@@ -90,7 +90,7 @@
   </div>
 
   <div id="panel" class="hidden">
-    <strong>Measured on this screen</strong>
+    <h2 style="font-size:14px;font-weight:700;margin-bottom:4px;">Measured on this screen</h2>
     <div class="vals">
       Screen: <b id="vScreen"></b> (<span id="vPpcm"></span> px/cm)<br>
       Wall (target): <b id="vWall"></b><br>
@@ -128,6 +128,7 @@
     $('cal').classList.add('done');
     $('panel').classList.remove('hidden');
     layout();
+    $('fs').focus();
   }
 
   const wall = $('wall'), stick = $('stick');
@@ -156,7 +157,11 @@
     document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
   $('hide').onclick = () => $('panel').classList.add('hidden');
   $('recal').onclick = () => { $('cal').classList.remove('done'); $('panel').classList.add('hidden'); };
-  addEventListener('keydown', e => { if (e.key === 'h') $('panel').classList.toggle('hidden'); });
+  addEventListener('keydown', e => {
+    if (e.key === 'h' && !['INPUT','BUTTON','SELECT','TEXTAREA'].includes(e.target.tagName)) {
+      $('panel').classList.toggle('hidden');
+    }
+  });
 
   drawCard();
   if (pxPerMm > 0) { $('cal').classList.add('done'); $('panel').classList.remove('hidden'); }

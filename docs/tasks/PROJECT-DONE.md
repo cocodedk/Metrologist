@@ -169,3 +169,100 @@ section on the website so the app and site tell the same story.
   diagrams or annotated screenshots.
 - Optional: a short first-run walkthrough that links into the manual.
 - Mirrors the website's "How it works" content for consistency.
+
+---
+id: 2026-06-14-wcag-accessibility-audit
+title: "Run a WCAG accessibility audit on the website"
+status: completed
+finished: 2026-06-14T12:09:14+02:00
+priority: medium
+area: frontend
+created: 2026-06-14
+source: "user request"
+---
+
+## Context
+
+The GitHub Pages site (EN + FA) hasn't been checked for accessibility. Run the
+`/wcag-accessibility-audit` skill against the website pages and fix the findings.
+Watch the areas that were set up but not verified: colour contrast (dark theme +
+amber accents), tap-target sizes, focus states, keyboard navigation, semantic
+landmarks, alt text, language attributes, and the Persian RTL layout.
+
+## Acceptance
+
+- `/wcag-accessibility-audit` run against the EN and FA Pages (and the
+  printable / calibration pages), producing a findings report with WCAG
+  criteria, severity, and conformance level (A / AA).
+- High and important findings fixed — contrast, visible focus, semantic
+  structure, alt text, keyboard access, `lang`/`dir`, and RTL.
+- Site re-checked to confirm WCAG 2.1 AA where practical; any remaining gaps
+  documented.
+
+## Resolution
+
+Audited the EN+FA pages, the print-stick pages, and the calibration tool against WCAG 2.2 AA. Fixed the high/important findings: raised low-contrast `--text-dim` text (hero eyebrow, footer, accuracy + dims labels) to `--text-secondary` and lightened `--green-read` to #55C98A; gave the lang switch a 3:1 border and a real 44px height; added an explicit `h2` type rule and promoted feature `h4`→`h3` for correct heading order; added a `prefers-reduced-motion` block (incl. revealing `.reveal` content); removed redundant `role=contentinfo` and labelled the footer Download link. Calibration tool: removed `maximum-scale=1`, added `aria-live` to the live readout, guarded the `h` shortcut against form fields, made the panel title an `h2`, gave the card an `img` role + label, relabelled the range input, and moved focus after calibration.
+
+---
+id: 2026-06-14-design-for-ai-exam
+title: "Run the design-for-ai design exam on the UI"
+status: completed
+finished: 2026-06-14T12:09:14+02:00
+priority: medium
+area: frontend
+created: 2026-06-14
+source: "user request"
+---
+
+## Context
+
+Run the `/design-for-ai:exam` skill — a theory-backed visual-design audit that
+finds what's wrong and explains why — against the project's user-facing surfaces:
+the GitHub Pages site (EN + FA) and the app's Compose screens. Use it to catch
+design problems (typography scale, colour/contrast, spacing rhythm, visual
+hierarchy, consistency, brand) and then act on the findings.
+
+## Acceptance
+
+- `/design-for-ai:exam` run against the website and the app UI, producing a
+  critique that names the design principle each issue violates and why.
+- Actionable findings addressed across typography, colour, spacing, hierarchy,
+  and consistency.
+- Changes keep the stick / measurement identity coherent across the app, the
+  launcher icon, and the site.
+
+## Resolution
+
+Ran the design-for-ai exam on the site and the Compose app. Headline fix: the app shipped the default Material 3 purple theme with zero brand coherence — replaced `Color.kt`/`Theme.kt` with the brand palette (StaffRed primary, Amber secondary, dark instrument surfaces), disabled dynamic colour, and expanded `Type.kt` into a full monospace-for-data scale. ResultsScreen now reads like an instrument (amber `headlineMedium` values over dim labels, confidence coloured by band). CameraScreen got a real button hierarchy (prominent Capture vs outlined Settings/Help). MarkScreen overlays use brand colours with on-canvas Object/Stick labels. Website: explicit `h2` scale, GitHub CTA demoted to a `.btn-tertiary` text link, and the contrast fixes above — keeping the red-white stick identity coherent across site, icon, and app.
+
+---
+id: 2026-06-14-nielsen-heuristics-audit
+title: "Run a Nielsen heuristics usability audit"
+status: completed
+finished: 2026-06-14T12:09:14+02:00
+priority: medium
+area: ux
+created: 2026-06-14
+source: "user request"
+---
+
+## Context
+
+Run the `/nielsen-heuristics-audit` skill (Jakob Nielsen's 10 usability
+heuristics) against the app flow (capture → mark → results → settings) and the
+website, then act on the findings. The marking flow is the highest-stakes
+surface: watch learnability, visibility of system status, error
+prevention/recovery (overlapping corners, low confidence, missing stick length),
+recognition over recall, and consistency.
+
+## Acceptance
+
+- `/nielsen-heuristics-audit` run against the app screens and the website,
+  producing a report mapped to the 10 heuristics with severity ratings.
+- High-severity usability issues fixed — status visibility, error
+  prevention/recovery, consistency, recognition over recall, and help.
+- Findings re-checked; remaining gaps documented.
+
+## Resolution
+
+Ran the 10-heuristic audit over capture→mark→results→settings and the site, then fixed the high-severity issues. Visibility/feedback: Capture disables with a 'Capturing…' state; MarkScreen shows 'Detecting stick…' while auto-detect runs. Recognition: Object/Stick labels drawn on the two boxes. Error prevention/control: a ~60dp hit-test threshold means a single finger away from a handle pans instead of grabbing a corner; a Re-mark path returns from Results to the marked photo; the Method row shows only for the tilt-sensor fallback. Consistency/recovery: Settings gained a back-nav icon and human unit names (Metres/Centimetres/Feet & inches), and the permission-denied state offers Grant/Open-settings. Site copy now describes the actual drag-box interaction, notes the stick width must be entered, and states one consistent accuracy figure.

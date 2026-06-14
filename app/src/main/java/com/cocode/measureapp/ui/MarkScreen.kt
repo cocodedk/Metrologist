@@ -24,11 +24,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -46,10 +46,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 /**
- * Marking screen: two adjustable 4-corner boxes (cyan over the object, red around the stick) on the
- * captured photo. Pinch to zoom and drag empty space to pan; drag a handle to move it, with a
- * magnifier loupe for precise placement. The stick's two ends (yellow) come from its box; the
- * object corners are canonicalised by CornerOrdering before measuring.
+ * Marking screen: two adjustable 4-corner boxes (GreenRead over the object, StaffRed around the
+ * stick) on the captured photo. One-finger drag near a handle moves the handle; one-finger drag
+ * far from any handle pans. Two-finger pinch zooms + pans. A magnifier loupe aids precise placement.
  */
 @Composable
 fun MarkScreen(
@@ -63,8 +62,7 @@ fun MarkScreen(
 ) {
     val bmp = image.bitmap
     val img = remember(bmp) { bmp.asImageBitmap() }
-    val w = bmp.width.toDouble()
-    val h = bmp.height.toDouble()
+    val w = bmp.width.toDouble(); val h = bmp.height.toDouble()
     fun defCorners() = listOf(
         Vec2(w * 0.20, h * 0.20), Vec2(w * 0.80, h * 0.20),
         Vec2(w * 0.80, h * 0.80), Vec2(w * 0.20, h * 0.80),
@@ -73,22 +71,23 @@ fun MarkScreen(
         Vec2(w * 0.35, h * 0.64), Vec2(w * 0.65, h * 0.64),
         Vec2(w * 0.65, h * 0.72), Vec2(w * 0.35, h * 0.72),
     )
-    val hint = "Drag any corner to adjust it · two fingers to zoom & pan"
+    val cornerDragHint = "Drag a corner to adjust · two fingers to zoom & pan"
 
     val corners = remember { mutableStateListOf<Vec2>().apply { addAll(defCorners()) } }
-    val stick = remember { mutableStateListOf<Vec2>().apply { addAll(defStick()) } }
+    val stick   = remember { mutableStateListOf<Vec2>().apply { addAll(defStick()) } }
     var canvasSize by remember { mutableStateOf(Size.Zero) }
     var active by remember { mutableStateOf(-1) }
     var resetGen by remember { mutableStateOf(0) }
-    var note by remember { mutableStateOf(hint) }
+    var note by remember { mutableStateOf("Detecting stick…") }
     var zoom by remember { mutableStateOf(1f) }
     var pan by remember { mutableStateOf(Offset.Zero) }
+    val density = LocalDensity.current.density
+    val grabThreshold = remember(density) { handleGrabThresholdPx(density) }
 
     LaunchedEffect(image) {
         val gen = resetGen
         val r = withContext(Dispatchers.Default) { detector.detect(bmp) }
-        val a = r?.points?.firstOrNull()
-        val b = r?.points?.lastOrNull()
+        val a = r?.points?.firstOrNull(); val b = r?.points?.lastOrNull()
         if (a != null && b != null && a.distanceTo(b) > 1.0 && resetGen == gen) {
             val dir = (b - a).normalized()
             val perp = Vec2(-dir.y, dir.x)
@@ -96,6 +95,8 @@ fun MarkScreen(
             stick[0] = a + perp * hw; stick[1] = b + perp * hw
             stick[2] = b - perp * hw; stick[3] = a - perp * hw
             note = "Stick auto-detected (${(r.confidence * 100).toInt()}%) — drag to fine-tune"
+        } else if (resetGen == gen) {
+            note = cornerDragHint
         }
     }
 
@@ -104,10 +105,7 @@ fun MarkScreen(
     fun sNow() = fit() * zoom
     fun txNow() = (canvasSize.width - bmp.width * sNow()) / 2f + pan.x
     fun tyNow() = (canvasSize.height - bmp.height * sNow()) / 2f + pan.y
-    val s = sNow()
-    val tx = txNow()
-    val ty = tyNow()
-    fun toScreen(p: Vec2) = Offset(p.x.toFloat() * s + tx, p.y.toFloat() * s + ty)
+    fun toScreen(p: Vec2) = Offset(p.x.toFloat() * sNow() + txNow(), p.y.toFloat() * sNow() + tyNow())
     fun handlePos(i: Int) = if (i in 0..3) corners[i] else stick[i - 4]
 
     Column(Modifier.fillMaxSize()) {
@@ -120,32 +118,47 @@ fun MarkScreen(
                     .pointerInput(canvasSize) {
                         awaitEachGesture {
                             val down = awaitFirstDown(requireUnconsumed = false)
-                            val handle = nearestHandle(down.position, corners, stick, sNow(), txNow(), tyNow())
+                            val handle = nearestHandleOrPan(
+                                down.position, corners, stick,
+                                sNow(), txNow(), tyNow(), grabThreshold,
+                            )
                             do {
                                 val e = awaitPointerEvent()
                                 if (e.changes.count { it.pressed } >= 2) {
-                                    // two fingers → zoom + pan
                                     active = -1
-                                    val zc = e.calculateZoom()
-                                    val pc = e.calculatePan()
+                                    val zc = e.calculateZoom(); val pc = e.calculatePan()
                                     if (zc != 1f || pc != Offset.Zero) {
                                         val sc = sNow()
                                         zoom = (zoom * zc).coerceIn(1f, 6f)
-                                        val limX = bmp.width * sc / 2f
-                                        val limY = bmp.height * sc / 2f
-                                        pan = Offset((pan.x + pc.x).coerceIn(-limX, limX), (pan.y + pc.y).coerceIn(-limY, limY))
+                                        pan = Offset(
+                                            (pan.x + pc.x).coerceIn(-bmp.width * sc / 2f, bmp.width * sc / 2f),
+                                            (pan.y + pc.y).coerceIn(-bmp.height * sc / 2f, bmp.height * sc / 2f),
+                                        )
                                     }
                                     e.changes.forEach { it.consume() }
                                 } else {
-                                    // one finger → always move the nearest handle
-                                    active = handle
                                     val d = e.changes.firstOrNull { it.id == down.id }?.positionChange() ?: Offset.Zero
-                                    if (d != Offset.Zero) {
-                                        val sc = sNow()
-                                        val delta = Vec2((d.x / sc).toDouble(), (d.y / sc).toDouble())
-                                        if (handle in 0..3) corners[handle] = corners[handle] + delta
-                                        else stick[handle - 4] = stick[handle - 4] + delta
-                                        e.changes.forEach { it.consume() }
+                                    if (handle >= 0) {
+                                        // handle drag
+                                        active = handle
+                                        if (d != Offset.Zero) {
+                                            val sc = sNow()
+                                            val delta = Vec2((d.x / sc).toDouble(), (d.y / sc).toDouble())
+                                            if (handle in 0..3) corners[handle] = corners[handle] + delta
+                                            else stick[handle - 4] = stick[handle - 4] + delta
+                                            e.changes.forEach { it.consume() }
+                                        }
+                                    } else {
+                                        // pan (no handle grabbed)
+                                        active = -1
+                                        if (d != Offset.Zero) {
+                                            val sc = sNow()
+                                            pan = Offset(
+                                                (pan.x + d.x).coerceIn(-bmp.width * sc / 2f, bmp.width * sc / 2f),
+                                                (pan.y + d.y).coerceIn(-bmp.height * sc / 2f, bmp.height * sc / 2f),
+                                            )
+                                            e.changes.forEach { it.consume() }
+                                        }
                                     }
                                 }
                             } while (e.changes.any { it.pressed })
@@ -155,13 +168,13 @@ fun MarkScreen(
             ) {
                 drawImage(
                     img,
-                    dstOffset = IntOffset(tx.toInt(), ty.toInt()),
-                    dstSize = IntSize((bmp.width * s).toInt(), (bmp.height * s).toInt()),
+                    dstOffset = IntOffset(txNow().toInt(), tyNow().toInt()),
+                    dstSize = IntSize((bmp.width * sNow()).toInt(), (bmp.height * sNow()).toInt()),
                 )
-                drawQuad(corners.map { toScreen(it) }, Color.Cyan, active, 0)
-                drawQuad(stick.map { toScreen(it) }, Color.Red, active, 4)
-                StickBox.ends(stick.toList()).forEach { drawCircle(Color.Yellow, 10f, toScreen(it)) }
-                if (active >= 0) drawMagnifier(img, handlePos(active), toScreen(handlePos(active)), s)
+                drawQuad(corners.map { toScreen(it) }, objectQuadColor, active, 0, "Object")
+                drawQuad(stick.map { toScreen(it) }, stickQuadColor, active, 4, "Stick")
+                StickBox.ends(stick.toList()).forEach { drawCircle(stickEndDotColor, 10f, toScreen(it)) }
+                if (active >= 0) drawMagnifier(img, handlePos(active), toScreen(handlePos(active)), sNow())
             }
         }
         Row(Modifier.padding(12.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -169,8 +182,7 @@ fun MarkScreen(
                 resetGen++
                 corners.clear(); corners.addAll(defCorners())
                 stick.clear(); stick.addAll(defStick())
-                zoom = 1f; pan = Offset.Zero
-                note = hint
+                zoom = 1f; pan = Offset.Zero; note = cornerDragHint
             }) { Text("Reset") }
             Button(onClick = onBack) { Text("Retake") }
             Button(onClick = {
@@ -180,13 +192,10 @@ fun MarkScreen(
                 } else {
                     onMeasured(
                         MeasurementPresenter.present(
-                            corners = ordered,
-                            stick = stick.toList(),
-                            intrinsics = image.scene.intrinsics,
-                            gravity = image.scene.gravity,
+                            corners = ordered, stick = stick.toList(),
+                            intrinsics = image.scene.intrinsics, gravity = image.scene.gravity,
                             profile = StickProfile(stickLengthMeters, width = stickWidthMeters),
-                            orientation = SurfaceOrientation.VERTICAL,
-                            unit = unit,
+                            orientation = SurfaceOrientation.VERTICAL, unit = unit,
                         ),
                     )
                 }
