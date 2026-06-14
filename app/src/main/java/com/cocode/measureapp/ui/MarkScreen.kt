@@ -55,6 +55,9 @@ fun MarkScreen(
     stickLengthMeters: Double,
     stickWidthMeters: Double,
     unit: LengthUnit,
+    initialCorners: List<Vec2>? = null,
+    initialStick: List<Vec2>? = null,
+    onMarkChanged: (List<Vec2>, List<Vec2>) -> Unit = { _, _ -> },
     detector: StickDetector = DeferredStickDetector,
     onMeasured: (MeasurementView) -> Unit,
     onBack: () -> Unit,
@@ -72,16 +75,17 @@ fun MarkScreen(
     )
     val cornerDragHint = "Drag a corner to adjust · two fingers to zoom & pan"
 
-    val corners = remember { mutableStateListOf<Vec2>().apply { addAll(defCorners()) } }
-    val stick   = remember { mutableStateListOf<Vec2>().apply { addAll(defStick()) } }
+    val corners = remember { mutableStateListOf<Vec2>().apply { addAll(initialCorners ?: defCorners()) } }
+    val stick   = remember { mutableStateListOf<Vec2>().apply { addAll(initialStick ?: defStick()) } }
     var canvasSize by remember { mutableStateOf(Size.Zero) }
     var active by remember { mutableStateOf(-1) }
     var resetGen by remember { mutableStateOf(0) }
-    var note by remember { mutableStateOf("Detecting stick…") }
+    var note by remember { mutableStateOf(if (initialStick == null) "Detecting stick…" else cornerDragHint) }
     var zoom by remember { mutableStateOf(1f) }
     var pan by remember { mutableStateOf(Offset.Zero) }
 
     LaunchedEffect(image) {
+        if (initialStick != null) return@LaunchedEffect   // re-marking: keep the user's stick box
         val gen = resetGen
         val r = withContext(Dispatchers.Default) { detector.detect(bmp) }
         val a = r?.points?.firstOrNull(); val b = r?.points?.lastOrNull()
@@ -171,6 +175,7 @@ fun MarkScreen(
                 if (ordered == null) {
                     note = "Spread the 4 object corners apart — they overlap"
                 } else {
+                    onMarkChanged(corners.toList(), stick.toList())   // keep placements for re-mark
                     onMeasured(
                         MeasurementPresenter.present(
                             corners = ordered, stick = stick.toList(),

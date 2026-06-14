@@ -21,6 +21,7 @@ import com.cocode.measureapp.core.MeasurementView
 import com.cocode.measureapp.data.SettingsRepository
 import com.cocode.measureapp.detect.OpenCvStickDetector
 import com.cocode.measureapp.export.AnnotatedExporter
+import com.cocode.measureapp.geometry.Vec2
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -40,6 +41,9 @@ fun MeasureApp() {
     var step     by remember { mutableStateOf(Step.Capture) }
     var captured by remember { mutableStateOf<CapturedImage?>(null) }
     var view     by remember { mutableStateOf<MeasurementView?>(null) }
+    // Marking placements live here so they survive Mark <-> Results navigation.
+    var savedCorners by remember { mutableStateOf<List<Vec2>?>(null) }
+    var savedStick   by remember { mutableStateOf<List<Vec2>?>(null) }
 
     // System back steps through the flow instead of leaving the app.
     BackHandler(enabled = step != Step.Capture) {
@@ -50,7 +54,11 @@ fun MeasureApp() {
         Box(Modifier.fillMaxSize().safeDrawingPadding()) {
             when (step) {
                 Step.Capture -> CameraScreen(
-                    onCaptured = { img -> captured = img; step = Step.Mark },
+                    onCaptured = { img ->
+                        captured = img
+                        savedCorners = null; savedStick = null   // fresh marking for a new photo
+                        step = Step.Mark
+                    },
                     onSettings = { step = Step.Settings },
                     onHelp     = { step = Step.Help },
                 )
@@ -67,6 +75,9 @@ fun MeasureApp() {
                             stickLengthMeters = stickLength,
                             stickWidthMeters  = stickWidth,
                             unit             = unit,
+                            initialCorners   = savedCorners,
+                            initialStick     = savedStick,
+                            onMarkChanged    = { c, s -> savedCorners = c; savedStick = s },
                             detector         = detector,
                             onMeasured       = { v -> view = v; step = Step.Results },
                             onBack           = { step = Step.Capture },
