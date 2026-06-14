@@ -1,114 +1,98 @@
 #!/bin/sh
+# setup-signing.sh
+# Uploads the 4 GitHub release-signing secrets to cocodedk/Metrologist.
+# Reuses the shared $HOME/release.keystore (same key as the other cocodedk apps)
+# if present; otherwise generates a new one. Run once from the project root:
+#   sh scripts/setup-signing.sh
 set -eu
 
-# Signing setup for cocodedk/Metrologist
-# Generates or reuses release.keystore and uploads secrets to GitHub.
-# DO NOT run this in CI — run once locally, then delete the keystore passphrase from your shell history.
+restore_tty() { stty echo 2>/dev/null || true; }
+trap restore_tty EXIT INT TERM
 
-OWNER="cocodedk"
-REPO="Metrologist"
-KEYSTORE_FILE="release.keystore"
-KEY_ALIAS="metrologist-release"
+REPO="cocodedk/Metrologist"
+KEYSTORE="${KEYSTORE_FILE:-$HOME/release.keystore}"  # override: KEYSTORE_FILE=/path/to/key.jks sh scripts/setup-signing.sh
+ALIAS="${KEYSTORE_ALIAS:-android}"                   # override: KEYSTORE_ALIAS=mykey sh scripts/setup-signing.sh
 
-echo "==> Signing setup for ${OWNER}/${REPO} (app: Metrologist)"
+echo ""
+echo "=== Metrologist Release Signing Setup ==="
 echo ""
 
-# ── Keystore ────────────────────────────────────────────────────────────────
-if [ -f "$KEYSTORE_FILE" ]; then
-  echo "Found existing keystore: $KEYSTORE_FILE"
+# ── Prerequisites ────────────────────────────────────────────────────────────
+command -v keytool >/dev/null 2>&1 || { echo "ERROR: keytool not found — install JDK 17+"; exit 1; }
+command -v gh     >/dev/null 2>&1 || { echo "ERROR: gh not found — install GitHub CLI";    exit 1; }
+command -v base64 >/dev/null 2>&1 || { echo "ERROR: base64 not found";                     exit 1; }
+
+gh auth status >/dev/null 2>&1 || { echo "ERROR: gh not authenticated — run: gh auth login"; exit 1; }
+
+# ── Keystore ─────────────────────────────────────────────────────────────────
+if [ -f "$KEYSTORE" ]; then
+    echo "Found existing keystore: $KEYSTORE"
+    echo "Reusing it (shared cocodedk signing key) — no new key generated."
 else
-  echo "No keystore found — generating a new one."
-  echo "Enter a KEYSTORE_PASSWORD (no double-quotes allowed):"
-  stty -echo
-  read -r KEYSTORE_PASSWORD
-  stty echo
-  echo ""
-  case "$KEYSTORE_PASSWORD" in
-    *'"'*)
-      echo "ERROR: Password must not contain a double-quote character."
-      exit 1
-      ;;
-  esac
-
-  echo "Enter a KEY_PASSWORD (no double-quotes allowed, or press Enter to reuse KEYSTORE_PASSWORD):"
-  stty -echo
-  read -r KEY_PASSWORD
-  stty echo
-  echo ""
-  if [ -z "$KEY_PASSWORD" ]; then
-    KEY_PASSWORD="$KEYSTORE_PASSWORD"
-  fi
-  case "$KEY_PASSWORD" in
-    *'"'*)
-      echo "ERROR: Key password must not contain a double-quote character."
-      exit 1
-      ;;
-  esac
-
-  keytool -genkeypair \
-    -keystore "$KEYSTORE_FILE" \
-    -alias "$KEY_ALIAS" \
-    -keyalg RSA \
-    -keysize 4096 \
-    -validity 10000 \
-    -storepass "$KEYSTORE_PASSWORD" \
-    -keypass "$KEY_PASSWORD" \
-    -dname "CN=Metrologist Release, OU=Mobile, O=cocodedk, C=DK"
-
-  echo "Keystore generated: $KEYSTORE_FILE"
+    echo "Generating release keystore at $KEYSTORE..."
+    echo "You will be prompted for a keystore password, a key password,"
+    echo "and some name/org fields (those can be anything)."
+    echo ""
+    keytool -genkey -v \
+        -keystore "$KEYSTORE" \
+        -alias "$ALIAS" \
+        -keyalg RSA -keysize 2048 -validity 10000
 fi
 
-# ── Collect passwords if not already set (reuse path) ───────────────────────
-if [ -z "${KEYSTORE_PASSWORD:-}" ]; then
-  echo "Enter KEYSTORE_PASSWORD (no double-quotes):"
-  stty -echo
-  read -r KEYSTORE_PASSWORD
-  stty echo
-  echo ""
-  case "$KEYSTORE_PASSWORD" in
-    *'"'*) echo "ERROR: Password must not contain a double-quote."; exit 1 ;;
-  esac
-fi
-
-if [ -z "${KEY_PASSWORD:-}" ]; then
-  echo "Enter KEY_PASSWORD (no double-quotes, Enter to reuse KEYSTORE_PASSWORD):"
-  stty -echo
-  read -r KEY_PASSWORD
-  stty echo
-  echo ""
-  if [ -z "$KEY_PASSWORD" ]; then
-    KEY_PASSWORD="$KEYSTORE_PASSWORD"
-  fi
-  case "$KEY_PASSWORD" in
-    *'"'*) echo "ERROR: Key password must not contain a double-quote."; exit 1 ;;
-  esac
-fi
-
-# ── Verify keystore is readable ─────────────────────────────────────────────
-echo "==> Verifying keystore..."
-keytool -list \
-  -keystore "$KEYSTORE_FILE" \
-  -alias "$KEY_ALIAS" \
-  -storepass "$KEYSTORE_PASSWORD" \
-  -noprompt
-echo "  Keystore OK."
-
-# ── Upload secrets to GitHub ─────────────────────────────────────────────────
-echo "==> Uploading secrets to ${OWNER}/${REPO}..."
-
-KEYSTORE_BASE64=$(base64 -w0 "$KEYSTORE_FILE")
-
-printf '%s' "$KEYSTORE_BASE64"   | gh secret set KEYSTORE_BASE64   --repo "${OWNER}/${REPO}"
-printf '%s' "$KEYSTORE_PASSWORD" | gh secret set KEYSTORE_PASSWORD  --repo "${OWNER}/${REPO}"
-printf '%s' "$KEY_ALIAS"         | gh secret set KEY_ALIAS          --repo "${OWNER}/${REPO}"
-printf '%s' "$KEY_PASSWORD"      | gh secret set KEY_PASSWORD        --repo "${OWNER}/${REPO}"
-
+# ── Read passwords securely ───────────────────────────────────────────────────
 echo ""
-echo "Secrets uploaded:"
-echo "  KEYSTORE_BASE64    — base64-encoded $KEYSTORE_FILE"
-echo "  KEYSTORE_PASSWORD  — keystore password"
-echo "  KEY_ALIAS          — $KEY_ALIAS"
-echo "  KEY_PASSWORD       — key password"
+printf "Keystore password: "
+stty -echo 2>/dev/null || true
+read -r KSPASS
+restore_tty
+case "$KSPASS" in
+  *'"'*) echo 'ERROR: Password must not contain " (double quote).'; exit 1 ;;
+esac
 echo ""
-echo "In your Gradle signing config, decode KEYSTORE_BASE64 back to a file, then reference"
-echo "KEYSTORE_PASSWORD, KEY_ALIAS, and KEY_PASSWORD from environment variables or local.properties."
+
+printf "Key password (Enter = same as keystore password): "
+stty -echo 2>/dev/null || true
+read -r KEYPASS
+restore_tty
+case "$KEYPASS" in
+  *'"'*) echo 'ERROR: Key password must not contain " (double quote).'; exit 1 ;;
+esac
+echo ""
+
+[ -z "$KEYPASS" ] && KEYPASS="$KSPASS"
+
+# ── Verify before uploading anything ─────────────────────────────────────────
+echo "Verifying keystore..."
+keytool -list -keystore "$KEYSTORE" -alias "$ALIAS" \
+    -storepass "$KSPASS" -keypass "$KEYPASS" >/dev/null 2>&1 || {
+    echo ""
+    echo "ERROR: Wrong password or alias '$ALIAS'. Nothing was uploaded."
+    echo "       (If this keystore uses a different alias, re-run with"
+    echo "        KEYSTORE_ALIAS=youralias sh scripts/setup-signing.sh)"
+    exit 1
+}
+echo "✓ Keystore valid"
+
+# ── Upload secrets ────────────────────────────────────────────────────────────
+KEYSTORE_B64=$(base64 "$KEYSTORE" | tr -d '\n')
+
+echo "Uploading secrets to $REPO..."
+printf '%s' "$KEYSTORE_B64" | gh secret set KEYSTORE_BASE64  --repo "$REPO"
+printf '%s' "$KSPASS"       | gh secret set KEYSTORE_PASSWORD --repo "$REPO"
+printf '%s' "$ALIAS"        | gh secret set KEY_ALIAS         --repo "$REPO"
+printf '%s' "$KEYPASS"      | gh secret set KEY_PASSWORD      --repo "$REPO"
+
+# ── Done ─────────────────────────────────────────────────────────────────────
+echo ""
+echo "✓ All 4 secrets uploaded:"
+echo "    KEYSTORE_BASE64    ✓"
+echo "    KEYSTORE_PASSWORD  ✓"
+echo "    KEY_ALIAS          ✓  ($ALIAS)"
+echo "    KEY_PASSWORD       ✓"
+echo ""
+echo "IMPORTANT: keep $KEYSTORE backed up somewhere secure."
+echo "           If you lose it you cannot ship signed updates as the same app."
+echo ""
+echo "To cut the first release (manual trigger):"
+echo "  gh workflow run \"Release APK\" -f bump=patch    # -> tags v0.0.1"
+echo "  then: https://github.com/$REPO/releases/latest/download/Metrologist.apk"
