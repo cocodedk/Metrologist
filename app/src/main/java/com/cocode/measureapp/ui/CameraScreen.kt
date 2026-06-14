@@ -47,8 +47,11 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.cocode.measureapp.capture.GravityProvider
+import com.cocode.measureapp.geometry.TiltAngles
+import com.cocode.measureapp.geometry.tiltFromGravity
 import com.cocode.measureapp.ui.theme.StaffRed
 import java.util.concurrent.Executors
+import kotlinx.coroutines.delay
 
 /** In-app CameraX capture. Records the photo plus the camera intrinsics and gravity. */
 @OptIn(androidx.camera.camera2.interop.ExperimentalCamera2Interop::class)
@@ -83,6 +86,13 @@ fun CameraScreen(
     val imageCapture = remember { ImageCapture.Builder().build() }
     val boundCameraId = remember { mutableStateOf<String?>(null) }
     var capturing by remember { mutableStateOf(false) }
+    var tilt by remember { mutableStateOf(TiltAngles(0.0, 0.0)) }
+    LaunchedEffect(Unit) {
+        while (true) {
+            tilt = tiltFromGravity(gravity.current())
+            delay(50)
+        }
+    }
 
     Box(Modifier.fillMaxSize()) {
         if (hasPermission) {
@@ -119,6 +129,10 @@ fun CameraScreen(
                 },
                 modifier = Modifier.align(Alignment.Center),
             )
+        }
+
+        if (hasPermission) {
+            LevelOverlay(tilt, Modifier.align(Alignment.Center))
         }
 
         Row(
