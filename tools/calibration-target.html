@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Measure App — Screen Calibration Target</title>
 <style>
   * { margin: 0; box-sizing: border-box; }
@@ -54,6 +54,9 @@
   .row { display: flex; gap: 8px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
   .vals { margin-top: 8px; } .vals b { color: #7fe0c0; }
   .hint { margin-top: 8px; font-size: 12px; color: #bbb; }
+  .vbar { position: relative; height: 22px; margin-top: 10px; border: 1px solid #7fe0c0; border-top: none; }
+  .vbar i { position: absolute; top: 0; width: 1px; background: #7fe0c0; }
+  .vbar span { position: absolute; top: 4px; font-size: 9px; color: #7fe0c0; transform: translateX(-50%); }
 </style>
 </head>
 <body>
@@ -97,6 +100,8 @@
       Diagonal: <b id="vDiag"></b> &middot; Area: <b id="vArea"></b><br>
       Stick: <b id="vStick"></b> (band <span id="vBand"></span> cm)
     </div>
+    <div class="vbar" id="vbar" aria-hidden="true"></div>
+    <div class="hint" id="diag"></div>
     <div class="row">
       <button id="fs">Fullscreen</button>
       <button id="hide">Hide UI (h)</button>
@@ -151,6 +156,24 @@
     $('vArea').textContent = `${(W * H).toFixed(0)} cm²`;
     $('vStick').textContent = `${L.toFixed(1)} cm`;
     $('vBand').textContent = (L / 4).toFixed(2);
+    drawVerify();
+  }
+  // Ground-truth check: a 5 cm bar the user verifies against a physical ruler.
+  function drawVerify() {
+    const bar = $('vbar'); bar.innerHTML = '';
+    if (pxPerMm <= 0) return;
+    bar.style.width = (pxPerMm * 50) + 'px';   // 5 cm
+    for (let c = 0; c <= 5; c++) {
+      const x = c * 10 * pxPerMm;
+      const t = document.createElement('i');
+      t.style.left = x + 'px'; t.style.height = (c % 5 === 0 ? 14 : 8) + 'px';
+      bar.appendChild(t);
+      const s = document.createElement('span'); s.style.left = x + 'px'; s.textContent = c;
+      bar.appendChild(s);
+    }
+    const ppi = (pxPerMm * 25.4).toFixed(0);
+    $('diag').textContent = 'Hold a ruler on the bar — it must read 5 cm. ' +
+      `(dpr ${window.devicePixelRatio}, screen ${screen.width}×${screen.height}px, ~${ppi} ppi)`;
   }
   addEventListener('resize', layout);
   $('fs').onclick = () =>

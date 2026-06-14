@@ -28,7 +28,6 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -81,8 +80,6 @@ fun MarkScreen(
     var note by remember { mutableStateOf("Detecting stick…") }
     var zoom by remember { mutableStateOf(1f) }
     var pan by remember { mutableStateOf(Offset.Zero) }
-    val density = LocalDensity.current.density
-    val grabThreshold = remember(density) { handleGrabThresholdPx(density) }
 
     LaunchedEffect(image) {
         val gen = resetGen
@@ -118,10 +115,8 @@ fun MarkScreen(
                     .pointerInput(canvasSize) {
                         awaitEachGesture {
                             val down = awaitFirstDown(requireUnconsumed = false)
-                            val handle = nearestHandleOrPan(
-                                down.position, corners, stick,
-                                sNow(), txNow(), tyNow(), grabThreshold,
-                            )
+                            // One finger always grabs the nearest handle; two fingers zoom + pan.
+                            val handle = nearestHandle(down.position, corners, stick, sNow(), txNow(), tyNow())
                             do {
                                 val e = awaitPointerEvent()
                                 if (e.changes.count { it.pressed } >= 2) {
@@ -137,28 +132,14 @@ fun MarkScreen(
                                     }
                                     e.changes.forEach { it.consume() }
                                 } else {
+                                    active = handle
                                     val d = e.changes.firstOrNull { it.id == down.id }?.positionChange() ?: Offset.Zero
-                                    if (handle >= 0) {
-                                        // handle drag
-                                        active = handle
-                                        if (d != Offset.Zero) {
-                                            val sc = sNow()
-                                            val delta = Vec2((d.x / sc).toDouble(), (d.y / sc).toDouble())
-                                            if (handle in 0..3) corners[handle] = corners[handle] + delta
-                                            else stick[handle - 4] = stick[handle - 4] + delta
-                                            e.changes.forEach { it.consume() }
-                                        }
-                                    } else {
-                                        // pan (no handle grabbed)
-                                        active = -1
-                                        if (d != Offset.Zero) {
-                                            val sc = sNow()
-                                            pan = Offset(
-                                                (pan.x + d.x).coerceIn(-bmp.width * sc / 2f, bmp.width * sc / 2f),
-                                                (pan.y + d.y).coerceIn(-bmp.height * sc / 2f, bmp.height * sc / 2f),
-                                            )
-                                            e.changes.forEach { it.consume() }
-                                        }
+                                    if (d != Offset.Zero) {
+                                        val sc = sNow()
+                                        val delta = Vec2((d.x / sc).toDouble(), (d.y / sc).toDouble())
+                                        if (handle in 0..3) corners[handle] = corners[handle] + delta
+                                        else stick[handle - 4] = stick[handle - 4] + delta
+                                        e.changes.forEach { it.consume() }
                                     }
                                 }
                             } while (e.changes.any { it.pressed })
