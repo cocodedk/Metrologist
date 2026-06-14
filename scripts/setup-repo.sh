@@ -9,21 +9,23 @@ echo "==> Configuring merge settings for ${OWNER}/${REPO}..."
 gh repo edit "${OWNER}/${REPO}" \
   --enable-squash-merge \
   --enable-rebase-merge \
-  --disable-merge-commit \
+  --enable-merge-commit=false \
   --delete-branch-on-merge
 
 echo "==> Applying branch protection to '${BRANCH}'..."
-PROTECTION_RESPONSE=$(gh api \
+PROTECTION_PAYLOAD='{
+  "required_status_checks": { "strict": true, "contexts": ["verify"] },
+  "enforce_admins": false,
+  "required_pull_request_reviews": { "dismiss_stale_reviews": false, "require_code_owner_reviews": false, "required_approving_review_count": 0 },
+  "restrictions": null,
+  "allow_force_pushes": false,
+  "allow_deletions": false
+}'
+PROTECTION_RESPONSE=$(printf '%s' "$PROTECTION_PAYLOAD" | gh api \
   --method PUT \
   -H "Accept: application/vnd.github+json" \
   "/repos/${OWNER}/${REPO}/branches/${BRANCH}/protection" \
-  --field required_status_checks='{"strict":true,"contexts":["verify"]}' \
-  --field enforce_admins=false \
-  --field required_pull_request_reviews='{"required_approving_review_count":0,"dismiss_stale_reviews":false,"require_code_owner_reviews":false}' \
-  --field restrictions=null \
-  --field allow_force_pushes=false \
-  --field allow_deletions=false \
-  2>&1 || true)
+  --input - 2>&1 || true)
 
 if echo "$PROTECTION_RESPONSE" | grep -qi "upgrade to github pro"; then
   echo ""
