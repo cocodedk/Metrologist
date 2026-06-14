@@ -8,6 +8,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.cocode.measureapp.core.LengthUnit
 import com.cocode.measureapp.core.MeasurementView
@@ -33,7 +37,8 @@ fun MeasureApp() {
     var captured by remember { mutableStateOf<CapturedImage?>(null) }
     var view by remember { mutableStateOf<MeasurementView?>(null) }
 
-    when (step) {
+    Box(Modifier.fillMaxSize().safeDrawingPadding()) {
+        when (step) {
         Step.Capture -> CameraScreen(
             onCaptured = { img -> captured = img; step = Step.Mark },
             onSettings = { step = Step.Settings },
@@ -80,5 +85,6 @@ fun MeasureApp() {
             onUnit = { value -> scope.launch { repo.setUnit(value) } },
             onBack = { step = Step.Capture },
         )
+        }
     }
 }
