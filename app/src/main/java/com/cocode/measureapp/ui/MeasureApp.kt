@@ -31,6 +31,7 @@ fun MeasureApp() {
     val detector = remember { OpenCvStickDetector() }
     val scope = rememberCoroutineScope()
     val stickLength by repo.stickLengthMeters.collectAsState(initial = SettingsRepository.DEFAULT_LENGTH_M)
+    val stickWidth by repo.stickWidthMeters.collectAsState(initial = SettingsRepository.DEFAULT_WIDTH_M)
     val unit by repo.unit.collectAsState(initial = LengthUnit.METERS)
 
     var step by remember { mutableStateOf(Step.Capture) }
@@ -52,6 +53,7 @@ fun MeasureApp() {
                 MarkScreen(
                     image = img,
                     stickLengthMeters = stickLength,
+                    stickWidthMeters = stickWidth,
                     unit = unit,
                     detector = detector,
                     onMeasured = { v -> view = v; step = Step.Results },
@@ -80,8 +82,10 @@ fun MeasureApp() {
 
         Step.Settings -> SettingsScreen(
             stickLengthMeters = stickLength,
+            stickWidthMeters = stickWidth,
             unit = unit,
             onLength = { value -> scope.launch { repo.setStickLengthMeters(value) } },
+            onWidth = { value -> scope.launch { repo.setStickWidthMeters(value) } },
             onUnit = { value -> scope.launch { repo.setUnit(value) } },
             onBack = { step = Step.Capture },
         )

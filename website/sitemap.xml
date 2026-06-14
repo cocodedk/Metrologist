@@ -22,4 +22,24 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cocodedk.github.io/Metrologist/"/>
   </url>
 
+  <url>
+    <loc>https://cocodedk.github.io/Metrologist/print-stick.html</loc>
+    <lastmod>2026-06-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cocodedk.github.io/Metrologist/print-stick.html"/>
+    <xhtml:link rel="alternate" hreflang="fa" href="https://cocodedk.github.io/Metrologist/fa/print-stick.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cocodedk.github.io/Metrologist/print-stick.html"/>
+  </url>
+
+  <url>
+    <loc>https://cocodedk.github.io/Metrologist/fa/print-stick.html</loc>
+    <lastmod>2026-06-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cocodedk.github.io/Metrologist/print-stick.html"/>
+    <xhtml:link rel="alternate" hreflang="fa" href="https://cocodedk.github.io/Metrologist/fa/print-stick.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cocodedk.github.io/Metrologist/print-stick.html"/>
+  </url>
+
 </urlset>

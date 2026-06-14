@@ -49,13 +49,16 @@ class MetrologyEngineTest {
             place(-w / 2, h / 2, r, depth),  // BL
         ).map { project(it) }
 
-        // A stick of real length 1.0 lying horizontally on the same wall, 5 markers / 4 bands.
+        // A stick of real length 1.0 x width 0.08 lying flat on the same wall, as a 4-corner box.
         val stickLen = 1.0
-        val stickPixels = (0..4).map { i ->
-            val sx = -stickLen / 2 + stickLen * i / 4.0
-            project(place(sx, 0.0, r, depth))
-        }
-        val profile = StickProfile(totalLength = stickLen, bandCount = 4)
+        val stickWid = 0.08
+        val stickPixels = listOf(
+            place(-stickLen / 2, -stickWid / 2, r, depth), // TL
+            place(stickLen / 2, -stickWid / 2, r, depth),  // TR
+            place(stickLen / 2, stickWid / 2, r, depth),   // BR
+            place(-stickLen / 2, stickWid / 2, r, depth),  // BL
+        ).map { project(it) }
+        val profile = StickProfile(totalLength = stickLen, bandCount = 4, width = stickWid)
 
         val result = MetrologyEngine.measure(corners, stickPixels, k, profile)
 
@@ -83,7 +86,10 @@ class MetrologyEngineTest {
             place(w / 2, h / 2, identity, depth),
             place(-w / 2, h / 2, identity, depth),
         ).map { project(it) }
-        val stickPixels = listOf(Vec2(0.0, 0.0), Vec2(10.0, 0.0))
+        // Solver returns null before the stick is used; a valid 4-corner box keeps the contract.
+        val stickPixels = listOf(
+            Vec2(0.0, 0.0), Vec2(10.0, 0.0), Vec2(10.0, 1.0), Vec2(0.0, 1.0),
+        )
 
         val result = MetrologyEngine.measure(corners, stickPixels, k, StickProfile(1.0))
 

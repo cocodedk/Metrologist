@@ -25,4 +25,34 @@ class StickBoxTest {
     fun wrongCornerCountThrows() {
         StickBox.ends(listOf(Vec2(0.0, 0.0), Vec2(1.0, 1.0)))
     }
+
+    @Test fun longShortMeanEdgesWideBox() {
+        // wide-short box: long pair (0-1, 2-3) = 10, short pair (1-2, 3-0) = 2.
+        val box = listOf(Vec2(0.0, 0.0), Vec2(10.0, 0.0), Vec2(10.0, 2.0), Vec2(0.0, 2.0))
+        val (long, short) = StickBox.longShortMeanEdges(box)
+        assertEquals(10.0, long, 1e-9)
+        assertEquals(2.0, short, 1e-9)
+    }
+
+    @Test fun longShortMeanEdgesTallBox() {
+        // tall-narrow box: long pair is (1-2, 3-0) = 10, short pair (0-1, 2-3) = 2.
+        val box = listOf(Vec2(0.0, 0.0), Vec2(2.0, 0.0), Vec2(2.0, 10.0), Vec2(0.0, 10.0))
+        val (long, short) = StickBox.longShortMeanEdges(box)
+        assertEquals(10.0, long, 1e-9)
+        assertEquals(2.0, short, 1e-9)
+    }
+
+    @Test fun longShortMeanEdgesAveragesUnequalOppositeEdges() {
+        // Trapezoid: top edge (0-1)=8, bottom edge (2-3)=10 -> long mean 9; the two slanted
+        // sides (1-2, 3-0) are each sqrt(1^2 + 3^2) = sqrt(10) -> short mean sqrt(10).
+        val box = listOf(Vec2(0.0, 0.0), Vec2(8.0, 0.0), Vec2(9.0, 3.0), Vec2(-1.0, 3.0))
+        val (long, short) = StickBox.longShortMeanEdges(box)
+        assertEquals(9.0, long, 1e-9)
+        assertEquals(kotlin.math.sqrt(10.0), short, 1e-9)
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun longShortMeanEdgesWrongCornerCountThrows() {
+        StickBox.longShortMeanEdges(listOf(Vec2(0.0, 0.0), Vec2(1.0, 1.0)))
+    }
 }

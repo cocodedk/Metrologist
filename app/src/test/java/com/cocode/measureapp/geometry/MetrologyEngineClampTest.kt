@@ -11,17 +11,20 @@ import kotlin.math.sin
  * [MetrologyEngine.measure] (`confidence = solution.confidence * (1 - min(agreement, 1))`).
  *
  * Both cases reuse a single valid, non-fronto-parallel corner quad so the rectangle solver
- * succeeds with `solution.confidence > 0`. Only the stick marker spacing differs, driving
- * `ScaleSolver.agreement` either at/above 1.0 (clamp fires -> overall confidence forced to
- * exactly 0.0) or below 1.0 (clamp inert -> 0 < confidence < solution.confidence). This proves
- * the clamp itself — not the solver — zeroes a successful solution, and isolates the boundary.
+ * succeeds with `solution.confidence > 0`. The stick is a real box of fixed length and a fixed
+ * ACTUAL width on the wall; only the DECLARED [StickProfile.width] differs, driving the
+ * length-vs-width scale disagreement [StickScale] reports either at/above 1.0 (clamp fires ->
+ * overall confidence forced to exactly 0.0) or below 1.0 (clamp inert -> 0 < confidence <
+ * solution.confidence). This proves the clamp itself — not the solver — zeroes a successful
+ * solution, and isolates the boundary.
  */
 class MetrologyEngineClampTest {
     private val k = CameraIntrinsics(fx = 800.0, fy = 800.0, cx = 320.0, cy = 240.0)
     private val w = 1.2
     private val h = 0.8
     private val depth = 4.0
-    private val profile = StickProfile(totalLength = 1.0, bandCount = 4)
+    private val stickLen = 1.0
+    private val stickWidthActual = 0.04
     private val r = rotY(0.4) * rotX(0.25)
 
     private fun rotY(a: Double) = Mat3(cos(a), 0.0, sin(a), 0.0, 1.0, 0.0, -sin(a), 0.0, cos(a))
@@ -38,13 +41,17 @@ class MetrologyEngineClampTest {
         place(-w / 2, -h / 2), place(w / 2, -h / 2), place(w / 2, h / 2), place(-w / 2, h / 2),
     ).map { project(it) }
 
-    /** Stick markers at given wall-x positions (all on y=0 on the same plane). */
-    private fun stickAt(xs: List<Double>): List<Vec2> = xs.map { project(place(it, 0.0)) }
+    /** The stick's real box (length [stickLen] x [stickWidthActual]) projected to 4 corners. */
+    private val stick = listOf(
+        place(-stickLen / 2, -stickWidthActual / 2), // TL
+        place(stickLen / 2, -stickWidthActual / 2),  // TR
+        place(stickLen / 2, stickWidthActual / 2),   // BR
+        place(-stickLen / 2, stickWidthActual / 2),  // BL
+    ).map { project(it) }
 
     @Test fun saturatingAgreementForcesConfidenceToZero() {
-        // Badly mismarked joints: metric bands ~ [0.05, 0.25, 0.25, 0.45] of wall-x -> one
-        // segment estimate ~2x the median, so agreement ~4.0 >= 1.0 and the clamp fires.
-        val stick = stickAt(listOf(-0.5, -0.45, -0.20, 0.05, 0.5))
+        // Declared width 10x the real width -> scaleWid ~ 10x scaleLen -> agreement ~2.5 >= 1.0.
+        val profile = StickProfile(totalLength = stickLen, bandCount = 4, width = stickWidthActual * 10.0)
         val result = MetrologyEngine.measure(corners, stick, k, profile)
 
         assertTrue("scale agreement must saturate", result.scale.agreement >= 1.0)
@@ -54,8 +61,8 @@ class MetrologyEngineClampTest {
     }
 
     @Test fun subUnitAgreementKeepsPartialConfidence() {
-        // One overstretched band -> agreement ~0.94, just below the clamp threshold.
-        val stick = stickAt(listOf(-0.5, -0.45, -0.40, -0.35, 0.5))
+        // Declared width 1.25x the real width -> mild length-vs-width disagreement below 1.0.
+        val profile = StickProfile(totalLength = stickLen, bandCount = 4, width = stickWidthActual * 1.25)
         val result = MetrologyEngine.measure(corners, stick, k, profile)
 
         assertTrue("agreement below clamp", result.scale.agreement > 0.0 && result.scale.agreement < 1.0)

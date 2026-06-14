@@ -113,4 +113,17 @@ class ScaleSolverTest {
     fun bandCountNegativeThrows() {
         StickProfile(totalLength = 1.0, bandCount = -1)
     }
+
+    @Test fun stickProfileWidthDefaultsToZero() {
+        assertEquals(0.0, StickProfile(totalLength = 1.0).width, 0.0)
+    }
+
+    @Test fun stickProfileWidthGetterReturnsConstructedValue() {
+        assertEquals(0.04, StickProfile(totalLength = 1.0, width = 0.04).width, 0.0)
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun stickProfileNegativeWidthThrows() {
+        StickProfile(totalLength = 1.0, width = -0.01)
+    }
 }

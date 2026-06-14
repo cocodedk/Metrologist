@@ -1,5 +1,6 @@
 package com.cocode.measureapp.geometry
 
+import com.cocode.measureapp.stick.StickScale
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -37,7 +38,7 @@ class MetrologyEngineGravityOracleTest {
         val sol = GravitySolver.solve(scene.gravityCam, SurfaceOrientation.VERTICAL)
         val cornerMetric = projectToPlane(scene.cornerPixels, scene.k, sol.frame)
         val stickMetric = projectToPlane(scene.stickPixels, scene.k, sol.frame)
-        val scale = ScaleSolver.solve(stickMetric, scene.profile)
+        val scale = StickScale.solve(stickMetric, scene.profile)
         return Measurements.compute(cornerMetric.map { it * scale.scale })
     }
 

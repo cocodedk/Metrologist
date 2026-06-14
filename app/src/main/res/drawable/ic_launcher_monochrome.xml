@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Monochrome adaptive icon layer for Android 13+ themed icons.
+  Single solid colour — the system tints this to match the user's wallpaper palette.
+  Silhouette of the survey-staff motif (bands expressed as alternating fills
+  on the same path are not needed; solid black is what Android expects here).
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Staff body silhouette -->
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M42,14 Q41,14 41,15 L41,93 Q41,94 42,94 L66,94 Q67,94 67,93 L67,15 Q67,14 66,14 Z" />
+
+    <!-- Left tick marks (silhouette) -->
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M34,33 L41,33 L41,35 L34,35 Z" />
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M34,53 L41,53 L41,55 L34,55 Z" />
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M34,73 L41,73 L41,75 L34,75 Z" />
+
+    <!-- Crosshair (silhouette) -->
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M53,44 L55,44 L55,64 L53,64 Z" />
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M44,53 L64,53 L64,55 L44,55 Z" />
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M51,52 A3,3 0 1 1 57,52 A3,3 0 1 1 51,52 Z" />
+
+</vector>

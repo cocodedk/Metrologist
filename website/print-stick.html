@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Primary SEO -->
+  <title>Print Reference Stick — Metrologist</title>
+  <meta name="description" content="Print a physical red-white reference stick at exact size (20 cm × 4 cm / 7.87 in × 1.57 in) for the Metrologist measurement app. Includes a calibration ruler to verify 100% print scale.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://cocodedk.github.io/Metrologist/print-stick.html">
+
+  <!-- hreflang -->
+  <link rel="alternate" hreflang="en" href="https://cocodedk.github.io/Metrologist/print-stick.html">
+  <link rel="alternate" hreflang="fa" href="https://cocodedk.github.io/Metrologist/fa/print-stick.html">
+  <link rel="alternate" hreflang="x-default" href="https://cocodedk.github.io/Metrologist/print-stick.html">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+  <!-- Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap">
+
+  <style>
+    /* ── Design tokens (matches styles.css) ── */
+    :root {
+      --bg-deep:      #0D0F0E;
+      --bg-surface:   #141714;
+      --bg-card:      #1C1F1C;
+      --staff-red:    #D42B2B;
+      --staff-white:  #F2F2EE;
+      --amber:        #E8A020;
+      --amber-glow:   rgba(232, 160, 32, 0.35);
+      --text-primary: #F2F2EE;
+      --text-secondary:#8A9189;
+      --text-dim:     #4A524A;
+      --grid-line:    rgba(242, 242, 238, 0.055);
+      --grid-line-2:  rgba(242, 242, 238, 0.02);
+      --rail-width:   6px;
+      --rail-band:    28px;
+      --radius-sm:    4px;
+      --radius:       6px;
+      --transition:   0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { font-size: 16px; scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+    body {
+      background-color: var(--bg-deep);
+      color: var(--text-primary);
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 1.0625rem;
+      line-height: 1.65;
+      background-image:
+        linear-gradient(var(--grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px),
+        linear-gradient(var(--grid-line-2) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line-2) 1px, transparent 1px);
+      background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.028;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 256px 256px;
+      z-index: 9999;
+    }
+
+    /* ── Staff rail ── */
+    .staff-rail {
+      position: fixed;
+      top: 0; left: 0;
+      width: var(--rail-width);
+      height: 100vh;
+      z-index: 100;
+      background: repeating-linear-gradient(
+        to bottom,
+        var(--staff-red)   0px, var(--staff-red)   var(--rail-band),
+        var(--staff-white) var(--rail-band), var(--staff-white) calc(var(--rail-band) * 2)
+      );
+      box-shadow: 2px 0 12px rgba(212, 43, 43, 0.25);
+    }
+
+    /* ── Nav ── */
+    .site-nav {
+      position: sticky;
+      top: 0; z-index: 50;
+      background: rgba(13, 15, 14, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--grid-line);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1rem 0.75rem calc(var(--rail-width) + 16px);
+      gap: 1rem;
+    }
+    .nav-brand {
+      display: flex; align-items: center; gap: 0.55rem;
+      text-decoration: none; color: var(--text-primary);
+    }
+    .nav-brand-icon { width: 28px; height: 28px; flex-shrink: 0; }
+    .nav-brand-name {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.9rem; font-weight: 500;
+      letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .nav-actions { display: flex; align-items: center; gap: 0.75rem; }
+    .lang-switch {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem; letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 0.35rem 0.65rem;
+      border: 1px solid var(--text-dim);
+      border-radius: var(--radius-sm);
+      transition: color var(--transition), border-color var(--transition);
+      min-height: 44px;
+      display: flex; align-items: center;
+    }
+    .lang-switch:hover { color: var(--amber); border-color: var(--amber); }
+
+    /* ── Page wrap ── */
+    .page-wrap {
+      padding-left: calc(var(--rail-width) + 16px);
+      padding-right: 16px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* ── Utility ── */
+    .mono { font-family: 'DM Mono', 'Courier New', monospace; }
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem; font-weight: 500;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--amber); margin-bottom: 0.75rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .section-label::before {
+      content: '';
+      display: inline-block; width: 18px; height: 2px;
+      background: var(--amber); flex-shrink: 0;
+    }
+
+    /* ── Main content ── */
+    main { padding: 3rem 0 4rem; }
+
+    /* ── Page header ── */
+    .page-header { margin-bottom: 2.5rem; }
+    .page-header h1 {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: clamp(2rem, 6vw, 3.2rem);
+      font-weight: 300;
+      line-height: 1.12;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.75rem;
+    }
+    .page-header h1 em { font-style: normal; color: var(--amber); }
+    .page-header p {
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      max-width: 560px;
+      line-height: 1.7;
+    }
+
+    /* ── Instruction card ── */
+    .instruction-card {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 1.75rem 1.5rem;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .instruction-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: repeating-linear-gradient(
+        to right,
+        var(--staff-red) 0, var(--staff-red) 16px,
+        var(--staff-white) 16px, var(--staff-white) 32px
+      );
+      opacity: 0.5;
+    }
+    .instruction-card h2 {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.88rem; font-weight: 500;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--amber); margin-bottom: 1rem;
+    }
+    .instruction-steps {
+      list-style: none;
+      display: flex; flex-direction: column; gap: 0.65rem;
+    }
+    .instruction-steps li {
+      display: flex; align-items: flex-start; gap: 0.85rem;
+      font-size: 0.97rem; color: var(--text-secondary);
+      line-height: 1.55;
+    }
+    .instruction-steps li .step-badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem; font-weight: 500;
+      letter-spacing: 0.1em;
+      background: var(--staff-red);
+      color: var(--staff-white);
+      padding: 0.15rem 0.45rem;
+      border-radius: 2px;
+      flex-shrink: 0;
+      margin-top: 0.18rem;
+    }
+    .instruction-steps li strong { color: var(--text-primary); }
+
+    /* ── Critical print warning ── */
+    .print-warning {
+      background: rgba(212, 43, 43, 0.12);
+      border: 1px solid rgba(212, 43, 43, 0.4);
+      border-radius: var(--radius-sm);
+      padding: 1rem 1.25rem;
+      margin: 1.25rem 0;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+      letter-spacing: 0.03em;
+      color: #F2A0A0;
+      line-height: 1.6;
+    }
+    .print-warning strong { color: #FF6B6B; }
+
+    /* ── Dimensions badge ── */
+    .dims-badge {
+      display: inline-flex; flex-direction: column; gap: 0.25rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--text-dim);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 1rem;
+      margin: 1.25rem 0;
+    }
+    .dims-badge .dim-line {
+      font-family: 'DM Mono', monospace;
+      font-size: 1rem; font-weight: 500;
+      color: var(--amber);
+      letter-spacing: 0.04em;
+    }
+    .dims-badge .dim-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem; letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    /* ── Print button ── */
+    .btn-print {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: var(--staff-red);
+      color: var(--staff-white);
+      text-decoration: none;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.82rem; font-weight: 500;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 0.8rem 1.4rem;
+      border-radius: var(--radius-sm);
+      min-height: 48px;
+      border: none; cursor: pointer;
+      transition: background var(--transition), box-shadow var(--transition), transform var(--transition);
+      margin-top: 0.5rem;
+    }
+    .btn-print:hover {
+      background: #e8322e;
+      box-shadow: 0 0 24px rgba(212, 43, 43, 0.45);
+      transform: translateY(-1px);
+    }
+
+    /* ── Staff band divider ── */
+    .staff-divider {
+      height: 8px; width: 100%;
+      background: repeating-linear-gradient(
+        to right,
+        var(--staff-red)   0px, var(--staff-red)   32px,
+        var(--staff-white) 32px, var(--staff-white) 64px
+      );
+      opacity: 0.18;
+      margin: 2.5rem 0;
+    }
+
+    /* ── Print preview area (screen view) ── */
+    .print-preview-wrap {
+      margin-top: 2rem;
+    }
+    .print-preview-wrap h2 {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.88rem; font-weight: 500;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--amber); margin-bottom: 1rem;
+    }
+    .print-preview-frame {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 2rem;
+      max-width: 620px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    /* ── The actual printable content (screen preview version) ── */
+    .printable-area {
+      display: none; /* hidden on screen — actual area is inside .print-preview-frame */
+    }
+
+    /* ── Preview stick (visual only, not true physical size on screen) ── */
+    .preview-stick {
+      display: flex;
+      width: 100%;
+      max-width: 400px;
+      height: 48px;
+      border: 2px solid #000;
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+    }
+    .preview-stick .band {
+      flex: 1;
+    }
+    .preview-stick .band.r { background: #FF0000; }
+    .preview-stick .band.w { background: #FFFFFF; }
+
+    .preview-ruler {
+      display: flex;
+      align-items: flex-end;
+      width: 100%;
+      max-width: 300px;
+      height: 32px;
+      border-left: 2px solid #000;
+      border-bottom: 2px solid #000;
+      position: relative;
+      margin-bottom: 0.5rem;
+    }
+    .preview-ruler-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      color: #333;
+      margin-top: 0.25rem;
+    }
+    .preview-frame-note {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      color: #333;
+      line-height: 1.5;
+      margin-top: 0.5rem;
+    }
+
+    /* ── Footer ── */
+    .site-footer {
+      border-top: 1px solid var(--grid-line);
+      padding: 2rem 0 2.5rem;
+      margin-top: 1rem;
+    }
+    .footer-inner {
+      display: flex; flex-direction: column; gap: 0.75rem;
+    }
+    .footer-copy {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem; letter-spacing: 0.06em;
+      color: var(--text-dim); line-height: 1.7;
+    }
+    .footer-copy a { color: var(--text-secondary); text-decoration: none; transition: color var(--transition); }
+    .footer-copy a:hover { color: var(--amber); }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 1rem; }
+    .footer-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem; letter-spacing: 0.08em;
+      color: var(--text-dim); text-decoration: none;
+      transition: color var(--transition);
+    }
+    .footer-links a:hover { color: var(--text-secondary); }
+
+    /* ── Focus ── */
+    a:focus-visible, button:focus-visible {
+      outline: 2px solid var(--amber); outline-offset: 3px; border-radius: 2px;
+    }
+    .skip-link {
+      position: absolute; top: -100%; left: 0;
+      background: var(--amber); color: var(--bg-deep);
+      padding: 0.5rem 1rem;
+      font-family: 'DM Mono', monospace; font-size: 0.8rem;
+      z-index: 9999; text-decoration: none;
+    }
+    .skip-link:focus { top: 0; }
+
+    /* ── Responsive: 640px ── */
+    @media (min-width: 640px) {
+      .page-wrap {
+        padding-left: calc(var(--rail-width) + 28px);
+        padding-right: 28px;
+      }
+      .nav-inner {
+        padding-left: calc(var(--rail-width) + 28px);
+        padding-right: 28px;
+      }
+      .footer-inner { flex-direction: row; align-items: center; justify-content: space-between; }
+    }
+    @media (min-width: 768px) {
+      :root { --rail-width: 8px; --rail-band: 32px; }
+      .page-wrap {
+        padding-left: calc(var(--rail-width) + 40px);
+        padding-right: 40px;
+      }
+      .nav-inner {
+        padding-left: calc(var(--rail-width) + 40px);
+        padding-right: 40px;
+      }
+    }
+    @media (min-width: 1024px) {
+      .page-wrap {
+        padding-left: calc(var(--rail-width) + 60px);
+        padding-right: 60px;
+      }
+      .nav-inner {
+        padding-left: calc(var(--rail-width) + 60px);
+        padding-right: 60px;
+      }
+    }
+
+    /* ══════════════════════════════════════════════
+       PRINT STYLES — this is what actually prints
+       Stick: 20.0 cm × 4.0 cm  (7.87 in × 1.57 in)
+       ══════════════════════════════════════════════ */
+    @media print {
+      /* Page setup — fits both A4 and US Letter portrait */
+      @page {
+        size: A4 portrait;
+        margin: 15mm 15mm 15mm 15mm;
+      }
+
+      /* Hide all screen chrome */
+      .staff-rail,
+      .site-nav,
+      .skip-link,
+      .page-header,
+      .instruction-card,
+      .staff-divider,
+      .print-preview-wrap,
+      .site-footer,
+      body::after {
+        display: none !important;
+      }
+
+      body {
+        background: #fff !important;
+        color: #000 !important;
+        font-family: 'DM Mono', 'Courier New', monospace;
+        background-image: none !important;
+        margin: 0; padding: 0;
+      }
+
+      /* Show the hidden printable area */
+      .printable-area {
+        display: block !important;
+      }
+
+      /* ── Print page layout ── */
+      .print-page {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+      }
+
+      /* ── Print header ── */
+      .print-title {
+        font-family: 'DM Mono', 'Courier New', monospace;
+        font-size: 11pt;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #000;
+        margin-bottom: 4mm;
+        border-bottom: 0.5pt solid #999;
+        padding-bottom: 2mm;
+        width: 100%;
+      }
+
+      /* ── Critical scale warning ── */
+      .print-scale-warning {
+        font-family: 'DM Mono', 'Courier New', monospace;
+        font-size: 9.5pt;
+        font-weight: 700;
+        color: #CC0000;
+        background: #FFF0F0;
+        border: 1.5pt solid #CC0000;
+        padding: 3mm 4mm;
+        margin-bottom: 5mm;
+        width: 100%;
+        line-height: 1.5;
+      }
+
+      /* ── THE STICK — exact physical size ── */
+      /* 20.0 cm long × 4.0 cm wide, 4 equal bands of 5.0 cm each */
+      .print-stick {
+        display: flex;
+        width: 200mm;   /* 20.0 cm */
+        height: 40mm;   /* 4.0 cm */
+        border: 1.5pt solid #000;
+        border-radius: 1mm;
+        overflow: hidden;
+        margin-bottom: 5mm;
+        flex-shrink: 0;
+      }
+      .print-stick .band {
+        flex: 1;
+        height: 100%;
+      }
+      .print-stick .band.r { background: #FF0000; }
+      .print-stick .band.w {
+        background: #FFFFFF;
+        border-left: 0.5pt solid #CCCCCC;
+        border-right: 0.5pt solid #CCCCCC;
+      }
+
+      /* ── Stick dimension label ── */
+      .print-stick-dims {
+        font-family: 'DM Mono', 'Courier New', monospace;
+        font-size: 8pt;
+        color: #333;
+        margin-bottom: 7mm;
+        line-height: 1.6;
+      }
+      .print-stick-dims strong {
+        font-size: 9pt;
+        color: #000;
+      }
+
+      /* ── Calibration ruler ── */
+      .print-ruler-section {
+        margin-top: 3mm;
+        margin-bottom: 3mm;
+      }
+      .print-ruler-title {
+        font-family: 'DM Mono', 'Courier New', monospace;
+        font-size: 8pt;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #000;
+        margin-bottom: 3mm;
+      }
+
+      /* 10 cm ruler — drawn with SVG in the HTML, sized via CSS */
+      .print-ruler-svg {
+        display: block;
+        width: 100mm;   /* exactly 10 cm */
+        height: 12mm;
+      }
+
+      .print-ruler-label {
+        font-family: 'DM Mono', 'Courier New', monospace;
+        font-size: 7.5pt;
+        color: #444;
+        margin-top: 1mm;
+        margin-bottom: 6mm;
+      }
+
+      /* ── Instructions block ── */
+      .print-instructions {
+        border-top: 0.5pt solid #999;
+        padding-top: 4mm;
+        margin-top: 2mm;
+        width: 100%;
+      }
+      .print-instructions-title {
+        font-family: 'DM Mono', 'Courier New', monospace;
+        font-size: 8pt;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #000;
+        margin-bottom: 3mm;
+      }
+      .print-instructions ol {
+        padding-left: 5mm;
+        margin: 0;
+      }
+      .print-instructions li {
+        font-family: 'DM Mono', 'Courier New', monospace;
+        font-size: 8pt;
+        color: #222;
+        line-height: 1.7;
+        margin-bottom: 1mm;
+      }
+      .print-instructions li strong { color: #000; font-weight: 700; }
+      .print-instructions .app-note {
+        margin-top: 3mm;
+        font-family: 'DM Mono', 'Courier New', monospace;
+        font-size: 7.5pt;
+        color: #555;
+        border-top: 0.5pt solid #ddd;
+        padding-top: 2mm;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Fixed staff rail (screen only) -->
+  <div class="staff-rail" aria-hidden="true"></div>
+
+  <!-- Navigation (screen only) -->
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-brand" aria-label="Metrologist home">
+        <svg class="nav-brand-icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <rect x="11" y="2" width="10" height="7" rx="1" fill="#D42B2B"/>
+          <rect x="11" y="9" width="10" height="7" fill="#F2F2EE"/>
+          <rect x="11" y="16" width="10" height="7" fill="#D42B2B"/>
+          <rect x="11" y="23" width="10" height="7" rx="1" fill="#F2F2EE"/>
+          <line x1="16" y1="12" x2="16" y2="20" stroke="#E8A020" stroke-width="1.2"/>
+          <line x1="12" y1="16" x2="20" y2="16" stroke="#E8A020" stroke-width="1.2"/>
+          <circle cx="16" cy="16" r="1" fill="#E8A020"/>
+        </svg>
+        <span class="nav-brand-name">Metrologist</span>
+      </a>
+      <div class="nav-actions">
+        <a href="fa/print-stick.html" class="lang-switch" aria-label="Switch to Persian">فارسی</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main content -->
+  <main id="main">
+    <section class="page-wrap">
+
+      <!-- Screen: header -->
+      <div class="page-header">
+        <p class="section-label">Reference stick</p>
+        <h1>Print a reference stick.<br><em>Actual size. Ready to use.</em></h1>
+        <p>
+          Print this page at 100% / Actual size to get a physical red-white reference stick
+          exactly <strong>20.0 cm × 4.0 cm</strong> (7.87 in × 1.57 in) — the default dimensions
+          you enter in the Metrologist app's stick settings.
+        </p>
+      </div>
+
+      <!-- Screen: instructions card -->
+      <div class="instruction-card">
+        <h2>How to use</h2>
+        <ul class="instruction-steps">
+          <li>
+            <span class="step-badge">01</span>
+            <span><strong>Print at 100% / Actual size.</strong> In your print dialog, disable "Fit to page", "Shrink to fit", or "Scale to fit". Set scale to <strong>100%</strong>. This is critical — any scaling makes the stick the wrong physical size.</span>
+          </li>
+          <li>
+            <span class="step-badge">02</span>
+            <span><strong>Verify with a ruler.</strong> The calibration ruler printed below the stick must measure exactly <strong>10 cm (100 mm)</strong> with a real ruler. If it doesn't, reprint with corrected scale settings.</span>
+          </li>
+          <li>
+            <span class="step-badge">03</span>
+            <span><strong>Cut it out and mount it.</strong> Cut along the stick outline. Glue or tape it to something flat and rigid — cardboard, a ruler, a thin board. The stick must stay flat and straight when photographed.</span>
+          </li>
+          <li>
+            <span class="step-badge">04</span>
+            <span><strong>Enter dimensions in the app.</strong> In Metrologist settings → Reference stick, enter <strong>Length: 20.0 cm</strong> and <strong>Width: 4.0 cm</strong> (or 7.87 in × 1.57 in).</span>
+          </li>
+          <li>
+            <span class="step-badge">05</span>
+            <span><strong>Photograph and measure.</strong> Place the stick on the surface, take a photo, mark the four corners and two stick ends — done.</span>
+          </li>
+        </ul>
+
+        <div class="print-warning">
+          <strong>CRITICAL — PRINT AT 100% / ACTUAL SIZE</strong><br>
+          Turn OFF "Fit to page" · Turn OFF "Shrink to fit" · Set scale to 100%<br>
+          Most browsers default to "Fit to page" — you must change this or the stick will print at the wrong size.
+        </div>
+
+        <div class="dims-badge">
+          <span class="dim-label">Stick dimensions</span>
+          <span class="dim-line">Length: 20.0 cm &nbsp;/&nbsp; 7.87 in</span>
+          <span class="dim-line">Width: &nbsp;4.0 cm &nbsp;/&nbsp; 1.57 in</span>
+          <span class="dim-label">4 equal bands · 5.0 cm each</span>
+        </div>
+
+        <button class="btn-print" onclick="window.print()">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+            <path d="M4 1h8v3H4V1zm-2 4h12a1 1 0 011 1v5a1 1 0 01-1 1h-1v2H3v-2H2a1 1 0 01-1-1V6a1 1 0 011-1zm9 1a1 1 0 100 2 1 1 0 000-2zM4 10v3h8v-3H4z"/>
+          </svg>
+          Print reference stick
+        </button>
+      </div>
+
+      <!-- Screen: preview -->
+      <div class="print-preview-wrap">
+        <h2 class="mono" style="font-size:0.7rem;letter-spacing:0.15em;color:var(--amber);text-transform:uppercase;margin-bottom:1rem;">
+          Preview (not to scale on screen)
+        </h2>
+        <div class="print-preview-frame">
+          <div class="preview-stick" aria-label="Red-white-red-white reference stick preview">
+            <div class="band r"></div>
+            <div class="band w"></div>
+            <div class="band r"></div>
+            <div class="band w"></div>
+          </div>
+          <div class="preview-ruler-label" style="font-family:'DM Mono',monospace;font-size:0.68rem;color:#555;margin-bottom:0.5rem;">
+            ← 10 cm calibration ruler (verify with real ruler after printing)
+          </div>
+          <div style="display:flex;align-items:flex-end;gap:0;margin-bottom:0.35rem;">
+            <svg width="200" height="24" viewBox="0 0 200 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <line x1="0" y1="12" x2="200" y2="12" stroke="#222" stroke-width="1.5"/>
+              <line x1="0" y1="4" x2="0" y2="20" stroke="#222" stroke-width="1.5"/>
+              <line x1="200" y1="4" x2="200" y2="20" stroke="#222" stroke-width="1.5"/>
+              <line x1="20" y1="8" x2="20" y2="16" stroke="#222" stroke-width="1"/>
+              <line x1="40" y1="8" x2="40" y2="16" stroke="#222" stroke-width="1"/>
+              <line x1="60" y1="8" x2="60" y2="16" stroke="#222" stroke-width="1"/>
+              <line x1="80" y1="8" x2="80" y2="16" stroke="#222" stroke-width="1"/>
+              <line x1="100" y1="6" x2="100" y2="18" stroke="#222" stroke-width="1.5"/>
+              <line x1="120" y1="8" x2="120" y2="16" stroke="#222" stroke-width="1"/>
+              <line x1="140" y1="8" x2="140" y2="16" stroke="#222" stroke-width="1"/>
+              <line x1="160" y1="8" x2="160" y2="16" stroke="#222" stroke-width="1"/>
+              <line x1="180" y1="8" x2="180" y2="16" stroke="#222" stroke-width="1"/>
+              <text x="0" y="24" font-family="DM Mono, monospace" font-size="7" fill="#333">0</text>
+              <text x="93" y="24" font-family="DM Mono, monospace" font-size="7" fill="#333">5</text>
+              <text x="186" y="24" font-family="DM Mono, monospace" font-size="7" fill="#333">10 cm</text>
+            </svg>
+          </div>
+          <p class="preview-frame-note">
+            Stick: 20.0 cm × 4.0 cm &nbsp;·&nbsp; 7.87 in × 1.57 in<br>
+            Red-White-Red-White · 4 bands · 5.0 cm each
+          </p>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- ══════════════════════════════════════════
+       PRINTABLE AREA — only renders at @media print
+       Physical dimensions are set in CSS above.
+       ══════════════════════════════════════════ -->
+  <div class="printable-area" aria-hidden="true">
+    <div class="print-page">
+
+      <div class="print-title">Metrologist — Reference Stick</div>
+
+      <div class="print-scale-warning">
+        ⚠ PRINT AT 100% / ACTUAL SIZE — turn OFF "Fit to page" / "Shrink to fit" / "Scale to fit"
+        &nbsp;·&nbsp; Set print scale to 100% &nbsp;·&nbsp; Verify with ruler below before cutting
+      </div>
+
+      <!-- THE STICK: 200mm × 40mm (20.0 cm × 4.0 cm) -->
+      <div class="print-stick" role="img" aria-label="Reference stick: red, white, red, white bands">
+        <div class="band r"></div>
+        <div class="band w"></div>
+        <div class="band r"></div>
+        <div class="band w"></div>
+      </div>
+
+      <div class="print-stick-dims">
+        <strong>Stick dimensions (enter these in the Metrologist app):</strong><br>
+        Length: 20.0 cm &nbsp;/&nbsp; 7.87 in &nbsp;&nbsp;·&nbsp;&nbsp; Width: 4.0 cm &nbsp;/&nbsp; 1.57 in<br>
+        4 equal bands · each band: 5.0 cm (50 mm) wide
+      </div>
+
+      <!-- CALIBRATION RULER: exactly 100mm = 10.0 cm -->
+      <div class="print-ruler-section">
+        <div class="print-ruler-title">Calibration check — verify with a real ruler</div>
+
+        <!--
+          This SVG is rendered at width: 100mm in print CSS (above).
+          viewBox is 500 × 60 units → each unit = 0.2mm → 10 ticks = 2mm
+          Major ticks at every 10 units (2mm), labelled at 0,10,20,...,50 (cm 0-10)
+        -->
+        <svg class="print-ruler-svg"
+             viewBox="0 0 500 60"
+             xmlns="http://www.w3.org/2000/svg"
+             aria-label="10 centimetre calibration ruler">
+          <!-- baseline -->
+          <line x1="0" y1="30" x2="500" y2="30" stroke="#000" stroke-width="2"/>
+          <!-- left cap -->
+          <line x1="0" y1="10" x2="0" y2="50" stroke="#000" stroke-width="2"/>
+          <!-- right cap -->
+          <line x1="500" y1="10" x2="500" y2="50" stroke="#000" stroke-width="2"/>
+
+          <!-- mm ticks (every 5 units = 1mm), half-ticks -->
+          <!-- cm ticks (every 50 units = 10mm = 1cm) -->
+          <!-- 2mm intermediate ticks (every 10 units) -->
+          <!-- We draw: major cm (50u), half-cm (25u), mm (5u) -->
+
+          <!-- generate ticks using repetition — js not available in print SVG, so inline all 10cm -->
+          <!-- 1mm = 5 viewBox units. Labels at cm positions (50u each). -->
+
+          <!-- mm tick lines: height 8u; half-cm: 14u; cm: 22u -->
+          <!-- 0cm mark (label) -->
+          <line x1="0" y1="8" x2="0" y2="52" stroke="#000" stroke-width="2"/>
+          <text x="3" y="58" font-family="Courier New, monospace" font-size="14" fill="#000">0</text>
+
+          <!-- 1mm–9mm -->
+          <line x1="5"  y1="22" x2="5"  y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="10" y1="22" x2="10" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="15" y1="22" x2="15" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="20" y1="22" x2="20" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="25" y1="16" x2="25" y2="44" stroke="#000" stroke-width="1.2"/><!-- 5mm -->
+          <line x1="30" y1="22" x2="30" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="35" y1="22" x2="35" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="40" y1="22" x2="40" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="45" y1="22" x2="45" y2="38" stroke="#000" stroke-width="1"/>
+          <!-- 1cm -->
+          <line x1="50" y1="12" x2="50" y2="48" stroke="#000" stroke-width="1.5"/>
+          <text x="53" y="58" font-family="Courier New, monospace" font-size="14" fill="#000">1</text>
+
+          <!-- repeat pattern 2–9 cm -->
+          <line x1="55" y1="22" x2="55" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="60" y1="22" x2="60" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="65" y1="22" x2="65" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="70" y1="22" x2="70" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="75" y1="16" x2="75" y2="44" stroke="#000" stroke-width="1.2"/>
+          <line x1="80" y1="22" x2="80" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="85" y1="22" x2="85" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="90" y1="22" x2="90" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="95" y1="22" x2="95" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="100" y1="12" x2="100" y2="48" stroke="#000" stroke-width="1.5"/>
+          <text x="103" y="58" font-family="Courier New, monospace" font-size="14" fill="#000">2</text>
+
+          <line x1="105" y1="22" x2="105" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="110" y1="22" x2="110" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="115" y1="22" x2="115" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="120" y1="22" x2="120" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="125" y1="16" x2="125" y2="44" stroke="#000" stroke-width="1.2"/>
+          <line x1="130" y1="22" x2="130" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="135" y1="22" x2="135" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="140" y1="22" x2="140" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="145" y1="22" x2="145" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="150" y1="12" x2="150" y2="48" stroke="#000" stroke-width="1.5"/>
+          <text x="153" y="58" font-family="Courier New, monospace" font-size="14" fill="#000">3</text>
+
+          <line x1="155" y1="22" x2="155" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="160" y1="22" x2="160" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="165" y1="22" x2="165" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="170" y1="22" x2="170" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="175" y1="16" x2="175" y2="44" stroke="#000" stroke-width="1.2"/>
+          <line x1="180" y1="22" x2="180" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="185" y1="22" x2="185" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="190" y1="22" x2="190" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="195" y1="22" x2="195" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="200" y1="12" x2="200" y2="48" stroke="#000" stroke-width="1.5"/>
+          <text x="203" y="58" font-family="Courier New, monospace" font-size="14" fill="#000">4</text>
+
+          <line x1="205" y1="22" x2="205" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="210" y1="22" x2="210" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="215" y1="22" x2="215" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="220" y1="22" x2="220" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="225" y1="16" x2="225" y2="44" stroke="#000" stroke-width="1.2"/>
+          <line x1="230" y1="22" x2="230" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="235" y1="22" x2="235" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="240" y1="22" x2="240" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="245" y1="22" x2="245" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="250" y1="8" x2="250" y2="52" stroke="#000" stroke-width="2"/><!-- 5cm midpoint -->
+          <text x="253" y="58" font-family="Courier New, monospace" font-size="14" fill="#000">5</text>
+
+          <line x1="255" y1="22" x2="255" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="260" y1="22" x2="260" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="265" y1="22" x2="265" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="270" y1="22" x2="270" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="275" y1="16" x2="275" y2="44" stroke="#000" stroke-width="1.2"/>
+          <line x1="280" y1="22" x2="280" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="285" y1="22" x2="285" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="290" y1="22" x2="290" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="295" y1="22" x2="295" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="300" y1="12" x2="300" y2="48" stroke="#000" stroke-width="1.5"/>
+          <text x="303" y="58" font-family="Courier New, monospace" font-size="14" fill="#000">6</text>
+
+          <line x1="305" y1="22" x2="305" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="310" y1="22" x2="310" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="315" y1="22" x2="315" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="320" y1="22" x2="320" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="325" y1="16" x2="325" y2="44" stroke="#000" stroke-width="1.2"/>
+          <line x1="330" y1="22" x2="330" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="335" y1="22" x2="335" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="340" y1="22" x2="340" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="345" y1="22" x2="345" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="350" y1="12" x2="350" y2="48" stroke="#000" stroke-width="1.5"/>
+          <text x="353" y="58" font-family="Courier New, monospace" font-size="14" fill="#000">7</text>
+
+          <line x1="355" y1="22" x2="355" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="360" y1="22" x2="360" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="365" y1="22" x2="365" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="370" y1="22" x2="370" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="375" y1="16" x2="375" y2="44" stroke="#000" stroke-width="1.2"/>
+          <line x1="380" y1="22" x2="380" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="385" y1="22" x2="385" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="390" y1="22" x2="390" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="395" y1="22" x2="395" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="400" y1="12" x2="400" y2="48" stroke="#000" stroke-width="1.5"/>
+          <text x="403" y="58" font-family="Courier New, monospace" font-size="14" fill="#000">8</text>
+
+          <line x1="405" y1="22" x2="405" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="410" y1="22" x2="410" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="415" y1="22" x2="415" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="420" y1="22" x2="420" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="425" y1="16" x2="425" y2="44" stroke="#000" stroke-width="1.2"/>
+          <line x1="430" y1="22" x2="430" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="435" y1="22" x2="435" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="440" y1="22" x2="440" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="445" y1="22" x2="445" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="450" y1="12" x2="450" y2="48" stroke="#000" stroke-width="1.5"/>
+          <text x="453" y="58" font-family="Courier New, monospace" font-size="14" fill="#000">9</text>
+
+          <line x1="455" y1="22" x2="455" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="460" y1="22" x2="460" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="465" y1="22" x2="465" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="470" y1="22" x2="470" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="475" y1="16" x2="475" y2="44" stroke="#000" stroke-width="1.2"/>
+          <line x1="480" y1="22" x2="480" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="485" y1="22" x2="485" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="490" y1="22" x2="490" y2="38" stroke="#000" stroke-width="1"/>
+          <line x1="495" y1="22" x2="495" y2="38" stroke="#000" stroke-width="1"/>
+          <!-- 10cm end mark -->
+          <line x1="500" y1="8" x2="500" y2="52" stroke="#000" stroke-width="2"/>
+          <text x="476" y="58" font-family="Courier New, monospace" font-size="14" fill="#000">10 cm</text>
+        </svg>
+
+        <div class="print-ruler-label">
+          Verify: this ruler must measure exactly 10 cm (100 mm / 3.94 in) with a real ruler.
+          If it doesn't, your printer scaled the page — reprint at 100% / Actual size.
+        </div>
+      </div>
+
+      <!-- Instructions -->
+      <div class="print-instructions">
+        <div class="print-instructions-title">Instructions</div>
+        <ol>
+          <li><strong>Verify scale first:</strong> confirm the ruler above = exactly 10 cm with a real ruler.</li>
+          <li><strong>Cut out the stick</strong> along its border.</li>
+          <li><strong>Mount on something rigid and flat</strong> — thick cardboard, a ruler, a thin board. Keep it straight.</li>
+          <li><strong>In the Metrologist app</strong> → Settings → Reference stick → enter <strong>Length 20.0 cm</strong> and <strong>Width 4.0 cm</strong> (or 7.87 in × 1.57 in).</li>
+          <li><strong>Place the stick on the surface, take a photo</strong>, mark the 4 corners and 2 stick ends.</li>
+        </ol>
+        <div class="app-note">
+          Metrologist is a free, offline Android app. Download at: https://cocodedk.github.io/Metrologist/
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer (screen only) -->
+  <footer class="site-footer page-wrap" role="contentinfo">
+    <div class="footer-inner">
+      <p class="footer-copy">
+        Apache-2.0 | &copy; 2026 <a href="https://cocode.dk" target="_blank" rel="noreferrer">Cocode</a> | Created by <a href="https://linkedin.com/in/babakbandpey" target="_blank" rel="noreferrer">Babak Bandpey</a>
+      </p>
+      <div class="footer-links">
+        <a href="/">Home</a>
+        <a href="https://github.com/cocodedk/Metrologist" target="_blank" rel="noreferrer">GitHub</a>
+        <a href="https://github.com/cocodedk/Metrologist/releases/latest/download/Metrologist.apk">Download APK</a>
+        <a href="fa/">فارسی</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

@@ -55,6 +55,7 @@ import kotlinx.coroutines.withContext
 fun MarkScreen(
     image: CapturedImage,
     stickLengthMeters: Double,
+    stickWidthMeters: Double,
     unit: LengthUnit,
     detector: StickDetector = DeferredStickDetector,
     onMeasured: (MeasurementView) -> Unit,
@@ -180,10 +181,10 @@ fun MarkScreen(
                     onMeasured(
                         MeasurementPresenter.present(
                             corners = ordered,
-                            stick = StickBox.ends(stick.toList()),
+                            stick = stick.toList(),
                             intrinsics = image.scene.intrinsics,
                             gravity = image.scene.gravity,
-                            profile = StickProfile(stickLengthMeters),
+                            profile = StickProfile(stickLengthMeters, width = stickWidthMeters),
                             orientation = SurfaceOrientation.VERTICAL,
                             unit = unit,
                         ),

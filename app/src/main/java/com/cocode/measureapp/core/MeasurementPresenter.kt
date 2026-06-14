@@ -32,6 +32,7 @@ data class MeasurementView(
  * No Android imports; safe to unit-test on the JVM.
  */
 object MeasurementPresenter {
+    /** [stick] is the 4 image corners of the stick's bounding box (clockwise around the quad). */
     fun present(
         corners: List<Vec2>,
         stick: List<Vec2>,

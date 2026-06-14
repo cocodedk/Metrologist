@@ -1,5 +1,6 @@
 package com.cocode.measureapp.geometry
 
+import com.cocode.measureapp.stick.StickScale
 import kotlin.math.asin
 import kotlin.math.min
 
@@ -39,9 +40,10 @@ data class EngineResult(
 object MetrologyEngine {
     /**
      * @param corners image corners of the target rectangle, `[TL, TR, BR, BL]` clockwise.
-     * @param stick image markers along the known-length stick lying on the same plane.
+     * @param stick the 4 image corners of the stick's bounding box (clockwise around the quad),
+     *   lying on the same plane; long edges = stick length, short edges = stick width.
      * @param k camera intrinsics.
-     * @param profile the stick's known real length and band subdivision.
+     * @param profile the stick's known real length, width, and band subdivision.
      *
      * Rectangle-only Plan 2 path. When [RectangleSolver] cannot recover a plane the solution
      * is `null` and a zeroed result with `confidence = 0.0` and a RECTANGLE solution flagged
@@ -97,9 +99,10 @@ object MetrologyEngine {
     }
 
     /**
-     * Shared metrology logic for a usable [solution]: project corners + stick to up-to-scale
-     * metric, recover the real scale with [ScaleSolver], scale the corners, measure them, and
-     * combine `confidence = solution.confidence * (1 - min(agreement, 1))`.
+     * Shared metrology logic for a usable [solution]: project corners + the stick's 4 box
+     * corners to up-to-scale metric, recover the real scale with [StickScale] (using BOTH the
+     * known length along the long edges and the known width across the short edges), scale the
+     * corners, measure them, and combine `confidence = solution.confidence * (1 - min(agreement, 1))`.
      */
     private fun measureWith(
         solution: PlaneSolution,
@@ -110,7 +113,7 @@ object MetrologyEngine {
     ): EngineResult {
         val cornerMetric = projectToPlane(corners, k, solution.frame)
         val stickMetric = projectToPlane(stick, k, solution.frame)
-        val scale = ScaleSolver.solve(stickMetric, profile)
+        val scale = StickScale.solve(stickMetric, profile)
         val cornersReal = cornerMetric.map { it * scale.scale }
         val measurement = Measurements.compute(cornersReal)
         val confidence = solution.confidence * (1.0 - min(scale.agreement, 1.0))
