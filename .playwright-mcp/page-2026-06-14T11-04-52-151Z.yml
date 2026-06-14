@@ -1,0 +1,13 @@
+- generic [ref=e2]:
+  - heading "Calibrate this screen" [level=2] [ref=e3]
+  - paragraph [ref=e4]: Hold a bank / credit card (any ID-1 card, 85.6 mm wide) flat against the screen and resize the blue card until it matches exactly. This measures your display, so every value below becomes a real, on-screen measurement.
+  - img "Bank-card outline — resize to match a real ID-1 card (85.6 mm wide)" [ref=e5]
+  - generic [ref=e6]:
+    - generic [ref=e7]: Card width (pixels)
+    - slider "Card width (pixels)" [ref=e8]: "320"
+  - generic [ref=e9]:
+    - button "Set from card" [ref=e10] [cursor=pointer]
+    - generic [ref=e11]: or, if you know it,
+    - spinbutton [ref=e12]
+    - button "Use PPI" [ref=e13] [cursor=pointer]
+  - generic [ref=e14]: "Card box: 320 px → 3.74 px/mm"

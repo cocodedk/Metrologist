@@ -98,7 +98,7 @@
       Screen: <b id="vScreen"></b> (<span id="vPpcm"></span> px/cm)<br>
       Wall (target): <b id="vWall"></b><br>
       Diagonal: <b id="vDiag"></b> &middot; Area: <b id="vArea"></b><br>
-      Stick: <b id="vStick"></b> (band <span id="vBand"></span> cm)
+      Stick (set in app): <b id="vStick"></b> · band <span id="vBand"></span> cm
     </div>
     <div class="vbar" id="vbar" aria-hidden="true"></div>
     <div class="hint" id="diag"></div>
@@ -114,7 +114,7 @@
 <script>
   const $ = id => document.getElementById(id);
   const ID1_W = 85.6;        // ISO/IEC 7810 ID-1 card width in mm
-  const STICK_FRAC = 0.45;   // stick length as a fraction of wall width
+  const STICK_LEN_MM = 200, STICK_WID_MM = 40;  // fixed 20.0 × 4.0 cm target (matches the printable stick)
   let pxPerMm = parseFloat(localStorage.getItem('pxPerMm')) || 0;
 
   const card = $('card'), cardW = $('cardW');
@@ -141,12 +141,19 @@
     const wpx = Math.round(innerWidth * 0.94), hpx = Math.round(innerHeight * 0.86);
     wall.style.width = wpx + 'px';
     wall.style.height = hpx + 'px';
-    const spx = Math.round(wpx * STICK_FRAC);
+    let spx, swpx;
+    if (pxPerMm > 0 && STICK_LEN_MM * pxPerMm < wpx * 0.9) {
+      spx = Math.round(STICK_LEN_MM * pxPerMm);      // fixed 20 cm when it fits the screen
+      swpx = Math.round(STICK_WID_MM * pxPerMm);
+    } else {
+      spx = Math.round(wpx * 0.45);                  // fall back to adaptive on small screens
+      swpx = Math.max(14, Math.round(spx * 0.11));
+    }
     stick.style.width = spx + 'px';
-    stick.style.height = Math.max(14, Math.round(spx * 0.11)) + 'px';
-    if (pxPerMm > 0) report(wpx, hpx, spx);
+    stick.style.height = swpx + 'px';
+    if (pxPerMm > 0) report(wpx, hpx, spx, swpx);
   }
-  function report(wpx, hpx, spx) {
+  function report(wpx, hpx, spx, swpx) {
     const cm = px => px / pxPerMm / 10;
     const W = cm(wpx), H = cm(hpx), L = cm(spx);
     $('vScreen').textContent = `${cm(screen.width).toFixed(1)} × ${cm(screen.height).toFixed(1)} cm`;
@@ -154,12 +161,11 @@
     $('vWall').textContent = `${W.toFixed(1)} × ${H.toFixed(1)} cm`;
     $('vDiag').textContent = `${Math.hypot(W, H).toFixed(1)} cm`;
     $('vArea').textContent = `${(W * H).toFixed(0)} cm²`;
-    $('vStick').textContent = `${L.toFixed(1)} cm`;
+    $('vStick').textContent = `${L.toFixed(1)} × ${cm(swpx).toFixed(1)} cm`;
     $('vBand').textContent = (L / 4).toFixed(2);
     drawVerify();
   }
-  // Ground-truth check: a 5 cm bar the user verifies against a physical ruler.
-  function drawVerify() {
+  function drawVerify() {  // 5 cm bar the user checks against a physical ruler
     const bar = $('vbar'); bar.innerHTML = '';
     if (pxPerMm <= 0) return;
     bar.style.width = (pxPerMm * 50) + 'px';   // 5 cm
