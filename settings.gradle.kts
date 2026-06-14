@@ -22,6 +22,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Measure App"
+rootProject.name = "Metrologist"
 include(":app")
  
