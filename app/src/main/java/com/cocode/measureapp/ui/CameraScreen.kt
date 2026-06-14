@@ -89,7 +89,7 @@ fun CameraScreen(
     var tilt by remember { mutableStateOf(TiltAngles(0.0, 0.0)) }
     LaunchedEffect(Unit) {
         while (true) {
-            tilt = tiltFromGravity(gravity.current())
+            tilt = tiltFromGravity(gravity.current(), displayRotationDegrees(context))
             delay(50)
         }
     }

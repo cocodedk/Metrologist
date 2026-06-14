@@ -4,6 +4,8 @@ import com.cocode.measureapp.geometry.Tolerances.NORM_EPS
 import kotlin.math.abs
 import kotlin.math.asin
 import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
 
 /** Device tilt relative to a level, square pose, in degrees. */
 data class TiltAngles(val pitchDeg: Double, val rollDeg: Double) {
@@ -20,12 +22,18 @@ data class TiltAngles(val pitchDeg: Double, val rollDeg: Double) {
 /**
  * Pitch (lean forward/back) and roll (sideways tilt) from a gravity direction in the
  * camera-frame approximation (x right, y down, z forward), where (0, 1, 0) is upright.
+ * [rotationDegrees] is the current display rotation (0/90/180/270); the in-plane gravity
+ * is rotated into the view frame so "level" reads 0,0 in portrait and landscape alike.
  * A zero-length input falls back to the upright reading.
  */
-fun tiltFromGravity(gravity: Vec3): TiltAngles {
+fun tiltFromGravity(gravity: Vec3, rotationDegrees: Int = 0): TiltAngles {
     val n = gravity.norm()
     val g = if (n > NORM_EPS) gravity * (1.0 / n) else Vec3(0.0, 1.0, 0.0)
-    val roll = Math.toDegrees(asin(g.x.coerceIn(-1.0, 1.0)))
-    val pitch = Math.toDegrees(atan2(g.z, g.y))
+    val rad = Math.toRadians(rotationDegrees.toDouble())
+    val c = cos(rad); val s = sin(rad)
+    val vx = g.x * c - g.y * s   // gravity in the current view's right axis
+    val vy = g.x * s + g.y * c   // gravity in the current view's down axis
+    val roll = Math.toDegrees(asin(vx.coerceIn(-1.0, 1.0)))
+    val pitch = Math.toDegrees(atan2(g.z, vy))
     return TiltAngles(pitchDeg = pitch, rollDeg = roll)
 }

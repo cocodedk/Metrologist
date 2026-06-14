@@ -3,6 +3,8 @@ package com.cocode.measureapp.ui
 import android.content.Context
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
+import android.view.Surface
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -12,6 +14,16 @@ import com.cocode.measureapp.capture.GravityProvider
 import com.cocode.measureapp.capture.IntrinsicsExtractor
 import com.cocode.measureapp.geometry.CameraIntrinsics
 import com.cocode.measureapp.model.CapturedScene
+
+/** Current display rotation in degrees (0/90/180/270) — keeps the tilt level orientation-aware. */
+@Suppress("DEPRECATION")
+internal fun displayRotationDegrees(context: Context): Int =
+    when ((context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.rotation) {
+        Surface.ROTATION_90 -> 90
+        Surface.ROTATION_180 -> 180
+        Surface.ROTATION_270 -> 270
+        else -> 0
+    }
 
 /** Reads camera intrinsics from the bound camera, falling back to the first back-facing camera. */
 internal fun readIntrinsics(context: Context, boundId: String?, w: Int, h: Int): CameraIntrinsics {

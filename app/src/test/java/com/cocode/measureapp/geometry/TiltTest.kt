@@ -74,4 +74,37 @@ class TiltTest {
     @Test fun tiltedDiagonallyIsNotLevel() {
         assertFalse(TiltAngles(45.0, 45.0).isLevel(1.0))
     }
+
+    // --- orientation-aware: landscape (display rotated 90/270) facing a wall ---
+
+    @Test fun landscape90FacingWallIsLevel() {
+        // Rotated 90° to landscape, square to a wall: gravity along camera +x.
+        val t = tiltFromGravity(Vec3(1.0, 0.0, 0.0), rotationDegrees = 90)
+        assertEquals(0.0, t.pitchDeg, eps)
+        assertEquals(0.0, t.rollDeg, eps)
+        assertTrue(t.isLevel())
+    }
+
+    @Test fun landscape270FacingWallIsLevel() {
+        val t = tiltFromGravity(Vec3(-1.0, 0.0, 0.0), rotationDegrees = 270)
+        assertEquals(0.0, t.pitchDeg, eps)
+        assertEquals(0.0, t.rollDeg, eps)
+        assertTrue(t.isLevel())
+    }
+
+    @Test fun landscapeForwardLeanShowsPitch() {
+        val a = Math.toRadians(8.0)
+        val t = tiltFromGravity(Vec3(cos(a), 0.0, sin(a)), rotationDegrees = 90)
+        assertEquals(8.0, t.pitchDeg, eps)
+        assertEquals(0.0, t.rollDeg, eps)
+        assertFalse(t.isLevel())
+    }
+
+    @Test fun landscapeSidewaysTiltShowsRoll() {
+        val a = Math.toRadians(8.0)
+        val t = tiltFromGravity(Vec3(cos(a), -sin(a), 0.0), rotationDegrees = 90)
+        assertEquals(0.0, t.pitchDeg, eps)
+        assertEquals(8.0, t.rollDeg, eps)
+        assertFalse(t.isLevel())
+    }
 }
