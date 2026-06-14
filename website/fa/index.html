@@ -1,0 +1,368 @@
+<!--
+  کلمات کلیدی: اندازه‌گیری با گوشی، اپلیکیشن اندازه‌گیری از عکس، اپ اندرویدی متراژ،
+  اندازه‌گیری دیوار با دوربین، محاسبه مساحت با اندروید، متروژیست، ابزار اندازه‌گیری آفلاین،
+  اندازه‌گیری دقیق با تلفن همراه، نرم‌افزار اندازه‌گیری یک‌تصویری
+-->
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Primary SEO -->
+  <title>اندازه‌گیری با گوشی — اپ اندرویدی متروژیست</title>
+  <meta name="description" content="متروژیست با یک عکس از گوشی، عرض، ارتفاع، مساحت، قطر و زوایای هر سطح صافی را محاسبه می‌کند. بدون اینترنت. رایگان. اوپن‌سورس. ساخته‌شده توسط کوکد.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://cocodedk.github.io/Metrologist/fa/">
+
+  <!-- hreflang -->
+  <link rel="alternate" hreflang="en" href="https://cocodedk.github.io/Metrologist/">
+  <link rel="alternate" hreflang="fa" href="https://cocodedk.github.io/Metrologist/fa/">
+  <link rel="alternate" hreflang="x-default" href="https://cocodedk.github.io/Metrologist/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://cocodedk.github.io/Metrologist/fa/">
+  <meta property="og:title" content="اندازه‌گیری با گوشی — اپ اندرویدی متروژیست">
+  <meta property="og:description" content="اندازه‌گیری دقیق سطوح صاف از یک عکس. چهار گوشه و چوب مرجع را علامت بزنید — عرض، ارتفاع، مساحت، قطر و زوایا را دریافت کنید. رایگان، آفلاین، اوپن‌سورس.">
+  <meta property="og:image" content="https://cocodedk.github.io/Metrologist/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="fa_IR">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta property="og:site_name" content="Metrologist">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="اندازه‌گیری با گوشی — اپ اندرویدی متروژیست">
+  <meta name="twitter:description" content="اندازه‌گیری دقیق از یک عکس. اپ رایگان و آفلاین اندروید.">
+  <meta name="twitter:image" content="https://cocodedk.github.io/Metrologist/og.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="../styles.css">
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "MobileApplication",
+    "name": "Metrologist",
+    "alternateName": "متروژیست",
+    "description": "اندازه‌گیری سطوح صاف از یک عکس با استفاده از چوب مرجع. عرض، ارتفاع، مساحت، قطر و زوایا را با امتیاز اطمینان دریافت کنید. کاملاً آفلاین کار می‌کند.",
+    "operatingSystem": "Android",
+    "applicationCategory": "UtilitiesApplication",
+    "inLanguage": "fa",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "IRR"
+    },
+    "author": {
+      "@type": "Person",
+      "name": "بابک بندپی",
+      "url": "https://linkedin.com/in/babakbandpey",
+      "worksFor": {
+        "@type": "Organization",
+        "name": "Cocode",
+        "url": "https://cocode.dk",
+        "sameAs": [
+          "https://linkedin.com/in/babakbandpey",
+          "https://github.com/cocodedk"
+        ]
+      }
+    },
+    "codeRepository": "https://github.com/cocodedk/Metrologist",
+    "downloadUrl": "https://github.com/cocodedk/Metrologist/releases/latest/download/Metrologist.apk",
+    "softwareVersion": "latest",
+    "license": "https://www.apache.org/licenses/LICENSE-2.0"
+  }
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">رفتن به محتوا</a>
+
+  <!-- Fixed staff rail -->
+  <div class="staff-rail" aria-hidden="true"></div>
+
+  <!-- Navigation -->
+  <nav class="site-nav" aria-label="ناوبری اصلی">
+    <div class="nav-inner">
+      <a href="../" class="nav-brand" aria-label="صفحه اصلی متروژیست">
+        <svg class="nav-brand-icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <rect x="11" y="2" width="10" height="7" rx="1" fill="#D42B2B"/>
+          <rect x="11" y="9" width="10" height="7" fill="#F2F2EE"/>
+          <rect x="11" y="16" width="10" height="7" fill="#D42B2B"/>
+          <rect x="11" y="23" width="10" height="7" rx="1" fill="#F2F2EE"/>
+          <line x1="16" y1="12" x2="16" y2="20" stroke="#E8A020" stroke-width="1.2"/>
+          <line x1="12" y1="16" x2="20" y2="16" stroke="#E8A020" stroke-width="1.2"/>
+          <circle cx="16" cy="16" r="1" fill="#E8A020"/>
+        </svg>
+        <span class="nav-brand-name">Metrologist</span>
+      </a>
+      <div class="nav-actions">
+        <a href="../" class="lang-switch" aria-label="Switch to English">English</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main content -->
+  <main id="main">
+
+    <!-- Hero -->
+    <section class="hero page-wrap" aria-labelledby="hero-heading">
+      <div class="hero-readout mono" aria-hidden="true">±۲٪</div>
+
+      <!-- Crosshair SVG decoration -->
+      <svg class="hero-crosshair" viewBox="0 0 160 160" aria-hidden="true" focusable="false">
+        <circle cx="80" cy="80" r="70" fill="none" stroke="#F2F2EE" stroke-width="0.8"/>
+        <circle cx="80" cy="80" r="40" fill="none" stroke="#F2F2EE" stroke-width="0.5"/>
+        <line x1="80" y1="2" x2="80" y2="158" stroke="#F2F2EE" stroke-width="0.8"/>
+        <line x1="2" y1="80" x2="158" y2="80" stroke="#F2F2EE" stroke-width="0.8"/>
+        <line x1="80" y1="60" x2="80" y2="70" stroke="#E8A020" stroke-width="1.5"/>
+        <line x1="80" y1="90" x2="80" y2="100" stroke="#E8A020" stroke-width="1.5"/>
+        <line x1="60" y1="80" x2="70" y2="80" stroke="#E8A020" stroke-width="1.5"/>
+        <line x1="90" y1="80" x2="100" y2="80" stroke="#E8A020" stroke-width="1.5"/>
+        <circle cx="80" cy="80" r="2" fill="#E8A020"/>
+      </svg>
+
+      <div class="hero-content">
+        <p class="hero-eyebrow">اندازه‌گیری تک‌تصویری · اندروید · رایگان</p>
+        <h1 id="hero-heading">
+          با گوشی‌ات اندازه بگیر.<br>
+          <em>یک عکس. اعداد واقعی.</em>
+        </h1>
+        <p class="hero-desc">
+          از سطح مورد نظر — دیوار، در، پنجره — یک عکس بگیر. چوب مرجع قرمز-سفید را کنارش بگذار، چهار گوشه و دو سر چوب را علامت بزن. متروژیست عرض، ارتفاع، مساحت، قطر و زوایا را حساب می‌کند. بدون اینترنت. بدون سرور. کاملاً روی گوشی.
+        </p>
+        <div class="hero-actions">
+          <a href="https://github.com/cocodedk/Metrologist/releases/latest/download/Metrologist.apk"
+             class="btn-primary"
+             aria-label="دانلود فایل APK متروژیست">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+              <path d="M8 12l-4-4h2.5V3h3v5H12L8 12z"/>
+              <rect x="2" y="13" width="12" height="1.5" rx="0.75"/>
+            </svg>
+            دانلود APK
+          </a>
+          <a href="https://github.com/cocodedk/Metrologist"
+             class="btn-secondary"
+             target="_blank"
+             rel="noreferrer"
+             aria-label="مشاهده کد روی گیت‌هاب">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+            </svg>
+            گیت‌هاب
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <div class="staff-divider" aria-hidden="true"></div>
+
+    <!-- How it works -->
+    <section aria-labelledby="how-heading">
+      <div class="page-wrap">
+        <p class="section-label">روش کار</p>
+        <h2 id="how-heading">سه گام از عکس تا عدد</h2>
+
+        <div class="steps-grid">
+          <article class="step-card reveal">
+            <span class="step-num mono">گام ۰۱</span>
+            <h3>از سطح عکس بگیر</h3>
+            <p>چوب مرجع قرمز-سفید-قرمز-سفید را کنار دیوار، در یا پنجره قرار بده. یک عکس بگیر — هر زاویه، هر نور.</p>
+          </article>
+
+          <article class="step-card reveal" style="transition-delay:0.08s">
+            <span class="step-num mono">گام ۰۲</span>
+            <h3>گوشه‌ها و چوب را علامت بزن</h3>
+            <p>روی چهار گوشه سطح و دو سر چوب مرجع ضربدر بزن. بزرگ‌نمایی لمسی و ذره‌بین داخلی دقت قرارگیری نقاط را بالا می‌برند.</p>
+          </article>
+
+          <article class="step-card reveal" style="transition-delay:0.16s">
+            <span class="step-num mono">گام ۰۳</span>
+            <h3>نتیجه را بخوان</h3>
+            <p>عرض، ارتفاع، مساحت، قطر و زوایای گوشه‌ها — همراه با امتیاز اطمینان. بدون اینترنت، بدون حساب کاربری، کاملاً آفلاین.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <div class="staff-divider" aria-hidden="true"></div>
+
+    <!-- Features -->
+    <section aria-labelledby="features-heading">
+      <div class="page-wrap">
+        <p class="section-label">ویژگی‌ها</p>
+        <h2 id="features-heading">ساخته‌شده برای کسانی که به دقت اهمیت می‌دهند</h2>
+
+        <div class="features-grid">
+          <div class="feature-item reveal">
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="2" y="8" width="16" height="4" rx="1"/>
+                <line x1="6" y1="6" x2="6" y2="8"/>
+                <line x1="10" y1="5" x2="10" y2="8"/>
+                <line x1="14" y1="6" x2="14" y2="8"/>
+              </svg>
+            </div>
+            <div class="feature-text">
+              <h4>واحدهای واقعی</h4>
+              <p>نتایج به سانتی‌متر، اینچ یا متر — یک‌بار تنظیم می‌شود.</p>
+            </div>
+          </div>
+
+          <div class="feature-item reveal" style="transition-delay:0.05s">
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="10" cy="10" r="7"/>
+                <line x1="10" y1="3" x2="10" y2="10"/>
+                <line x1="10" y1="10" x2="14" y2="10"/>
+              </svg>
+            </div>
+            <div class="feature-text">
+              <h4>کاملاً آفلاین</h4>
+              <p>تمام محاسبات روی دستگاه انجام می‌شود. نیازی به اینترنت، سرور یا حساب کاربری نیست.</p>
+            </div>
+          </div>
+
+          <div class="feature-item reveal" style="transition-delay:0.1s">
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M10 2L12.5 7H17.5L13.5 10.5L15 16L10 13L5 16L6.5 10.5L2.5 7H7.5L10 2Z"/>
+              </svg>
+            </div>
+            <div class="feature-text">
+              <h4>امتیاز اطمینان</h4>
+              <p>هر نتیجه یک امتیاز اطمینان دارد تا بدانی چقدر می‌توانی به آن تکیه کنی.</p>
+            </div>
+          </div>
+
+          <div class="feature-item reveal" style="transition-delay:0.15s">
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M4 8L10 2L16 8V18H12V13H8V18H4V8Z"/>
+              </svg>
+            </div>
+            <div class="feature-text">
+              <h4>دیوار، در، پنجره</h4>
+              <p>هر سطح صاف و تختی. موتور هندسی زاویه دوربین را جبران می‌کند — فقط ضربدر بزن.</p>
+            </div>
+          </div>
+
+          <div class="feature-item reveal" style="transition-delay:0.2s">
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="10" cy="10" r="3"/>
+                <line x1="10" y1="2" x2="10" y2="6"/>
+                <line x1="10" y1="14" x2="10" y2="18"/>
+                <line x1="2" y1="10" x2="6" y2="10"/>
+                <line x1="14" y1="10" x2="18" y2="10"/>
+              </svg>
+            </div>
+            <div class="feature-text">
+              <h4>ذره‌بین و زوم لمسی</h4>
+              <p>ذره‌بین داخلی برای قرارگیری دقیق نقاط، حتی روی جزئیات ریز عکس.</p>
+            </div>
+          </div>
+
+          <div class="feature-item reveal" style="transition-delay:0.25s">
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                <polyline points="3,14 7,9 11,12 17,5"/>
+                <circle cx="17" cy="5" r="1.5" fill="currentColor" stroke="none"/>
+              </svg>
+            </div>
+            <div class="feature-text">
+              <h4>موتور ۱۰۰٪ تست‌شده</h4>
+              <p>موتور اندازه‌گیری Kotlin با پوشش کامل یونیت‌تست نوشته شده. اعدادی که می‌توانی به آن‌ها اعتماد کنی.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="staff-divider" aria-hidden="true"></div>
+
+    <!-- Accuracy -->
+    <section aria-labelledby="accuracy-heading">
+      <div class="page-wrap">
+        <p class="section-label">دقت</p>
+        <h2 id="accuracy-heading">چقدر دقیق است؟</h2>
+
+        <div class="accuracy-block reveal">
+          <div class="accuracy-left">
+            <div class="accuracy-readout">±۱–۵٪</div>
+            <div class="accuracy-label mono">خطای معمول</div>
+            <div class="confidence-row">
+              <div class="confidence-bar-wrap" role="meter" aria-valuenow="92" aria-valuemin="0" aria-valuemax="100" aria-label="نمونه امتیاز اطمینان">
+                <div class="confidence-bar"></div>
+              </div>
+              <span class="confidence-value mono">۹۲٪ اطمینان</span>
+            </div>
+          </div>
+          <div class="accuracy-right">
+            <p>
+              متروژیست از یک عکس کار می‌کند — بدون لیزر، بدون متر. میزان خطا معمولاً بین ۱ تا ۵ درصد است و به کیفیت عکس، زاویه دوربین و دقت قرارگیری چوب مرجع بستگی دارد. برای اکثر کارهای DIY و صنفی — بریدن مصالح، سفارش کاشی، ارائه پیش‌فاکتور — این دقت کافی است. امتیاز اطمینان روی صفحه به تو می‌گوید چه وقت می‌توانی به نتیجه تکیه کنی و چه وقت بهتر است دوباره عکس بگیری.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="staff-divider" aria-hidden="true"></div>
+
+    <!-- Open source -->
+    <section aria-labelledby="opensource-heading">
+      <div class="page-wrap">
+        <p class="section-label">اوپن‌سورس</p>
+        <h2 id="opensource-heading">رایگان، شفاف و آزاد</h2>
+
+        <div class="opensource-block reveal">
+          <span class="license-badge">مجوز Apache-2.0</span>
+          <p>
+            متروژیست کاملاً اوپن‌سورس است. موتور اندازه‌گیری، رابط کاربری، تست‌ها — همه در گیت‌هاب. می‌توانی استفاده کنی، فورک بزنی یا از آن یاد بگیری. مشارکت خوش‌آمد است.
+          </p>
+          <p>
+            ساخته‌شده توسط <a href="https://cocode.dk" target="_blank" rel="noreferrer">Cocode</a> ·
+            طراحی‌شده توسط <a href="https://linkedin.com/in/babakbandpey" target="_blank" rel="noreferrer">بابک بندپی</a> ·
+            <a href="https://github.com/cocodedk/Metrologist" target="_blank" rel="noreferrer">مشاهده در گیت‌هاب ←</a>
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer page-wrap" role="contentinfo">
+    <div class="footer-inner">
+      <p class="footer-copy">
+        Apache-2.0 | © ۱۴۰۵ <a href="https://cocode.dk" target="_blank" rel="noreferrer">Cocode</a> | ساخته شده توسط <a href="https://linkedin.com/in/babakbandpey" target="_blank" rel="noreferrer">بابک بندپی</a>
+      </p>
+      <div class="footer-links">
+        <a href="https://github.com/cocodedk/Metrologist" target="_blank" rel="noreferrer">گیت‌هاب</a>
+        <a href="https://github.com/cocodedk/Metrologist/releases/latest/download/Metrologist.apk">دانلود</a>
+        <a href="../">English</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Scroll-triggered reveal
+    const observer = new IntersectionObserver(
+      (entries) => entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      }),
+      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+    );
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>

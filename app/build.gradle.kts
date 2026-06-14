@@ -12,14 +12,40 @@ android {
         }
     }
 
+    // Version driven by VERSION_NAME env var in CI/release; falls back to "1.0.0" locally.
+    val versionNameStr = System.getenv("VERSION_NAME") ?: "1.0.0"
+    val versionParts = versionNameStr.split(".").map { it.toIntOrNull() ?: 0 }
+    val vMajor = versionParts.getOrElse(0) { 0 }
+    val vMinor = versionParts.getOrElse(1) { 0 }
+    val vPatch = versionParts.getOrElse(2) { 0 }
+
     defaultConfig {
         applicationId = "com.cocode.measureapp"
         minSdk = 24
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = vMajor * 1_000_000 + vMinor * 1_000 + vPatch
+        versionName = versionNameStr
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    // Release signing: only configured when all four env vars are present and the keystore exists.
+    val keystorePath = System.getenv("KEYSTORE_PATH")
+    val keystorePassword = System.getenv("KEYSTORE_PASSWORD")
+    val keyAlias = System.getenv("KEY_ALIAS")
+    val keyPassword = System.getenv("KEY_PASSWORD")
+    val keystoreFile = if (keystorePath != null) rootProject.file(keystorePath) else null
+
+    if (keystorePath != null && keystorePassword != null && keyAlias != null &&
+        keyPassword != null && keystoreFile != null && keystoreFile.exists()) {
+        signingConfigs {
+            create("release") {
+                storeFile = keystoreFile
+                storePassword = keystorePassword
+                this.keyAlias = keyAlias
+                this.keyPassword = keyPassword
+            }
+        }
     }
 
     buildTypes {
@@ -32,6 +58,11 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            // Wire release signing config when available.
+            val releaseSigning = signingConfigs.findByName("release")
+            if (releaseSigning != null) {
+                signingConfig = releaseSigning
+            }
         }
     }
     compileOptions {
@@ -40,6 +71,9 @@ android {
     }
     buildFeatures {
         compose = true
+    }
+    lint {
+        baseline = file("lint-baseline.xml")
     }
 }
 

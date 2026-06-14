@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 9.1.1" type="baseline" client="gradle" dependencies="false" name="AGP (9.1.1)" variant="all" version="9.1.1">
+
+    <issue
+        id="RedundantLabel"
+        message="Redundant label can be removed"
+        errorLine1="            android:label=&quot;@string/app_name&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/AndroidManifest.xml"
+            line="20"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="AndroidGradlePluginVersion"
+        message="A newer version of Gradle than 9.3.1 is available: 9.5.1"
+        errorLine1="distributionUrl=https\://services.gradle.org/distributions/gradle-9.3.1-bin.zip"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="$HOME/0-projects/measure-app/gradle/wrapper/gradle-wrapper.properties"
+            line="5"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="AndroidGradlePluginVersion"
+        message="A newer version of com.android.application than 9.1.1 is available: 9.2.1"
+        errorLine1="agp = &quot;9.1.1&quot;"
+        errorLine2="      ~~~~~~~">
+        <location
+            file="$HOME/0-projects/measure-app/gradle/libs.versions.toml"
+            line="2"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.core:core-ktx than 1.10.1 is available: 1.19.0"
+        errorLine1="coreKtx = &quot;1.10.1&quot;"
+        errorLine2="          ~~~~~~~~">
+        <location
+            file="$HOME/0-projects/measure-app/gradle/libs.versions.toml"
+            line="3"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.test.ext:junit than 1.1.5 is available: 1.3.0"
+        errorLine1="junitVersion = &quot;1.1.5&quot;"
+        errorLine2="               ~~~~~~~">
+        <location
+            file="$HOME/0-projects/measure-app/gradle/libs.versions.toml"
+            line="5"
+            column="16"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.test.espresso:espresso-core than 3.5.1 is available: 3.7.0"
+        errorLine1="espressoCore = &quot;3.5.1&quot;"
+        errorLine2="               ~~~~~~~">
+        <location
+            file="$HOME/0-projects/measure-app/gradle/libs.versions.toml"
+            line="6"
+            column="16"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.lifecycle:lifecycle-runtime-compose than 2.8.7 is available: 2.10.0"
+        errorLine1="lifecycleRuntimeKtx = &quot;2.8.7&quot;"
+        errorLine2="                      ~~~~~~~">
+        <location
+            file="$HOME/0-projects/measure-app/gradle/libs.versions.toml"
+            line="7"
+            column="23"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.lifecycle:lifecycle-runtime-ktx than 2.8.7 is available: 2.10.0"
+        errorLine1="lifecycleRuntimeKtx = &quot;2.8.7&quot;"
+        errorLine2="                      ~~~~~~~">
+        <location
+            file="$HOME/0-projects/measure-app/gradle/libs.versions.toml"
+            line="7"
+            column="23"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.activity:activity-compose than 1.8.0 is available: 1.13.0"
+        errorLine1="activityCompose = &quot;1.8.0&quot;"
+        errorLine2="                  ~~~~~~~">
+        <location
+            file="$HOME/0-projects/measure-app/gradle/libs.versions.toml"
+            line="8"
+            column="19"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.compose:compose-bom than 2026.02.01 is available: 2026.05.01"
+        errorLine1="composeBom = &quot;2026.02.01&quot;"
+        errorLine2="             ~~~~~~~~~~~~">
+        <location
+            file="$HOME/0-projects/measure-app/gradle/libs.versions.toml"
+            line="10"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.camera:camera-camera2 than 1.4.1 is available: 1.6.1"
+        errorLine1="camerax = &quot;1.4.1&quot;"
+        errorLine2="          ~~~~~~~">
+        <location
+            file="$HOME/0-projects/measure-app/gradle/libs.versions.toml"
+            line="11"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.camera:camera-core than 1.4.1 is available: 1.6.1"
+        errorLine1="camerax = &quot;1.4.1&quot;"
+        errorLine2="          ~~~~~~~">
+        <location
+            file="$HOME/0-projects/measure-app/gradle/libs.versions.toml"
+            line="11"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.camera:camera-lifecycle than 1.4.1 is available: 1.6.1"
+        errorLine1="camerax = &quot;1.4.1&quot;"
+        errorLine2="          ~~~~~~~">
+        <location
+            file="$HOME/0-projects/measure-app/gradle/libs.versions.toml"
+            line="11"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.camera:camera-view than 1.4.1 is available: 1.6.1"
+        errorLine1="camerax = &quot;1.4.1&quot;"
+        errorLine2="          ~~~~~~~">
+        <location
+            file="$HOME/0-projects/measure-app/gradle/libs.versions.toml"
+            line="11"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.datastore:datastore-preferences than 1.1.1 is available: 1.2.1"
+        errorLine1="datastore = &quot;1.1.1&quot;"
+        errorLine2="            ~~~~~~~">
+        <location
+            file="$HOME/0-projects/measure-app/gradle/libs.versions.toml"
+            line="12"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="NewerVersionAvailable"
+        message="A newer version of org.jetbrains.kotlin.plugin.compose than 2.2.10 is available: 2.4.0"
+        errorLine1="kotlin = &quot;2.2.10&quot;"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="$HOME/0-projects/measure-app/gradle/libs.versions.toml"
+            line="9"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="NewerVersionAvailable"
+        message="A newer version of org.opencv:opencv than 4.11.0 is available: 5.0.0"
+        errorLine1="opencv = &quot;4.11.0&quot;"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="$HOME/0-projects/measure-app/gradle/libs.versions.toml"
+            line="13"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="UnsafeOptInUsageError"
+        message="This declaration is opt-in and its usage should be marked with `@androidx.camera.camera2.interop.ExperimentalCamera2Interop` or `@OptIn(markerClass = androidx.camera.camera2.interop.ExperimentalCamera2Interop.class)`"
+        errorLine1="                        boundCameraId.value = Camera2CameraInfo.from(camera.cameraInfo).cameraId"
+        errorLine2="                        ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/cocode/measureapp/ui/CameraScreen.kt"
+            line="93"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="UnsafeOptInUsageError"
+        message="This declaration is opt-in and its usage should be marked with `@androidx.camera.camera2.interop.ExperimentalCamera2Interop` or `@OptIn(markerClass = androidx.camera.camera2.interop.ExperimentalCamera2Interop.class)`"
+        errorLine1="                        boundCameraId.value = Camera2CameraInfo.from(camera.cameraInfo).cameraId"
+        errorLine2="                                                                ~~~~">
+        <location
+            file="src/main/java/com/cocode/measureapp/ui/CameraScreen.kt"
+            line="93"
+            column="65"/>
+    </issue>
+
+    <issue
+        id="UnsafeOptInUsageError"
+        message="This declaration is opt-in and its usage should be marked with `@androidx.camera.camera2.interop.ExperimentalCamera2Interop` or `@OptIn(markerClass = androidx.camera.camera2.interop.ExperimentalCamera2Interop.class)`"
+        errorLine1="                        boundCameraId.value = Camera2CameraInfo.from(camera.cameraInfo).cameraId"
+        errorLine2="                                                                                        ~~~~~~~~">
+        <location
+            file="src/main/java/com/cocode/measureapp/ui/CameraScreen.kt"
+            line="93"
+            column="89"/>
+    </issue>
+
+    <issue
+        id="Aligned16KB"
+        message="The native library `arm64-v8a/libc++_shared.so` (from `org.opencv:opencv:4.11.0`) is not 16 KB aligned">
+        <location
+            file="$GRADLE_USER_HOME/caches/9.3.1/transforms/7b86d278eccf0f7d0364f739d1ecd226/transformed/opencv-4.11.0/jni/arm64-v8a/libc++_shared.so"/>
+    </issue>
+
+    <issue
+        id="Aligned16KB"
+        message="The native library `arm64-v8a/libc++_shared.so` (from `org.opencv:opencv:4.11.0`) is not 16 KB aligned">
+        <location
+            file="$GRADLE_USER_HOME/caches/9.3.1/transforms/7b86d278eccf0f7d0364f739d1ecd226/transformed/opencv-4.11.0/jni/arm64-v8a/libc++_shared.so"/>
+    </issue>
+
+    <issue
+        id="Aligned16KB"
+        message="The native library `arm64-v8a/libc++_shared.so` (from `org.opencv:opencv:4.11.0`) is not 16 KB aligned"
+        errorLine1="opencv = { group = &quot;org.opencv&quot;, name = &quot;opencv&quot;, version.ref = &quot;opencv&quot; }"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="$HOME/0-projects/measure-app/gradle/libs.versions.toml"
+            line="36"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="AutoboxingStateCreation"
+        message="Prefer `mutableIntStateOf` instead of `mutableStateOf`"
+        errorLine1="    var active by remember { mutableStateOf(-1) }"
+        errorLine2="                             ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/cocode/measureapp/ui/MarkScreen.kt"
+            line="80"
+            column="30"/>
+    </issue>
+
+    <issue
+        id="AutoboxingStateCreation"
+        message="Prefer `mutableIntStateOf` instead of `mutableStateOf`"
+        errorLine1="    var resetGen by remember { mutableStateOf(0) }"
+        errorLine2="                               ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/cocode/measureapp/ui/MarkScreen.kt"
+            line="81"
+            column="32"/>
+    </issue>
+
+    <issue
+        id="AutoboxingStateCreation"
+        message="Prefer `mutableFloatStateOf` instead of `mutableStateOf`"
+        errorLine1="    var zoom by remember { mutableStateOf(1f) }"
+        errorLine2="                           ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/cocode/measureapp/ui/MarkScreen.kt"
+            line="83"
+            column="28"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.purple_200` appears to be unused"
+        errorLine1="    &lt;color name=&quot;purple_200&quot;>#FFBB86FC&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="3"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.purple_500` appears to be unused"
+        errorLine1="    &lt;color name=&quot;purple_500&quot;>#FF6200EE&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="4"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.purple_700` appears to be unused"
+        errorLine1="    &lt;color name=&quot;purple_700&quot;>#FF3700B3&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="5"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.teal_200` appears to be unused"
+        errorLine1="    &lt;color name=&quot;teal_200&quot;>#FF03DAC5&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="6"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.teal_700` appears to be unused"
+        errorLine1="    &lt;color name=&quot;teal_700&quot;>#FF018786&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="7"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.black` appears to be unused"
+        errorLine1="    &lt;color name=&quot;black&quot;>#FF000000&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="8"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.white` appears to be unused"
+        errorLine1="    &lt;color name=&quot;white&quot;>#FFFFFFFF&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="9"
+            column="12"/>
+    </issue>
+
+</issues>

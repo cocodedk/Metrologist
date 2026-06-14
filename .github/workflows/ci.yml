@@ -1,0 +1,104 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  changes:
+    name: Detect changes
+    runs-on: ubuntu-latest
+    outputs:
+      code: ${{ steps.diff.outputs.code }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
+
+      - name: Compute diff range
+        id: diff
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
+          BEFORE: ${{ github.event.before }}
+          SHA: ${{ github.sha }}
+        shell: bash
+        run: |
+          if [[ "$EVENT_NAME" == "pull_request" ]]; then
+            git fetch origin "$BASE_REF" --depth=50 2>/dev/null || true
+            RANGE="origin/${BASE_REF}...HEAD"
+          else
+            # Fail-safe: new branch push (before is all-zeros) → treat as changed
+            if [[ "$BEFORE" == "0000000000000000000000000000000000000000" || -z "$BEFORE" ]]; then
+              echo "code=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            RANGE="${BEFORE}...${SHA}"
+          fi
+
+          CHANGED=$(git diff --name-only "$RANGE" 2>/dev/null || echo "")
+
+          # Fail-safe: empty diff → treat as changed
+          if [[ -z "$CHANGED" ]]; then
+            echo "code=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if echo "$CHANGED" | grep -qE \
+            '^(app/|[^/]+\.gradle\.kts|gradle/|gradlew|gradlew\.bat|\.github/workflows/ci\.yml)'; then
+            echo "code=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "code=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  build:
+    name: Build & test
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      - name: Build smoke
+        run: ./gradlew buildSmoke --no-daemon
+
+  verify:
+    name: verify
+    needs: [changes, build]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Evaluate results
+        env:
+          CHANGES_RESULT: ${{ needs.changes.result }}
+          BUILD_RESULT: ${{ needs.build.result }}
+        run: |
+          echo "changes job: $CHANGES_RESULT"
+          echo "build job:   $BUILD_RESULT"
+
+          if [[ "$CHANGES_RESULT" != "success" ]]; then
+            echo "ERROR: change-detection job failed ($CHANGES_RESULT)"
+            exit 1
+          fi
+
+          # build is 'skipped' when code==false; 'success' when it ran and passed
+          if [[ "$BUILD_RESULT" == "success" || "$BUILD_RESULT" == "skipped" ]]; then
+            echo "OK: all required checks passed."
+            exit 0
+          fi
+
+          echo "ERROR: build job ended with status '$BUILD_RESULT'"
+          exit 1

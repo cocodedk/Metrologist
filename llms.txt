@@ -1,0 +1,33 @@
+# Metrologist
+
+> Android app that measures real flat surfaces (walls, doors, windows, floor areas) from a single photo, using a red-white-red-white reference stick of known length for scale and single-view planar metrology to recover real-world dimensions.
+
+Metrologist implements a pure-Kotlin metrology engine (no Android dependencies) backed by ~219 unit tests at 100% line/branch/method coverage. The engine has two plane solvers — a rectangle solver based on vanishing-point geometry and a gravity solver based on the device IMU vector — auto-selected per shot. The Android shell (CameraX capture, OpenCV stick detection, Jetpack Compose marking UI, DataStore settings, PNG export) is intentionally thin. Package `com.cocode.measureapp`, minSdk 24, targetSdk 36, Kotlin 2.2.10, AGP 9.1.1.
+
+## Docs
+
+- [README](https://github.com/cocodedk/Metrologist/blob/main/README.md): Project overview, features, build instructions, and architecture summary
+- [Design Spec](https://github.com/cocodedk/Metrologist/blob/main/docs/superpowers/specs/2026-06-13-measure-app-design.md): Full v1 design: concept, locked decisions, user flow, geometry engine, architecture, and testing strategy
+- [Plan 1 — Math Primitives](https://github.com/cocodedk/Metrologist/blob/main/docs/superpowers/plans/2026-06-13-geometry-math-primitives.md): Vec2/Vec3, Mat3, CameraIntrinsics, Projective helpers
+- [Plan 2 — Metrology Engine](https://github.com/cocodedk/Metrologist/blob/main/docs/superpowers/plans/2026-06-13-plan2-metrology-engine.md): Rectangle solver, scale solver, measurements, EngineResult
+- [Plan 3 — Gravity Solver + Selector](https://github.com/cocodedk/Metrologist/blob/main/docs/superpowers/plans/2026-06-13-plan3-gravity-selector.md): GravitySolver, SolverSelector, diagnostics, hybrid engine path
+- [Plan 4 — App Support Logic](https://github.com/cocodedk/Metrologist/blob/main/docs/superpowers/plans/2026-06-13-plan4-app-support-logic.md): Units, MeasurementPresenter, CornerOrdering, DiagnosticsText
+- [Plan 5 — Stick Detection](https://github.com/cocodedk/Metrologist/blob/main/docs/superpowers/plans/2026-06-13-plan5-stick-detection.md): OpenCV HSV segmentation, PrincipalAxis, StickAssembler
+- [CONTRIBUTING](https://github.com/cocodedk/Metrologist/blob/main/CONTRIBUTING.md): Local setup, build commands, coding style, branch naming, PR checklist
+- [SECURITY](https://github.com/cocodedk/Metrologist/blob/main/SECURITY.md): Vulnerability reporting channels and supported versions
+
+## Source
+
+- [Repository](https://github.com/cocodedk/Metrologist): Full source on GitHub (Apache-2.0)
+- [MetrologyEngine.kt](https://github.com/cocodedk/Metrologist/blob/main/app/src/main/java/com/cocode/measureapp/geometry/MetrologyEngine.kt): Top-level engine entry points (`measure`, `measureHybrid`)
+- [RectangleSolver.kt](https://github.com/cocodedk/Metrologist/blob/main/app/src/main/java/com/cocode/measureapp/geometry/RectangleSolver.kt): Vanishing-point plane solver
+- [GravitySolver.kt](https://github.com/cocodedk/Metrologist/blob/main/app/src/main/java/com/cocode/measureapp/geometry/GravitySolver.kt): IMU gravity plane solver
+- [SolverSelector.kt](https://github.com/cocodedk/Metrologist/blob/main/app/src/main/java/com/cocode/measureapp/geometry/SolverSelector.kt): Auto-picks between rectangle and gravity solvers
+- [StickAssembler.kt](https://github.com/cocodedk/Metrologist/blob/main/app/src/main/java/com/cocode/measureapp/stick/StickAssembler.kt): Assembles stick points from CV output with band-pattern scoring
+
+## Optional
+
+- [English website](https://cocodedk.github.io/Metrologist/): Project Pages site
+- [Persian website](https://cocodedk.github.io/Metrologist/fa/): فارسی / Persian Pages site
+- [Latest APK](https://github.com/cocodedk/Metrologist/releases/latest/download/Metrologist.apk): Direct download of the stable release
+- [Cocode](https://cocode.dk): Author's studio website

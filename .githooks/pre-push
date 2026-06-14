@@ -1,0 +1,48 @@
+#!/bin/sh
+set -eu
+
+remote_name="$1"
+remote_url="$2"
+
+# Part 1: Owner lock — only allow pushes to github.com/cocodedk
+case "$remote_url" in
+  https://github.com/cocodedk/*|git@github.com:cocodedk/*|ssh://git@github.com/cocodedk/*)
+    ;;
+  *)
+    echo "ERROR: Push refused. Remote URL must be under github.com/cocodedk."
+    echo "  Got: $remote_url"
+    echo "  Bypass: git push --no-verify"
+    exit 1
+    ;;
+esac
+
+# Part 2: Protect branches — block deletion and non-fast-forward pushes
+ZERO='0000000000000000000000000000000000000000'
+
+while read local_ref local_sha remote_ref remote_sha; do
+  # Extract branch name from remote ref
+  branch=$(echo "$remote_ref" | sed 's|refs/heads/||')
+
+  case "$branch" in
+    main|master|trunk|production|prod|release)
+      # Block deletion (local sha is all zeros)
+      if [ "$local_sha" = "$ZERO" ]; then
+        echo "ERROR: Deletion of protected branch '$branch' is not allowed."
+        echo "  Bypass: git push --no-verify"
+        exit 1
+      fi
+
+      # Block non-fast-forward (force push)
+      # If remote sha is all zeros, branch is new — allow it
+      if [ "$remote_sha" != "$ZERO" ]; then
+        if ! git merge-base --is-ancestor "$remote_sha" "$local_sha" 2>/dev/null; then
+          echo "ERROR: Non-fast-forward push to protected branch '$branch' is not allowed."
+          echo "  Bypass: git push --no-verify"
+          exit 1
+        fi
+      fi
+      ;;
+  esac
+done
+
+exit 0
