@@ -10,7 +10,7 @@ kotlin = "2.2.10"
 composeBom = "2026.02.01"
 camerax = "1.4.1"
 datastore = "1.1.1"
-opencv = "4.11.0"
+opencv = "5.0.0"
 coreSplashscreen = "1.0.1"
 
 [libraries]
