@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — Metrologist</title>
+  <meta name="description" content="Privacy policy for Metrologist (com.cocode.measureapp): the camera is used only to measure on your device, nothing is uploaded, and no personal data is collected." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://cocodedk.github.io/Metrologist/privacy.html" />
+  <link rel="alternate" hreflang="en" href="https://cocodedk.github.io/Metrologist/privacy.html" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,400&family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg-deep: #0D0F0E; --bg-card: #1C1F1C;
+      --staff-red: #D42B2B; --staff-white: #F2F2EE;
+      --amber: #E8A020; --amber-glow: rgba(232, 160, 32, 0.35);
+      --green-read: #55C98A;
+      --text-primary: #F2F2EE; --text-secondary: #8A9189; --text-dim: #4A524A;
+      --grid-line: rgba(242, 242, 238, 0.055);
+      --radius: 6px; --radius-sm: 4px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+    body {
+      background-color: var(--bg-deep);
+      color: var(--text-primary);
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 1.0625rem; line-height: 1.68;
+      background-image:
+        linear-gradient(var(--grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+      background-size: 24px 24px;
+      min-height: 100vh; overflow-x: hidden;
+    }
+    .staff-rail {
+      position: fixed; top: 0; left: 0; width: 6px; height: 100vh; z-index: 100;
+      background: repeating-linear-gradient(to bottom,
+        var(--staff-red) 0, var(--staff-red) 28px,
+        var(--staff-white) 28px, var(--staff-white) 56px);
+      box-shadow: 2px 0 12px rgba(212, 43, 43, 0.25);
+    }
+    [dir="rtl"] .staff-rail { left: auto; right: 0; box-shadow: -2px 0 12px rgba(212, 43, 43, 0.25); }
+    .container { width: min(760px, 92vw); margin: 0 auto; padding: 40px 0 56px; padding-left: max(0px, calc(6px)); }
+    .mono { font-family: 'DM Mono', 'Courier New', monospace; }
+    .back {
+      display: inline-block; margin-bottom: 22px; text-decoration: none;
+      font-family: 'DM Mono', monospace; font-size: 0.76rem; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--text-secondary);
+      transition: color 0.22s ease;
+    }
+    .back:hover { color: var(--amber); }
+    .card {
+      background: var(--bg-card); border-radius: var(--radius);
+      padding: clamp(24px, 5vw, 44px); position: relative; overflow: hidden;
+    }
+    .card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: repeating-linear-gradient(to right,
+        var(--staff-red) 0, var(--staff-red) 16px,
+        var(--staff-white) 16px, var(--staff-white) 32px);
+      opacity: 0.5;
+    }
+    [dir="rtl"] .card::before {
+      background: repeating-linear-gradient(to left,
+        var(--staff-red) 0, var(--staff-red) 16px,
+        var(--staff-white) 16px, var(--staff-white) 32px);
+    }
+    h1 {
+      font-family: 'Crimson Pro', Georgia, serif; font-weight: 300;
+      font-size: clamp(1.9rem, 5vw, 2.6rem); line-height: 1.14;
+      letter-spacing: -0.01em; color: var(--text-primary); margin: 0 0 10px;
+    }
+    h2 {
+      font-family: 'DM Mono', monospace; font-weight: 500; font-size: 0.9rem;
+      letter-spacing: 0.05em; color: var(--amber); margin: 30px 0 8px;
+    }
+    .meta {
+      font-family: 'DM Mono', monospace; color: var(--text-secondary);
+      font-size: 0.78rem; letter-spacing: 0.04em; margin: 0 0 4px;
+    }
+    p, li { color: var(--text-secondary); }
+    ul { padding-inline-start: 1.2em; }
+    li { margin: 5px 0; }
+    strong { color: var(--text-primary); font-weight: 600; }
+    a { color: var(--amber); text-decoration: none; }
+    a:hover { color: var(--staff-white); text-decoration: underline; text-underline-offset: 3px; }
+    .lede { color: var(--text-primary); font-size: 1.12rem; margin-top: 14px; }
+    .divider {
+      height: 8px; margin: 44px 0;
+      background: repeating-linear-gradient(to right,
+        var(--staff-red) 0, var(--staff-red) 32px,
+        var(--staff-white) 32px, var(--staff-white) 64px);
+      opacity: 0.18;
+    }
+    section[dir="rtl"] { font-family: 'Vazirmatn', 'Crimson Pro', sans-serif; text-align: right; }
+    section[dir="rtl"] h1, section[dir="rtl"] h2 { font-family: 'Vazirmatn', 'DM Mono', sans-serif; letter-spacing: 0; }
+    section[dir="rtl"] .meta { font-family: 'Vazirmatn', 'DM Mono', monospace; }
+    footer {
+      font-family: 'DM Mono', monospace; color: var(--text-dim);
+      font-size: 0.72rem; letter-spacing: 0.06em; margin-top: 36px; text-align: center;
+    }
+    footer a { color: var(--text-secondary); }
+  </style>
+</head>
+<body>
+  <div class="staff-rail" aria-hidden="true"></div>
+  <div class="container">
+    <a class="back" href="./index.html">&larr; Metrologist</a>
+    <div class="card">
+
+      <!-- ==================== ENGLISH ==================== -->
+      <section lang="en">
+        <h1>Privacy Policy</h1>
+        <p class="meta">Metrologist &middot; <span class="mono">com.cocode.measureapp</span></p>
+        <p class="meta">Last updated: 14 July 2026</p>
+
+        <p class="lede"><strong>Metrologist does not collect, transmit, or share any personal data.</strong>
+        It is an Android app that measures flat surfaces from a photo, and every calculation runs
+        entirely on your device.</p>
+
+        <h2>Camera</h2>
+        <p>Metrologist uses your device camera for one purpose: to photograph the surface you want to
+        measure, together with the printed reference stick. That image is analysed <strong>on your
+        device</strong> to work out width, height, area, diagonal, and angles. The camera is never used
+        to record or send anything in the background — it is active only while you are on the capture
+        screen, and only after you grant the camera permission.</p>
+
+        <h2>Your photos stay on your device</h2>
+        <ul>
+          <li>Captured photos are processed <strong>in memory on your device</strong> and are <strong>not uploaded</strong> anywhere.</li>
+          <li>The app does <strong>not</strong> save your measurement photos to your gallery or shared storage on its own.</li>
+          <li>The image analysis (via the bundled OpenCV library) happens locally; no image, pixel, or measurement ever leaves the app.</li>
+        </ul>
+
+        <h2>Settings you choose</h2>
+        <p>Your preferences — the reference stick's length and width and your preferred display unit
+        (centimetres, inches, or metres) — are saved in a small private settings file on your own
+        device. This never leaves your phone and is removed when you uninstall the app or clear its data.</p>
+
+        <h2>Sharing a result (only if you ask)</h2>
+        <p>When you choose to share a measurement, the app draws the numbers onto a copy of your photo,
+        saves that image to its own private cache, and hands it to Android's system share sheet. You pick
+        where it goes — a messaging app, email, files, and so on. This only happens when you tap share,
+        and the destination is chosen entirely by you. We never receive the shared image.</p>
+
+        <h2>No internet, no tracking</h2>
+        <ul>
+          <li>The app requests <strong>no internet permission</strong>, so it is technically unable to send your data anywhere.</li>
+          <li>We use <strong>no analytics, no crash reporting, and no advertising</strong>.</li>
+          <li>There are <strong>no third-party tracking SDKs, no cookies, and no advertising identifiers</strong>.</li>
+          <li>The only runtime permission the app requests is the <strong>camera</strong> — no location, contacts, microphone, or account access.</li>
+        </ul>
+
+        <h2>Device backup</h2>
+        <p>If you have enabled Android Auto Backup or Google account backup on your device, the operating
+        system may include this app's local settings in your own personal Google backup. This is
+        controlled entirely by you and Google — we have no access to it. See
+        <a href="https://policies.google.com/privacy" rel="noopener" target="_blank">Google's Privacy Policy</a> for details.</p>
+
+        <h2>External links</h2>
+        <p>The app and this website link to the developer's site (<a href="https://cocode.dk" rel="noopener" target="_blank">cocode.dk</a>),
+        a LinkedIn profile, and the project's GitHub page. Selecting them opens your browser; those sites
+        are governed by their own privacy policies.</p>
+
+        <h2>Children</h2>
+        <p>The app does not knowingly collect data from anyone, including children.</p>
+
+        <h2>Changes</h2>
+        <p>If this policy changes, the updated version will be posted on this page with a new
+        "last updated" date.</p>
+
+        <h2>Contact</h2>
+        <p>Questions about this policy can be sent to
+        <a href="mailto:bb@cocode.dk">bb@cocode.dk</a> (CoCode.dk, developer: Babak Bandpey).</p>
+      </section>
+
+      <div class="divider" aria-hidden="true"></div>
+
+      <!-- ==================== PERSIAN (فارسی) ==================== -->
+      <section lang="fa" dir="rtl">
+        <h1>سیاست حفظ حریم خصوصی</h1>
+        <p class="meta">متروژیست &middot; <span class="mono">com.cocode.measureapp</span></p>
+        <p class="meta">آخرین به‌روزرسانی: ۱۴ ژوئیه ۲۰۲۶</p>
+
+        <p class="lede"><strong>متروژیست هیچ داده شخصی‌ای را جمع‌آوری، ارسال یا با دیگران به اشتراک نمی‌گذارد.</strong>
+        این یک برنامه اندرویدی است که سطوح صاف را از روی یک عکس اندازه‌گیری می‌کند و تمام محاسبات
+        به‌طور کامل روی دستگاه شما انجام می‌شود.</p>
+
+        <h2>دوربین</h2>
+        <p>متروژیست از دوربین دستگاه شما تنها برای یک هدف استفاده می‌کند: گرفتن عکس از سطحی که می‌خواهید
+        اندازه بگیرید، به همراه چوب مرجعِ چاپ‌شده. آن تصویر <strong>روی دستگاه شما</strong> تحلیل می‌شود تا
+        عرض، ارتفاع، مساحت، قطر و زاویه‌ها محاسبه شود. دوربین هرگز برای ضبط یا ارسال چیزی در پس‌زمینه به کار
+        نمی‌رود — تنها زمانی فعال است که در صفحهٔ عکس‌برداری هستید و تنها پس از آنکه مجوز دوربین را بدهید.</p>
+
+        <h2>عکس‌های شما روی دستگاهتان می‌مانند</h2>
+        <ul>
+          <li>عکس‌های گرفته‌شده <strong>در حافظهٔ دستگاه شما</strong> پردازش می‌شوند و به هیچ‌جا <strong>بارگذاری نمی‌شوند</strong>.</li>
+          <li>برنامه به‌خودیِ‌خود عکس‌های اندازه‌گیری شما را در گالری یا حافظهٔ مشترک ذخیره <strong>نمی‌کند</strong>.</li>
+          <li>تحلیل تصویر (با کتابخانهٔ همراهِ OpenCV) به‌صورت محلی انجام می‌شود؛ هیچ تصویر، پیکسل یا اندازه‌ای هرگز از برنامه خارج نمی‌شود.</li>
+        </ul>
+
+        <h2>تنظیماتی که انتخاب می‌کنید</h2>
+        <p>ترجیحات شما — طول و عرض چوب مرجع و واحد نمایش دلخواهتان (سانتی‌متر، اینچ یا متر) — در یک فایل
+        تنظیماتِ کوچکِ خصوصی روی دستگاه خودتان ذخیره می‌شود. این اطلاعات هرگز از گوشی شما خارج نمی‌شود و با
+        حذف برنامه یا پاک‌کردن داده‌های آن، از بین می‌رود.</p>
+
+        <h2>اشتراک‌گذاری نتیجه (تنها به‌درخواست شما)</h2>
+        <p>هنگامی که تصمیم می‌گیرید یک اندازه‌گیری را به اشتراک بگذارید، برنامه اعداد را روی یک کپی از عکس
+        شما ترسیم می‌کند، آن تصویر را در حافظهٔ نهانِ خصوصیِ خود ذخیره می‌کند و آن را به صفحهٔ اشتراک‌گذاریِ
+        سیستم اندروید می‌سپارد. شما انتخاب می‌کنید که به کجا برود — یک پیام‌رسان، ایمیل، فایل‌ها و مانند آن.
+        این تنها زمانی رخ می‌دهد که روی اشتراک‌گذاری بزنید و مقصد کاملاً توسط شما انتخاب می‌شود. ما هرگز
+        تصویر به‌اشتراک‌گذاشته‌شده را دریافت نمی‌کنیم.</p>
+
+        <h2>بدون اینترنت، بدون ردیابی</h2>
+        <ul>
+          <li>برنامه <strong>هیچ دسترسی اینترنتی</strong> درخواست نمی‌کند، بنابراین از نظر فنی قادر به ارسال داده‌های شما به هیچ‌جا نیست.</li>
+          <li>ما از <strong>هیچ ابزار تحلیلی، گزارش خطا یا تبلیغاتی</strong> استفاده نمی‌کنیم.</li>
+          <li>هیچ <strong>کیت توسعهٔ ردیابیِ شخص ثالث، کوکی یا شناسهٔ تبلیغاتی</strong> وجود ندارد.</li>
+          <li>تنها مجوز زمان‌اجرایی که برنامه درخواست می‌کند <strong>دوربین</strong> است — بدون موقعیت مکانی، مخاطبین، میکروفون یا دسترسی به حساب.</li>
+        </ul>
+
+        <h2>پشتیبان‌گیری دستگاه</h2>
+        <p>اگر پشتیبان‌گیری خودکار اندروید یا پشتیبان‌گیری حساب گوگل را فعال کرده باشید، سیستم‌عامل ممکن است
+        تنظیمات محلی این برنامه را در پشتیبان شخصی گوگل شما بگنجاند. این کار کاملاً توسط شما و گوگل کنترل
+        می‌شود و ما به آن دسترسی نداریم. برای جزئیات به
+        <a href="https://policies.google.com/privacy" rel="noopener" target="_blank">سیاست حریم خصوصی گوگل</a> مراجعه کنید.</p>
+
+        <h2>پیوندهای بیرونی</h2>
+        <p>برنامه و این وب‌سایت به سایت توسعه‌دهنده (<a href="https://cocode.dk" rel="noopener" target="_blank">cocode.dk</a>)،
+        پروفایل لینکدین و صفحهٔ گیت‌هابِ پروژه پیوند دارند. انتخاب آن‌ها مرورگر شما را باز می‌کند و این سایت‌ها
+        تابع سیاست‌های حریم خصوصی خودشان هستند.</p>
+
+        <h2>کودکان</h2>
+        <p>این برنامه آگاهانه هیچ داده‌ای را از هیچ‌کس، از جمله کودکان، جمع‌آوری نمی‌کند.</p>
+
+        <h2>تغییرات</h2>
+        <p>در صورت تغییر این سیاست، نسخهٔ به‌روزشده با تاریخ جدید در همین صفحه منتشر خواهد شد.</p>
+
+        <h2>تماس</h2>
+        <p>پرسش‌های مربوط به این سیاست را می‌توانید به
+        <a href="mailto:bb@cocode.dk">bb@cocode.dk</a> (CoCode.dk، توسعه‌دهنده: بابک بندپی) ارسال کنید.</p>
+      </section>
+
+    </div>
+    <footer>© 2026 CoCode.dk — Babak Bandpey · <a href="./index.html">Metrologist</a></footer>
+  </div>
+</body>
+</html>
