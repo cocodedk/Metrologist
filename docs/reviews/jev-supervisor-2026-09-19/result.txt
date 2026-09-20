@@ -1,0 +1,7 @@
+request_lifetime: gap  (certainty 0.31)  <- below gate
+file_aliases: satisfied  (certainty 0.60)  <- below gate
+worker_exit: satisfied  (certainty 0.93)
+quiet_checks: satisfied  (certainty 0.99)
+crash_recovery: satisfied  (certainty 0.92)
+pause_timeout: satisfied  (certainty 0.27)  <- below gate
+[typesafe/jev-1.13-20260917 0.58s cost $0.000287448]

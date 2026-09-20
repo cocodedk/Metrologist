@@ -1,0 +1,8 @@
+{
+  "request_lifetime": "gap",
+  "file_aliases": "gap",
+  "worker_exit": "satisfied",
+  "quiet_checks": "satisfied",
+  "crash_recovery": "satisfied",
+  "pause_timeout": "satisfied"
+}

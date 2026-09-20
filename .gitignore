@@ -1,5 +1,6 @@
 *.iml
 .gradle
+/.kotlin/
 /local.properties
 /.idea/
 .DS_Store
@@ -13,3 +14,14 @@ local.properties
 *.keystore
 *.jks
 keystore.properties
+
+# Local agent-supervisor state, prompts and process logs
+/.supervisor/
+__pycache__/
+
+# Retained local browser runs and screenshots; Android calibration fixtures stay tracked
+/.playwright-cli/
+/output/playwright/
+
+# Personal Obsidian tabs and recently opened files
+/docs/logic-contracts/.obsidian/workspace.json

@@ -1,0 +1,26 @@
+{
+  "requested_model": "~typesafe/jev-latest",
+  "resolved_models": [
+    "typesafe/jev-1.13-20260917"
+  ],
+  "provider": "OpenRouter / TypeSafe",
+  "requests": 27,
+  "judgments": 36,
+  "correct": 36,
+  "expected_counts": {
+    "gap": 22,
+    "covered": 14
+  },
+  "confidence_threshold": 0.8,
+  "above_threshold": 30,
+  "below_threshold": 6,
+  "confident_wrong": 0,
+  "cost_usd": 0.001093218,
+  "input_tokens_total": 26029,
+  "output_tokens_total": 1437,
+  "max_input_tokens": 2371,
+  "max_input_plus_output_tokens": 2523,
+  "total_client_seconds": 13.474471041996367,
+  "median_client_seconds": 0.48617787399962253,
+  "cases_sha256": "ce5dbec9895a5f56825f931fd4dd01065d6a587cd723d89ae45a8e97083c577e"
+}
