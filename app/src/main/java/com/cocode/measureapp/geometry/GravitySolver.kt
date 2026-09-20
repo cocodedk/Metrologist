@@ -12,6 +12,9 @@ enum class SurfaceOrientation { VERTICAL, HORIZONTAL }
  * pointing along world **down** (so for a level camera `gravity = (0, 1, 0)`). Because
  * `projectToPlane` depends only on the plane **normal**, the in-plane basis `(e1, e2)` is
  * any orthonormal pair on the plane — measurements are invariant to that choice.
+ *
+ * [SurfaceOrientation] is the user's explicit selection and is never derived from [gravity]:
+ * a downward-looking camera does not prove that the target is horizontal.
  */
 object GravitySolver {
     private val AXIS = Vec3(0.0, 0.0, 1.0)
@@ -25,8 +28,9 @@ object GravitySolver {
     }
 
     /**
-     * Wall: the plane contains [worldUp], so the normal is horizontal and chosen to face
-     * the camera. If the optical axis is parallel to [worldUp] there is no horizontal
+     * Wall: the plane contains [worldUp], so the normal is horizontal and ASSUMED to face
+     * the camera: gravity cannot determine a wall's azimuth, so eligibility reports this
+     * assumption and bounds its confidence. If the optical axis is parallel to [worldUp] there is no horizontal
      * component to face the camera — return a fallback frame with confidence `0`.
      */
     private fun solveVertical(worldUp: Vec3): PlaneSolution {

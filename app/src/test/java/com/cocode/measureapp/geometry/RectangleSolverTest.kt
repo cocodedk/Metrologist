@@ -1,5 +1,7 @@
 package com.cocode.measureapp.geometry
 
+import com.cocode.measureapp.geometry.rectangle.RectangleCandidate
+import com.cocode.measureapp.geometry.rectangle.RectangleRejection
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -58,26 +60,22 @@ class RectangleSolverTest {
         assertEquals(SolverKind.RECTANGLE, sol.solver)
     }
 
-    @Test fun frontoParallelReturnsNull() {
-        // Both edge pairs parallel in the image -> both vanishing points null.
-        val corners = rectPixels(1.2, 0.8, Mat3(
-            1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0,
-        ), 4.0)
-        assertNull(RectangleSolver.solve(corners, k))
-    }
-
-    @Test fun pureYawReturnsNullViaVp2Branch() {
-        // Pure yaw: top/bottom edges converge (vp1 finite) but left/right edges stay
-        // image-parallel (vp2 == null). Exercises the second `?: return null` (vp2).
-        val corners = rectPixels(1.2, 0.8, rotY(0.4), 4.0)
-        assertNull(RectangleSolver.solve(corners, k))
-    }
-
-    @Test fun purePitchReturnsNullViaVp1Branch() {
-        // Pure pitch: left/right edges converge (vp2 finite) but top/bottom edges stay
-        // image-parallel (vp1 == null). Exercises the first `?: return null` (vp1).
-        val corners = rectPixels(1.2, 0.8, rotX(0.4), 4.0)
-        assertNull(RectangleSolver.solve(corners, k))
+    /**
+     * Frontal, pure-yaw and pure-pitch views have vanishing points at infinity. They are valid
+     * directions: the candidate recovers the true normal `R * (0,0,1)` and the true aspect.
+     */
+    @Test fun infinityCasesRecoverGroundTruthPlane() {
+        val identity = Mat3(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0)
+        for (r in listOf(identity, rotY(0.4), rotX(0.4))) {
+            val c = RectangleSolver.candidate(rectPixels(1.2, 0.8, r, 4.0), k)
+            assertTrue("rejected: $c", c is RectangleCandidate.Accepted)
+            val f = (c as RectangleCandidate.Accepted).frame
+            val truthNormal = r * Vec3(0.0, 0.0, 1.0)
+            assertEquals(1.0, abs(f.normal.dot(truthNormal)), 1e-12)
+            val metric = projectToPlane(rectPixels(1.2, 0.8, r, 4.0), k, f)
+            val m = Measurements.compute(metric)
+            assertEquals(1.2 / 0.8, m.width / m.height, 1e-9)
+        }
     }
 
     @Test fun coincidentVanishingPointsReturnsNull() {
@@ -92,6 +90,8 @@ class RectangleSolverTest {
             Vec2(300.0, 200.0), // BL == TR
         )
         assertNull(RectangleSolver.solve(corners, k))
+        val c = RectangleSolver.candidate(corners, k) as RectangleCandidate.Rejected
+        assertEquals(RectangleRejection.COINCIDENT_DIRECTIONS, c.reason)
     }
 
     @Test(expected = IllegalArgumentException::class)

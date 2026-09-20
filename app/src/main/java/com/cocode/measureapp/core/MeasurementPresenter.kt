@@ -1,6 +1,12 @@
 package com.cocode.measureapp.core
 
+import com.cocode.measureapp.core.measurement.CorrectionText
 import com.cocode.measureapp.geometry.CameraIntrinsics
+import com.cocode.measureapp.geometry.EngineResult
+import com.cocode.measureapp.geometry.MeasurementDiagnostics
+import com.cocode.measureapp.geometry.MeasurementFailureReason
+import com.cocode.measureapp.geometry.MeasurementOutcome
+import com.cocode.measureapp.geometry.MeasurementResult
 import com.cocode.measureapp.geometry.MetrologyEngine
 import com.cocode.measureapp.geometry.SolverKind
 import com.cocode.measureapp.geometry.StickProfile
@@ -24,14 +30,49 @@ data class MeasurementView(
     val confidencePercent: Int,
     val solverName: String,
     val caveats: List<String>,
+    /** Why the attempt failed; null for a success (and for the legacy zero-confidence path). */
+    val failure: MeasurementFailureReason? = null,
+    /** Specific correction text for an unusable view; null for a success. */
+    val message: String? = null,
 )
 
 /**
- * Pure-Kotlin presenter: drives [MetrologyEngine.measureHybrid] and converts the raw
- * [com.cocode.measureapp.geometry.EngineResult] into a display-ready [MeasurementView].
+ * One engine request built from the marking flow. [orientation] is the user's currently
+ * visible wall vs floor/table selection — never inferred from camera pose or screen rotation —
+ * and [revision] is the [MeasurementSession] revision the request was built for.
+ */
+data class MeasurementRequest(
+    val corners: List<Vec2>,
+    val stick: List<Vec2>,
+    val intrinsics: CameraIntrinsics,
+    val gravity: Vec3,
+    val profile: StickProfile,
+    val orientation: SurfaceOrientation,
+    val revision: Int,
+)
+
+/** Engine seam used by [MeasurementPresenter.present]; tests substitute a recording engine. */
+typealias MeasurementEngine = (MeasurementRequest) -> EngineResult
+
+/**
+ * Pure-Kotlin presenter: formats a typed [MeasurementOutcome] (the production path, fed by
+ * [com.cocode.measureapp.core.measurement.MeasurementAttempt]) or a legacy [EngineResult] from
+ * [MetrologyEngine.measureHybrid] into a display-ready [MeasurementView].
  * No Android imports; safe to unit-test on the JVM.
  */
 object MeasurementPresenter {
+    /** The production engine: the hybrid solver with the request's explicit orientation. */
+    val hybridEngine: MeasurementEngine = { r ->
+        MetrologyEngine.measureHybrid(r.corners, r.stick, r.intrinsics, r.profile, r.gravity, r.orientation)
+    }
+
+    /** Runs [request] through [engine] and formats the result in [unit]. */
+    fun present(
+        request: MeasurementRequest,
+        unit: LengthUnit,
+        engine: MeasurementEngine = hybridEngine,
+    ): MeasurementView = toView(engine(request), unit)
+
     /** [stick] is the 4 image corners of the stick's bounding box (clockwise around the quad). */
     fun present(
         corners: List<Vec2>,
@@ -41,33 +82,69 @@ object MeasurementPresenter {
         profile: StickProfile,
         orientation: SurfaceOrientation,
         unit: LengthUnit,
-    ): MeasurementView = toView(
-        MetrologyEngine.measureHybrid(corners, stick, intrinsics, profile, gravity, orientation),
+    ): MeasurementView = present(
+        MeasurementRequest(corners, stick, intrinsics, gravity, profile, orientation, revision = 0),
         unit,
     )
 
-    /** Visible for testing: converts a pre-built [EngineResult] to a [MeasurementView]. */
-    internal fun toView(
-        r: com.cocode.measureapp.geometry.EngineResult,
+    /**
+     * Formats a typed outcome (contract C14 consumer). A success is formatted in [unit]; a
+     * failure keeps its reason, shows specific correction text and never shows dimensions.
+     */
+    fun present(outcome: MeasurementOutcome, unit: LengthUnit): MeasurementView = when (outcome) {
+        is MeasurementOutcome.Success -> formatted(
+            outcome.measurement, outcome.solver, outcome.confidence, outcome.diagnostics, unit,
+        )
+        is MeasurementOutcome.Failure -> unmeasured(outcome.reason, CorrectionText.message(outcome))
+    }
+
+    /**
+     * Visible for testing: converts a pre-built legacy [EngineResult] to a [MeasurementView].
+     * A zero-confidence result is the adapter's failure marker, so its zeroed placeholder
+     * measurement is never formatted as dimensions.
+     */
+    internal fun toView(r: EngineResult, unit: LengthUnit): MeasurementView =
+        if (r.confidence > 0.0) {
+            formatted(r.measurement, r.diagnostics?.solver ?: r.solution.solver, r.confidence, r.diagnostics, unit)
+        } else {
+            unmeasured(null, LEGACY_FAILURE)
+        }
+
+    private fun formatted(
+        m: MeasurementResult,
+        solver: SolverKind,
+        confidence: Double,
+        diagnostics: MeasurementDiagnostics?,
         unit: LengthUnit,
-    ): MeasurementView {
-        val m = r.measurement
-        val solver = r.diagnostics?.solver ?: r.solution.solver
-        val solverName = when (solver) {
+    ) = MeasurementView(
+        usable = true,
+        width = Units.formatLength(m.width, unit),
+        height = Units.formatLength(m.height, unit),
+        area = Units.formatArea(m.area, unit),
+        diagonal = Units.formatLength(m.diagonal, unit),
+        cornerAngles = m.cornerAngles.map { kotlin.math.round(it * 10) / 10.0 },
+        confidenceLabel = DiagnosticsText.confidenceLabel(confidence),
+        confidencePercent = (confidence * 100).roundToInt(),
+        solverName = when (solver) {
             SolverKind.RECTANGLE -> "Rectangle method"
             SolverKind.GRAVITY -> "Tilt-sensor fallback"
-        }
-        return MeasurementView(
-            usable = r.confidence > 0.0,
-            width = Units.formatLength(m.width, unit),
-            height = Units.formatLength(m.height, unit),
-            area = Units.formatArea(m.area, unit),
-            diagonal = Units.formatLength(m.diagonal, unit),
-            cornerAngles = m.cornerAngles.map { kotlin.math.round(it * 10) / 10.0 },
-            confidenceLabel = DiagnosticsText.confidenceLabel(r.confidence),
-            confidencePercent = (r.confidence * 100).roundToInt(),
-            solverName = solverName,
-            caveats = r.diagnostics?.let { DiagnosticsText.caveats(it) } ?: emptyList(),
-        )
-    }
+        },
+        caveats = diagnostics?.let { DiagnosticsText.caveats(it) } ?: emptyList(),
+    )
+
+    private fun unmeasured(reason: MeasurementFailureReason?, message: String) = MeasurementView(
+        usable = false,
+        width = NOT_MEASURED, height = NOT_MEASURED, area = NOT_MEASURED, diagonal = NOT_MEASURED,
+        cornerAngles = emptyList(),
+        confidenceLabel = "Not measured",
+        confidencePercent = 0,
+        solverName = "None",
+        caveats = emptyList(),
+        failure = reason,
+        message = message,
+    )
+
+    private const val NOT_MEASURED = "—"
+    private const val LEGACY_FAILURE =
+        "Could not measure confidently — check the markers and try a moderate angle."
 }

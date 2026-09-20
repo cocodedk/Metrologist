@@ -1,42 +1,41 @@
 package com.cocode.measureapp.geometry
 
-/** A chosen [PlaneSolution] together with a human-readable [reason] for the choice. */
-data class Selection(val solution: PlaneSolution, val reason: String)
+import com.cocode.measureapp.geometry.eligibility.Assessment
+import com.cocode.measureapp.geometry.eligibility.PlaneAssumption
+
+/** Outcome of ranking the ELIGIBLE candidates; ineligible ones never re-enter. */
+sealed interface Selection {
+    /** The [chosen] candidate and a human-readable [reason]. */
+    data class Chosen(val chosen: Assessment.Eligible, val reason: String) : Selection
+
+    /** Neither candidate is eligible; both verdicts are kept for an explanatory failure. */
+    data class NoneEligible(val rectangle: Assessment.Ineligible, val gravity: Assessment.Ineligible) : Selection
+}
 
 /**
- * Auto-picks between the rectangle and gravity plane solvers.
+ * Ranks rectangle and gravity candidates AFTER eligibility and surface checks.
  *
- * Three-way logic:
- * 1. Rectangle when it is present and confidently conditioned
- *    (`confidence >= minRectangleConfidence`).
- * 2. Otherwise gravity when it is present and usable (`confidence > 0`).
- * 3. Otherwise the higher-confidence non-null solution (rectangle preferred on ties).
- *
- * Both inputs being null is impossible in the pipeline: [GravitySolver] always returns a
- * value. The third branch still tolerates a null on either side defensively.
+ * 1. Only [Assessment.Eligible] candidates are ranked; there is no low-confidence fallback.
+ * 2. A plane whose orientation is only assumed (wall azimuth) ranks below a resolved one.
+ * 3. Otherwise the higher confidence wins; ties prefer the rectangle.
+ * 4. With none eligible the result is [Selection.NoneEligible], never a placeholder plane.
  */
 object SolverSelector {
-    fun select(
-        rectangle: PlaneSolution?,
-        gravity: PlaneSolution?,
-        minRectangleConfidence: Double = 0.15,
-    ): Selection {
-        if (rectangle != null && rectangle.confidence >= minRectangleConfidence) {
-            return Selection(rectangle, "rectangle: corners well-conditioned")
+    fun select(rectangle: Assessment, gravity: Assessment): Selection {
+        val eligible = listOf(rectangle, gravity).filterIsInstance<Assessment.Eligible>()
+        if (eligible.isEmpty()) {
+            return Selection.NoneEligible(rectangle as Assessment.Ineligible, gravity as Assessment.Ineligible)
         }
-        if (gravity != null && gravity.confidence > 0.0) {
-            val rectConf = rectangle?.confidence
-            return Selection(gravity, "fallback: rectangle null/low-confidence ($rectConf)")
+        val best = eligible.sortedWith(
+            compareBy<Assessment.Eligible>({ it.assumption == PlaneAssumption.WALL_FACES_CAMERA })
+                .thenByDescending { it.confidence }
+                .thenBy { it.solver != SolverKind.RECTANGLE },
+        ).first()
+        val other = listOf(rectangle, gravity).first { it !== best }
+        val why = when (other) {
+            is Assessment.Ineligible -> "other method ineligible: ${other.detail}"
+            is Assessment.Eligible -> "ranked above ${other.solver} (${other.assumption}, confidence ${other.confidence})"
         }
-        return betterNonNull(rectangle, gravity)
-    }
-
-    /** Pick the higher-confidence non-null solution; ties (and equal confidence) favor rectangle. */
-    private fun betterNonNull(rectangle: PlaneSolution?, gravity: PlaneSolution?): Selection {
-        val rectConf = rectangle?.confidence ?: Double.NEGATIVE_INFINITY
-        val gravConf = gravity?.confidence ?: Double.NEGATIVE_INFINITY
-        val chosen = if (rectangle != null && rectConf >= gravConf) rectangle else gravity!!
-        val reason = "low overall confidence: chose ${chosen.solver} (${chosen.confidence})"
-        return Selection(chosen, reason)
+        return Selection.Chosen(best, "${best.solver} (${best.assumption}); $why")
     }
 }

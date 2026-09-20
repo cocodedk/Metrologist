@@ -5,21 +5,18 @@ import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.calculatePan
 import androidx.compose.foundation.gestures.calculateZoom
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -31,16 +28,14 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import com.cocode.measureapp.core.CornerOrdering
-import com.cocode.measureapp.core.LengthUnit
-import com.cocode.measureapp.core.MeasurementPresenter
-import com.cocode.measureapp.core.MeasurementView
 import com.cocode.measureapp.detect.DeferredStickDetector
 import com.cocode.measureapp.detect.StickDetector
-import com.cocode.measureapp.geometry.StickProfile
 import com.cocode.measureapp.geometry.SurfaceOrientation
 import com.cocode.measureapp.geometry.Vec2
 import com.cocode.measureapp.stick.StickBox
+import com.cocode.measureapp.ui.measurement.MarkControls
+import com.cocode.measureapp.ui.measurement.MarkStatus
+import com.cocode.measureapp.ui.surface.SurfaceSelector
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -52,16 +47,24 @@ import kotlinx.coroutines.withContext
 @Composable
 fun MarkScreen(
     image: CapturedImage,
-    stickLengthMeters: Double,
-    stickWidthMeters: Double,
-    unit: LengthUnit,
+    orientation: SurfaceOrientation,
+    onOrientationChanged: (SurfaceOrientation) -> Unit,
     initialCorners: List<Vec2>? = null,
     initialStick: List<Vec2>? = null,
     onMarkChanged: (List<Vec2>, List<Vec2>) -> Unit = { _, _ -> },
     detector: StickDetector = DeferredStickDetector,
-    onMeasured: (MeasurementView) -> Unit,
+    /**
+     * The user's raw object corners and stick box. The caller validates and measures them with
+     * the visible [orientation]; a rejection comes back as [failureMessage], marks untouched.
+     */
+    onMeasure: (List<Vec2>, List<Vec2>) -> Unit,
+    /** Retake: leaves marking for a new capture. */
     onBack: () -> Unit,
+    /** Correction text for the last failed attempt at the current input revision. */
+    failureMessage: String? = null,
+    onSettings: () -> Unit = {},
 ) {
+    val reportMarks by rememberUpdatedState(onMarkChanged)
     val bmp = image.bitmap
     val img = remember(bmp) { bmp.asImageBitmap() }
     val w = bmp.width.toDouble(); val h = bmp.height.toDouble()
@@ -96,6 +99,7 @@ fun MarkScreen(
             stick[0] = a + perp * hw; stick[1] = b + perp * hw
             stick[2] = b - perp * hw; stick[3] = a - perp * hw
             note = "Stick auto-detected (${(r.confidence * 100).toInt()}%) — drag to fine-tune"
+            reportMarks(corners.toList(), stick.toList())
         } else if (resetGen == gen) {
             note = cornerDragHint
         }
@@ -110,7 +114,7 @@ fun MarkScreen(
     fun handlePos(i: Int) = if (i in 0..3) corners[i] else stick[i - 4]
 
     Column(Modifier.fillMaxSize()) {
-        Text(note, Modifier.padding(12.dp))
+        MarkStatus(note, failureMessage, Modifier.padding(12.dp))
         Box(Modifier.weight(1f).fillMaxWidth()) {
             Canvas(
                 Modifier
@@ -121,6 +125,7 @@ fun MarkScreen(
                             val down = awaitFirstDown(requireUnconsumed = false)
                             // One finger always grabs the nearest handle; two fingers zoom + pan.
                             val handle = nearestHandle(down.position, corners, stick, sNow(), txNow(), tyNow())
+                            var moved = false
                             do {
                                 val e = awaitPointerEvent()
                                 if (e.changes.count { it.pressed } >= 2) {
@@ -143,11 +148,14 @@ fun MarkScreen(
                                         val delta = Vec2((d.x / sc).toDouble(), (d.y / sc).toDouble())
                                         if (handle in 0..3) corners[handle] = corners[handle] + delta
                                         else stick[handle - 4] = stick[handle - 4] + delta
+                                        moved = true
                                         e.changes.forEach { it.consume() }
                                     }
                                 }
                             } while (e.changes.any { it.pressed })
                             active = -1
+                            // A finished edit invalidates any result for the previous marks.
+                            if (moved) reportMarks(corners.toList(), stick.toList())
                         }
                     },
             ) {
@@ -162,30 +170,19 @@ fun MarkScreen(
                 if (active >= 0) drawMagnifier(img, handlePos(active), toScreen(handlePos(active)), sNow())
             }
         }
-        Row(Modifier.padding(12.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Button(onClick = {
+        SurfaceSelector(orientation, onOrientationChanged, Modifier.padding(top = 8.dp))
+        MarkControls(
+            onReset = {
                 resetGen++
                 corners.clear(); corners.addAll(defCorners())
                 stick.clear(); stick.addAll(defStick())
                 zoom = 1f; pan = Offset.Zero; note = cornerDragHint
-            }) { Text("Reset") }
-            Button(onClick = onBack) { Text("Retake") }
-            Button(onClick = {
-                val ordered = runCatching { CornerOrdering.order(corners.toList()) }.getOrNull()
-                if (ordered == null) {
-                    note = "Spread the 4 object corners apart — they overlap"
-                } else {
-                    onMarkChanged(corners.toList(), stick.toList())   // keep placements for re-mark
-                    onMeasured(
-                        MeasurementPresenter.present(
-                            corners = ordered, stick = stick.toList(),
-                            intrinsics = image.scene.intrinsics, gravity = image.scene.gravity,
-                            profile = StickProfile(stickLengthMeters, width = stickWidthMeters),
-                            orientation = SurfaceOrientation.VERTICAL, unit = unit,
-                        ),
-                    )
-                }
-            }) { Text("Measure") }
-        }
+                reportMarks(corners.toList(), stick.toList())
+            },
+            onRetake = onBack,
+            onSettings = onSettings,
+            // Validation belongs to the measurement producer; invalid marks return as a failure.
+            onMeasure = { onMeasure(corners.toList(), stick.toList()) },
+        )
     }
 }

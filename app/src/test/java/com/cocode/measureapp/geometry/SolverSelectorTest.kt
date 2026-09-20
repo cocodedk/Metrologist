@@ -1,145 +1,66 @@
 package com.cocode.measureapp.geometry
 
+import com.cocode.measureapp.geometry.eligibility.Assessment
+import com.cocode.measureapp.geometry.eligibility.IneligibleReason
+import com.cocode.measureapp.geometry.eligibility.PlaneAssumption
+import com.cocode.measureapp.geometry.eligibility.SurfaceConsistency
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
+/** Ranking happens only among eligible candidates; rejected planes are never revived. */
 class SolverSelectorTest {
-    private val frame = PlaneFrame(
-        Vec3(1.0, 0.0, 0.0),
-        Vec3(0.0, 1.0, 0.0),
-        Vec3(0.0, 0.0, 1.0),
+    private val frame = PlaneFrame(Vec3(1.0, 0.0, 0.0), Vec3(0.0, 1.0, 0.0), Vec3(0.0, 0.0, 1.0))
+    private val m = MeasurementResult(2.0, 1.0, 2.0, 2.2, listOf(90.0, 90.0, 90.0, 90.0))
+
+    private fun eligible(solver: SolverKind, confidence: Double, assumption: PlaneAssumption) = Assessment.Eligible(
+        solver, frame, m, ScaleResult(1.0, 0.0), confidence, assumption, SurfaceConsistency.CONSISTENT, true, emptyList(),
     )
 
-    private fun rect(confidence: Double) =
-        PlaneSolution(frame, SolverKind.RECTANGLE, confidence)
+    private fun rect(confidence: Double) = eligible(SolverKind.RECTANGLE, confidence, PlaneAssumption.RECTANGLE_TARGET)
+    private fun wall(confidence: Double) = eligible(SolverKind.GRAVITY, confidence, PlaneAssumption.WALL_FACES_CAMERA)
+    private fun floor(confidence: Double) = eligible(SolverKind.GRAVITY, confidence, PlaneAssumption.FLOOR_NORMAL_FROM_GRAVITY)
 
-    private fun grav(confidence: Double) =
-        PlaneSolution(frame, SolverKind.GRAVITY, confidence)
+    private fun rejected(solver: SolverKind, reason: IneligibleReason) =
+        Assessment.Ineligible(solver, reason, MeasurementFailureReason.UNSUPPORTED_GEOMETRY, "$solver: $reason")
 
-    @Test
-    fun rectangleAboveThreshold_isSelected() {
-        val rectangle = rect(0.5)
-        val gravity = grav(0.9)
-        val sel = SolverSelector.select(rectangle, gravity)
+    private fun chosen(s: Selection) = (s as? Selection.Chosen ?: throw AssertionError("expected a choice, got $s")).chosen
 
-        assertSame(rectangle, sel.solution)
-        assertEquals("rectangle: corners well-conditioned", sel.reason)
+    @Test fun eligibleRectangleOutranksAssumedWallAzimuthEvenWithLowerConfidence() {
+        val r = rect(0.2)
+        assertSame(r, chosen(SolverSelector.select(r, wall(0.35))))
     }
 
-    @Test
-    fun rectangleExactlyAtThreshold_isSelected() {
-        val rectangle = rect(0.15)
-        val sel = SolverSelector.select(rectangle, grav(0.9))
-
-        assertSame(rectangle, sel.solution)
-        assertEquals("rectangle: corners well-conditioned", sel.reason)
+    @Test fun resolvedCandidatesRankByConfidence() {
+        val f = floor(0.9)
+        assertSame(f, chosen(SolverSelector.select(rect(0.5), f)))
+        val r = rect(0.9)
+        assertSame(r, chosen(SolverSelector.select(r, floor(0.5))))
     }
 
-    @Test
-    fun rectangleNull_fallsBackToGravity() {
-        val gravity = grav(0.8)
-        val sel = SolverSelector.select(null, gravity)
-
-        assertSame(gravity, sel.solution)
-        assertTrue("reason mentions fallback", sel.reason.startsWith("fallback:"))
+    @Test fun tiesPreferTheRectangle() {
+        val r = rect(0.5)
+        assertSame(r, chosen(SolverSelector.select(r, floor(0.5))))
     }
 
-    @Test
-    fun rectangleBelowThresholdButGravityUsable_fallsBackToGravity() {
-        val gravity = grav(0.8)
-        val sel = SolverSelector.select(rect(0.1), gravity)
-
-        assertSame(gravity, sel.solution)
-        assertTrue("reason mentions fallback", sel.reason.startsWith("fallback:"))
-        // Reason reports the low rectangle confidence that triggered the fallback.
-        assertTrue("reason notes the low confidence", sel.reason.contains("0.1"))
+    @Test fun highConfidenceIneligibleRectangleIsNeverRevived() {
+        // Old behaviour picked any rectangle scoring >= 0.15 on image angles; now it cannot.
+        val g = wall(0.3)
+        val sel = SolverSelector.select(rejected(SolverKind.RECTANGLE, IneligibleReason.NOT_ORTHOGONAL), g)
+        assertSame(g, chosen(sel))
+        assertTrue((sel as Selection.Chosen).reason.contains("NOT_ORTHOGONAL"))
     }
 
-    @Test
-    fun gravityZeroConfidenceWithLowRectangle_picksBetterNonNull() {
-        // Rectangle below threshold (0.1) but still beats gravity's zero confidence.
-        val rectangle = rect(0.1)
-        val sel = SolverSelector.select(rectangle, grav(0.0))
-
-        assertSame(rectangle, sel.solution)
-        assertTrue("reason notes low overall confidence", sel.reason.contains("low"))
+    @Test fun ineligibleGravityLeavesTheEligibleRectangle() {
+        val r = rect(0.1)
+        assertSame(r, chosen(SolverSelector.select(r, rejected(SolverKind.GRAVITY, IneligibleReason.GRAVITY_UNAVAILABLE))))
     }
 
-    @Test
-    fun gravityZeroConfidenceAndRectangleNull_picksGravity() {
-        // Both unusable by the first two branches: rectangle null, gravity zero confidence.
-        val gravity = grav(0.0)
-        val sel = SolverSelector.select(null, gravity)
-
-        assertSame(gravity, sel.solution)
-        assertTrue("reason notes low overall confidence", sel.reason.contains("low"))
-    }
-
-    @Test
-    fun bothUnusable_gravityHigherThanLowRectangle_picksGravity() {
-        // Rectangle below threshold, gravity zero so fails branch 2, but gravity confidence
-        // (0.0) < rectangle (0.1) -> rectangle wins the better-non-null tie-break here.
-        // Construct the opposite: gravity > rectangle but gravity still 0 is impossible, so
-        // use a case where gravity is non-zero yet rectangle below threshold is handled by
-        // branch 2. The third branch only triggers when gravity confidence == 0, so the
-        // better non-null is whichever has higher confidence.
-        val rectangle = rect(0.05)
-        val gravity = grav(0.0)
-        val sel = SolverSelector.select(rectangle, gravity)
-        assertSame(rectangle, sel.solution)
-    }
-
-    @Test
-    fun tiePrefersRectangle() {
-        // Third branch, equal confidences -> rectangle preferred on ties.
-        val rectangle = rect(0.0)
-        val gravity = grav(0.0)
-        val sel = SolverSelector.select(rectangle, gravity)
-
-        assertSame(rectangle, sel.solution)
-        assertEquals(SolverKind.RECTANGLE, sel.solution.solver)
-    }
-
-    @Test
-    fun gravityNull_picksRectangle() {
-        // Defensive path: rectangle below threshold (branch 1 fails) and gravity null
-        // (branch 2 fails) reaches betterNonNull. There gravConf is NEGATIVE_INFINITY,
-        // so the non-null rectangle wins via the rectConf >= gravConf true-branch.
-        // This is the only invocation passing a null gravity; it covers L27's
-        // `gravity != null` FALSE side, L37's elvis null side, and L38's rectangle-chosen
-        // path when gravConf == NEGATIVE_INFINITY.
-        val rectangle = rect(0.1)
-        val sel = SolverSelector.select(rectangle, null)
-
-        assertSame(rectangle, sel.solution)
-        assertEquals(SolverKind.RECTANGLE, sel.solution.solver)
-        assertTrue("reason notes low overall confidence", sel.reason.contains("low"))
-    }
-
-    @Test
-    fun bothUnusable_rectangleLowerThanGravity_picksGravity() {
-        // Reaches betterNonNull (branch 1 fails: rect < threshold; branch 2 fails:
-        // gravity confidence == 0). Here the rectangle is non-null but its confidence
-        // (-0.1) is below gravity's (0.0), so `rectConf >= gravConf` is FALSE and the
-        // `else gravity!!` arm of L38 is taken. This pins the last betterNonNull branch.
-        val rectangle = rect(-0.1)
-        val gravity = grav(0.0)
-        val sel = SolverSelector.select(rectangle, gravity)
-
-        assertSame(gravity, sel.solution)
-        assertEquals(SolverKind.GRAVITY, sel.solution.solver)
-        assertTrue("reason notes low overall confidence", sel.reason.contains("low"))
-    }
-
-    @Test
-    fun customThreshold_isRespected() {
-        // Raise the threshold so a 0.5 rectangle is no longer "well-conditioned".
-        val gravity = grav(0.8)
-        val sel = SolverSelector.select(rect(0.5), gravity, minRectangleConfidence = 0.9)
-
-        assertSame(gravity, sel.solution)
-        assertTrue("reason mentions fallback", sel.reason.startsWith("fallback:"))
+    @Test fun bothIneligibleIsAnExplicitNoChoice() {
+        val a = rejected(SolverKind.RECTANGLE, IneligibleReason.SURFACE_CONTRADICTION)
+        val b = rejected(SolverKind.GRAVITY, IneligibleReason.PROJECTION_UNUSABLE)
+        val sel = SolverSelector.select(a, b)
+        assertEquals(Selection.NoneEligible(a, b), sel)
     }
 }

@@ -1,5 +1,8 @@
 package com.cocode.measureapp.geometry
 
+import com.cocode.measureapp.geometry.frames.CalibrationProvenance
+import com.cocode.measureapp.geometry.rectangle.PlaneCandidates
+import com.cocode.measureapp.geometry.rectangle.RectangleCandidate
 import kotlin.math.abs
 import kotlin.math.acos
 
@@ -11,6 +14,24 @@ import kotlin.math.acos
  * the world, so they yield the plane's spanning axes and normal in the camera frame.
  */
 object RectangleSolver {
+    /**
+     * Plane candidate (contract C07): supports vanishing points at infinity (frontal, pure
+     * yaw, pure pitch) and returns conditioning/consistency evidence or an explicit rejection.
+     * [k] must describe the same aligned pixels as [corners]; [provenance] and [sceneId]
+     * travel with the result. Eligibility and surface consistency are decided downstream.
+     */
+    fun candidate(
+        corners: List<Vec2>,
+        k: CameraIntrinsics,
+        provenance: CalibrationProvenance = CalibrationProvenance.UNAVAILABLE,
+        sceneId: String? = null,
+    ): RectangleCandidate = PlaneCandidates.solve(corners, k, provenance, sceneId)
+
+    /**
+     * Legacy finite-vanishing-point path used only by the unchecked rectangle-only
+     * [MetrologyEngine.measure]: it returns null whenever an edge pair is image-parallel.
+     * Solver selection uses [candidate] plus eligibility; never rank this image-angle score.
+     */
     fun solve(corners: List<Vec2>, k: CameraIntrinsics): PlaneSolution? {
         require(corners.size == 4) { "expected 4 corners [TL,TR,BR,BL], got ${corners.size}" }
         val (tl, tr, br, bl) = corners

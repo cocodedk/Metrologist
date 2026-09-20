@@ -1,0 +1,126 @@
+{
+  "name": "frontal",
+  "source": "tools/calibration-target.html",
+  "kind": "Rendered page with synthetic pinhole metadata; not a camera capture",
+  "imageWidth": 762,
+  "imageHeight": 522,
+  "intrinsics": {
+    "fx": 1200,
+    "fy": 1200,
+    "cx": 381,
+    "cy": 261
+  },
+  "physicalDown": [
+    0,
+    1,
+    0
+  ],
+  "orientation": "VERTICAL",
+  "objectPixels": [
+    [
+      36,
+      36
+    ],
+    [
+      726,
+      36
+    ],
+    [
+      726,
+      486
+    ],
+    [
+      36,
+      486
+    ]
+  ],
+  "referencePixels": [
+    [
+      231,
+      328.5
+    ],
+    [
+      531,
+      328.5
+    ],
+    [
+      531,
+      388.5
+    ],
+    [
+      231,
+      388.5
+    ]
+  ],
+  "referenceLengthMetres": 0.1,
+  "referenceWidthMetres": 0.02,
+  "expected": {
+    "widthMetres": 0.23,
+    "heightMetres": 0.15,
+    "areaSquareMetres": 0.0345,
+    "diagonalMetres": 0.27459060435491967,
+    "anglesDegrees": [
+      90,
+      90,
+      90,
+      90
+    ]
+  },
+  "target": {
+    "version": 2,
+    "scenario": "front",
+    "width": 230,
+    "height": 150,
+    "length": 100,
+    "stickWidth": 20,
+    "points": [
+      [
+        0,
+        0
+      ],
+      [
+        230,
+        0
+      ],
+      [
+        230,
+        150
+      ],
+      [
+        0,
+        150
+      ]
+    ],
+    "reference": [
+      [
+        65,
+        97.5
+      ],
+      [
+        165,
+        97.5
+      ],
+      [
+        165,
+        117.5
+      ],
+      [
+        65,
+        117.5
+      ]
+    ],
+    "margin": 12,
+    "truth": {
+      "width": 230,
+      "height": 150,
+      "area": 34500,
+      "diagonal": 274.59060435491966,
+      "angles": [
+        90,
+        90,
+        90,
+        90
+      ]
+    }
+  }
+}

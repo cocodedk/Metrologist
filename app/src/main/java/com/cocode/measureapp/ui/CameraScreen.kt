@@ -1,60 +1,45 @@
 package com.cocode.measureapp.ui
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.camera.camera2.interop.Camera2CameraInfo
-import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
-import androidx.camera.core.Preview
-import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.view.PreviewView
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.cocode.measureapp.capture.GravityProvider
-import com.cocode.measureapp.geometry.TiltAngles
-import com.cocode.measureapp.geometry.tiltFromGravity
-import com.cocode.measureapp.ui.theme.StaffRed
+import com.cocode.measureapp.capture.gravity.levelReadingOf
+import com.cocode.measureapp.capture.recovery.CaptureController
+import com.cocode.measureapp.capture.recovery.CaptureState
+import com.cocode.measureapp.ui.capture.CAMERA_UNAVAILABLE
+import com.cocode.measureapp.ui.capture.CameraControls
+import com.cocode.measureapp.ui.capture.CameraPreview
+import com.cocode.measureapp.ui.capture.PermissionDeniedPanel
+import com.cocode.measureapp.ui.capture.startCapture
 import java.util.concurrent.Executors
 import kotlinx.coroutines.delay
 
-/** In-app CameraX capture. Records the photo plus the camera intrinsics and gravity. */
-@OptIn(androidx.camera.camera2.interop.ExperimentalCamera2Interop::class)
+/**
+ * In-app CameraX capture. Records the photo plus the camera intrinsics and gravity.
+ * Each screen instance owns a fresh [CaptureController]: every request ends in success,
+ * failure or cancellation, and late results after leaving the screen are discarded.
+ */
 @Composable
 fun CameraScreen(
     onCaptured: (CapturedImage) -> Unit,
@@ -74,49 +59,48 @@ fun CameraScreen(
     ) { granted -> hasPermission = granted }
     LaunchedEffect(Unit) { if (!hasPermission) permLauncher.launch(Manifest.permission.CAMERA) }
 
+    val deliver by rememberUpdatedState(onCaptured)
     val gravity = remember { GravityProvider(context) }
     val captureExecutor = remember { Executors.newSingleThreadExecutor() }
+    var captureState by remember { mutableStateOf(CaptureState()) }
+    val controller = remember {
+        CaptureController<CapturedImage>(
+            discard = { it.bitmap.recycle() },
+            requestIdOf = { it.metadata.requestId },
+            onStateChanged = { captureState = it },
+        )
+    }
     DisposableEffect(Unit) {
         gravity.start()
         onDispose {
             gravity.stop()
-            captureExecutor.shutdown()
+            controller.dispose()
+            // A pending request still owes a callback on this executor; shut down after it.
+            if (controller.released) captureExecutor.shutdown()
         }
     }
     val imageCapture = remember { ImageCapture.Builder().build() }
-    val boundCameraId = remember { mutableStateOf<String?>(null) }
-    var capturing by remember { mutableStateOf(false) }
-    var tilt by remember { mutableStateOf(TiltAngles(0.0, 0.0)) }
+    var boundCameraId by remember { mutableStateOf<String?>(null) }
+    var bindError by remember { mutableStateOf<String?>(null) }
+    var tilt by remember { mutableStateOf(levelReadingOf(gravity.latestSample(), 0)) }
     LaunchedEffect(Unit) {
         while (true) {
-            tilt = tiltFromGravity(gravity.current(), displayRotationDegrees(context))
+            // Device-axis down -> current display axes; the image-frame transform is not applied here.
+            tilt = levelReadingOf(gravity.latestSample(), displayRotationDegrees(context))
             delay(50)
         }
     }
 
     Box(Modifier.fillMaxSize()) {
         if (hasPermission) {
-            AndroidView(
-                factory = { ctx ->
-                    val previewView = PreviewView(ctx)
-                    val providerFuture = ProcessCameraProvider.getInstance(ctx)
-                    providerFuture.addListener({
-                        val provider = providerFuture.get()
-                        val preview = Preview.Builder().build()
-                        preview.setSurfaceProvider(previewView.surfaceProvider)
-                        provider.unbindAll()
-                        val camera = provider.bindToLifecycle(
-                            lifecycleOwner,
-                            CameraSelector.DEFAULT_BACK_CAMERA,
-                            preview,
-                            imageCapture,
-                        )
-                        boundCameraId.value = Camera2CameraInfo.from(camera.cameraInfo).cameraId
-                    }, ContextCompat.getMainExecutor(ctx))
-                    previewView
-                },
+            CameraPreview(
+                lifecycleOwner = lifecycleOwner,
+                imageCapture = imageCapture,
+                onBound = { id -> boundCameraId = id; bindError = null },
+                onBindFailed = { boundCameraId = null; bindError = CAMERA_UNAVAILABLE },
                 modifier = Modifier.fillMaxSize(),
             )
+            LevelOverlay(tilt, Modifier.align(Alignment.Center))
         } else {
             PermissionDeniedPanel(
                 onGrant = { permLauncher.launch(Manifest.permission.CAMERA) },
@@ -131,57 +115,22 @@ fun CameraScreen(
             )
         }
 
-        if (hasPermission) {
-            LevelOverlay(tilt, Modifier.align(Alignment.Center))
-        }
-
-        Row(
-            Modifier.align(Alignment.BottomCenter).padding(24.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            OutlinedButton(onClick = onSettings) {
-                Icon(Icons.Default.Settings, contentDescription = "Settings", Modifier.size(18.dp))
-                Spacer(Modifier.width(4.dp))
-                Text("Settings")
-            }
-            OutlinedButton(onClick = onHelp) {
-                Icon(Icons.Default.Info, contentDescription = "Help", Modifier.size(18.dp))
-                Spacer(Modifier.width(4.dp))
-                Text("Help")
-            }
-            Button(
-                enabled = hasPermission && !capturing,
-                onClick = {
-                    capturing = true
-                    takePicture(context, imageCapture, gravity, captureExecutor, boundCameraId.value) { img ->
-                        capturing = false
-                        onCaptured(img)
+        CameraControls(
+            captureEnabled = captureState.canCapture(hasPermission, cameraReady = boundCameraId != null),
+            capturing = captureState.busy,
+            message = captureState.error ?: bindError,
+            onSettings = onSettings,
+            onHelp = onHelp,
+            onCapture = {
+                val cameraId = boundCameraId
+                controller.launch { id ->
+                    startCapture(context, imageCapture, captureExecutor, id, cameraId, gravity) { rid, outcome ->
+                        controller.complete(rid, outcome)?.let { deliver(it) }
+                        if (controller.released) captureExecutor.shutdown()
                     }
-                },
-                colors = ButtonDefaults.buttonColors(containerColor = StaffRed),
-                modifier = Modifier.height(48.dp),
-            ) {
-                Text(if (capturing) "Capturing…" else "Capture")
-            }
-        }
+                }
+            },
+            modifier = Modifier.align(Alignment.BottomCenter),
+        )
     }
 }
-
-@Composable
-private fun PermissionDeniedPanel(
-    onGrant: () -> Unit,
-    onOpenSettings: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier.padding(32.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text("Camera permission is needed to capture.")
-        Button(onClick = onGrant) { Text("Grant permission") }
-        OutlinedButton(onClick = onOpenSettings) { Text("Open settings") }
-    }
-}
-

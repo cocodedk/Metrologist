@@ -65,12 +65,52 @@ class SyntheticScene(
      */
     val gravityCam: Vec3 = (r * Vec3(0.0, 1.0, 0.0)).normalized()
 
+    /**
+     * Camera-frame gravity if the same rectangle is read as a FLOOR/TABLE: world down is the
+     * plane normal `(0,0,1)`, pointing away from a camera on the `z < 0` side (any `t.z > 0`
+     * pose close to frontal). Derived from the pose only, never from a solver.
+     */
+    val floorGravityCam: Vec3 = (r * Vec3(0.0, 0.0, 1.0)).normalized()
+
+    /** Wall corners `[TL, TR, BR, BL]` in camera coordinates (`R*X + t`), for ray checks. */
+    val cornerCam: List<Vec3> get() = listOf(
+        Vec3(-w / 2.0, -h / 2.0, 0.0), Vec3(w / 2.0, -h / 2.0, 0.0),
+        Vec3(w / 2.0, h / 2.0, 0.0), Vec3(-w / 2.0, h / 2.0, 0.0),
+    ).map { r * it + t }
+
+    /**
+     * The same physical view recorded in a sensor BUFFER that must be turned clockwise by
+     * [bufferRotationDeg] to look like this scene: the camera is rolled by `-bufferRotationDeg`
+     * about its optical axis and projects through the fixed sensor intrinsics [kb].
+     */
+    fun asBuffer(kb: CameraIntrinsics, bufferRotationDeg: Double): SyntheticScene {
+        val inv = SceneRotations.roll(-bufferRotationDeg)
+        return SyntheticScene(w, h, inv * r, inv * t, kb, l, sw)
+    }
+
     /** Independent pinhole projection of a world point: `pixel = K * ((R*X + t) / z)`. */
     private fun project(x: Vec3): Vec2 {
         val xc = r * x + t
         val u = k.matrix() * (xc * (1.0 / xc.z))
         return Vec2(u.x, u.y)
     }
+}
+
+/** Fixtures shared by the rectangle vanishing-point contract (node 01) and its consumers. */
+object ContractScenes {
+    /** Contract intrinsics `(fx, fy, cx, cy) = (1000, 1000, 1000, 750)`. */
+    val K = CameraIntrinsics(fx = 1000.0, fy = 1000.0, cx = 1000.0, cy = 750.0)
+
+    /** 2 x 1 m wall, 1 x 0.04 m stick, camera translation `(0, 0, 4)`, posed by [r]. */
+    fun wall(r: Mat3, k: CameraIntrinsics = K, w: Double = 2.0, h: Double = 1.0): SyntheticScene =
+        SyntheticScene(w = w, h = h, r = r, t = Vec3(0.0, 0.0, 4.0), k = k, l = 1.0, sw = 0.04)
+
+    /** Node 03's half-pixel marking offsets for `[TL, TR, BR, BL]`, optionally negated. */
+    fun halfPixelOffsets(sign: Double): List<Vec2> =
+        listOf(Vec2(0.5, 0.0), Vec2(0.0, -0.5), Vec2(-0.5, 0.0), Vec2(0.0, 0.5)).map { it * sign }
+
+    /** Adds per-corner pixel [offsets] to [corners]. */
+    fun offset(corners: List<Vec2>, offsets: List<Vec2>): List<Vec2> = corners.zip(offsets) { c, o -> c + o }
 }
 
 /** Small sin/cos rotation-matrix builders for posing the synthetic camera. */
@@ -92,6 +132,16 @@ object SceneRotations {
             1.0, 0.0, 0.0,
             0.0, cos(a), -sin(a),
             0.0, sin(a), cos(a),
+        )
+    }
+
+    /** Rotation about the optical (z) axis; in y-down image axes it turns content clockwise. */
+    fun roll(deg: Double): Mat3 {
+        val a = Math.toRadians(deg)
+        return Mat3(
+            cos(a), -sin(a), 0.0,
+            sin(a), cos(a), 0.0,
+            0.0, 0.0, 1.0,
         )
     }
 

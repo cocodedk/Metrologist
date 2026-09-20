@@ -51,6 +51,26 @@ class StickBoxTest {
         assertEquals(kotlin.math.sqrt(10.0), short, 1e-9)
     }
 
+    @Test fun detectedEndsHandoffBuildsCounterClockwiseBoxWithLongEdgesFirst() {
+        val box = StickBox.fromDetectedEnds(Vec2(100.0, 100.0), Vec2(300.0, 100.0), halfWidth = 10.0)
+        assertEquals(listOf(Vec2(100.0, 110.0), Vec2(300.0, 110.0), Vec2(300.0, 90.0), Vec2(100.0, 90.0)), box)
+        assertEquals(box, StickBox.requireValid(box))
+        assertEquals(box.reversed(), StickBox.requireValid(box.reversed()))
+        val (long, short) = StickBox.longShortMeanEdges(box)
+        assertEquals(200.0, long, 1e-9)
+        assertEquals(20.0, short, 1e-9)
+    }
+
+    @Test fun detectedHalfWidthIsSixPercentWithEightPixelFloor() {
+        assertEquals(12.0, StickBox.detectedHalfWidth(Vec2(0.0, 0.0), Vec2(200.0, 0.0)), 1e-12)
+        assertEquals(8.0, StickBox.detectedHalfWidth(Vec2(0.0, 0.0), Vec2(50.0, 0.0)), 1e-12)
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun requireValidRejectsCrossedBox() {
+        StickBox.requireValid(listOf(Vec2(100.0, 110.0), Vec2(300.0, 90.0), Vec2(300.0, 110.0), Vec2(100.0, 90.0)))
+    }
+
     @Test(expected = IllegalArgumentException::class)
     fun longShortMeanEdgesWrongCornerCountThrows() {
         StickBox.longShortMeanEdges(listOf(Vec2(0.0, 0.0), Vec2(1.0, 1.0)))

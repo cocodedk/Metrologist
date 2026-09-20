@@ -14,4 +14,8 @@ data class CameraIntrinsics(
     )
 
     fun inverseMatrix() = matrix().inverse()
+
+    /** Finite positive focal lengths and a finite principal point: safe to back-project with. */
+    fun isUsable(): Boolean =
+        fx.isFinite() && fy.isFinite() && fx > 0.0 && fy > 0.0 && cx.isFinite() && cy.isFinite()
 }

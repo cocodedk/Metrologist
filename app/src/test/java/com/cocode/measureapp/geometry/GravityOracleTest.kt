@@ -2,7 +2,6 @@ package com.cocode.measureapp.geometry
 
 import com.cocode.measureapp.stick.StickScale
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -42,24 +41,26 @@ class GravityOracleTest {
     }
 
     @Test fun gravityRecoversTruthWhenFacingCamera() {
-        // Near-fronto pure yaw: RectangleSolver returns null, so measureHybrid is FORCED onto
-        // the gravity path. The wall faces the camera, so gravity stays within 2%.
+        // Near-fronto pure yaw: the wall faces the camera, so the gravity pipeline alone stays
+        // within 2%. The live selector no longer needs to be forced onto it: the rectangle
+        // candidate supports the vanishing point at infinity and is eligible here.
         val r = SceneRotations.yawPitch(yawDeg = 1.5, pitchDeg = 0.0)
         val scene = SyntheticScene(w = w, h = h, r = r, t = t, k = k, l = l)
         val gravity = gravityCam(r)
 
-        assertNull("rectangle must be null to force gravity", RectangleSolver.solve(scene.cornerPixels, scene.k))
+        val grav = gravityMeasure(scene, gravity)
+        val tol = 0.02 // 2% relative, per contract
+        assertEquals("width", w, grav.width, w * tol)
+        assertEquals("height", h, grav.height, h * tol)
+        assertEquals("area", w * h, grav.area, w * h * tol)
 
         val result = MetrologyEngine.measureHybrid(
             scene.cornerPixels, scene.stickPixels, scene.k, scene.profile,
             gravity, SurfaceOrientation.VERTICAL,
         )
-
-        assertEquals("gravity path selected", SolverKind.GRAVITY, result.solution.solver)
-        val tol = 0.02 // 2% relative, per contract
+        assertEquals("eligible rectangle outranks the assumed wall azimuth", SolverKind.RECTANGLE, result.solution.solver)
         assertEquals("width", w, result.measurement.width, w * tol)
         assertEquals("height", h, result.measurement.height, h * tol)
-        assertEquals("area", w * h, result.measurement.area, w * h * tol)
     }
 
     @Test fun gravityMateriallyLessAccurateAtObliqueAzimuthWhileRectangleStaysAccurate() {

@@ -1,8 +1,8 @@
 package com.cocode.measureapp.geometry
 
+import com.cocode.measureapp.geometry.rectangle.RectangleCandidate
 import com.cocode.measureapp.stick.StickScale
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import kotlin.math.abs
@@ -21,8 +21,9 @@ import kotlin.math.abs
  *    (documents the faces-camera assumption) while the RectangleSolver-based measure on the
  *    SAME scene stays within **0.5%**.
  * 3. **Selector behavior**: a clean oblique rectangle scene selects [SolverKind.RECTANGLE]
- *    (asserted via `diagnostics.solver`); a fronto-parallel scene (RectangleSolver returns
- *    null) selects [SolverKind.GRAVITY] and still yields a finite measurement.
+ *    (asserted via `diagnostics.solver`); a fronto-parallel scene still yields a finite
+ *    measurement. Its image-parallel edges are a vanishing point at infinity, which the
+ *    rectangle candidate solves exactly (node 01); solver choice there is node 03's.
  */
 class MetrologyEngineGravityOracleTest {
     private val w = 3.0
@@ -43,24 +44,14 @@ class MetrologyEngineGravityOracleTest {
     }
 
     @Test fun gravityRecoversTruthWhenWallFacesCamera() {
-        // Near-fronto pure yaw: RectangleSolver returns null, so measureHybrid is forced onto
-        // the gravity path. The wall faces the camera, so gravity stays within 2%.
+        // Near-fronto pure yaw: the wall faces the camera, so the gravity pipeline alone
+        // (no selector) stays within 2%.
         val scene = scene(SceneRotations.yawPitch(yawDeg = 1.5, pitchDeg = 0.0))
-        assertNull(
-            "rectangle must be null to force gravity",
-            RectangleSolver.solve(scene.cornerPixels, scene.k),
-        )
-
-        val result = MetrologyEngine.measureHybrid(
-            scene.cornerPixels, scene.stickPixels, scene.k, scene.profile,
-            scene.gravityCam, SurfaceOrientation.VERTICAL,
-        )
-
-        assertEquals("gravity path selected", SolverKind.GRAVITY, result.solution.solver)
+        val result = gravityOnly(scene)
         val tol = 0.02 // 2% relative, per contract
-        assertEquals("width", w, result.measurement.width, w * tol)
-        assertEquals("height", h, result.measurement.height, h * tol)
-        assertEquals("area", w * h, result.measurement.area, w * h * tol)
+        assertEquals("width", w, result.width, w * tol)
+        assertEquals("height", h, result.height, h * tol)
+        assertEquals("area", w * h, result.area, w * h * tol)
     }
 
     @Test fun gravityMateriallyWorseAtObliqueAzimuthWhileRectangleStaysAccurate() {
@@ -109,22 +100,31 @@ class MetrologyEngineGravityOracleTest {
         assertEquals("solution agrees with diagnostics", SolverKind.RECTANGLE, result.solution.solver)
     }
 
-    @Test fun selectorFallsBackToGravityOnFrontoParallelScene() {
-        // Fronto-parallel (pure tiny yaw): RectangleSolver returns null, so the selector
-        // must fall back to GRAVITY and still produce a finite measurement.
+    @Test fun nearFrontoParallelRectangleCandidateRecoversTruth() {
+        // Pure tiny yaw leaves the vertical edges image-parallel (vanishing point at infinity).
+        // That is a valid direction: the rectangle candidate recovers the oracle exactly.
         val scene = scene(SceneRotations.yawPitch(yawDeg = 1.5, pitchDeg = 0.0))
-        assertNull(
-            "rectangle must be null on fronto-parallel scene",
-            RectangleSolver.solve(scene.cornerPixels, scene.k),
-        )
+        val c = RectangleSolver.candidate(scene.cornerPixels, scene.k)
+        assertTrue("candidate rejected: $c", c is RectangleCandidate.Accepted)
+        val frame = (c as RectangleCandidate.Accepted).frame
+        val scale = StickScale.solve(projectToPlane(scene.stickPixels, scene.k, frame), scene.profile)
+        val m = Measurements.compute(projectToPlane(scene.cornerPixels, scene.k, frame).map { it * scale.scale })
+        assertEquals("width", w, m.width, w * 1e-6)
+        assertEquals("height", h, m.height, h * 1e-6)
+        assertEquals("area", w * h, m.area, w * h * 1e-6)
+    }
+
+    @Test fun hybridStillYieldsFiniteMeasurementOnFrontoParallelScene() {
+        // Solver choice for this scene belongs to the selector node; whichever it picks, the
+        // hybrid path must produce a finite, positive measurement.
+        val scene = scene(SceneRotations.yawPitch(yawDeg = 1.5, pitchDeg = 0.0))
 
         val result = MetrologyEngine.measureHybrid(
             scene.cornerPixels, scene.stickPixels, scene.k, scene.profile,
             scene.gravityCam, SurfaceOrientation.VERTICAL,
         )
 
-        val diag = result.diagnostics!!
-        assertEquals("selector falls back to GRAVITY", SolverKind.GRAVITY, diag.solver)
+        assertTrue("diagnostics present", result.diagnostics != null)
         assertTrue("finite width", result.measurement.width.isFinite())
         assertTrue("finite height", result.measurement.height.isFinite())
         assertTrue("finite area", result.measurement.area.isFinite())
