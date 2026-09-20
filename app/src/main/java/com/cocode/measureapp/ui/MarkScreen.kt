@@ -119,8 +119,11 @@ fun MarkScreen(
         }
     }
 
+    // Fill the screen rather than fit inside it: a 16:9 photo on a 20:9 screen left a fifth of
+    // the view as empty bands, and the marks live in image coordinates either way. Pinching
+    // below 1 zooms out past the fill, which is how the edges of the frame stay reachable.
     fun fit() = if (canvasSize.width > 0f && canvasSize.height > 0f)
-        minOf(canvasSize.width / bmp.width, canvasSize.height / bmp.height) else 1f
+        maxOf(canvasSize.width / bmp.width, canvasSize.height / bmp.height) else 1f
     fun sNow() = fit() * zoom
     fun txNow() = (canvasSize.width - bmp.width * sNow()) / 2f + pan.x
     fun tyNow() = (canvasSize.height - bmp.height * sNow()) / 2f + pan.y
@@ -148,7 +151,7 @@ fun MarkScreen(
                                     val zc = e.calculateZoom(); val pc = e.calculatePan()
                                     if (zc != 1f || pc != Offset.Zero) {
                                         val sc = sNow()
-                                        zoom = (zoom * zc).coerceIn(1f, 6f)
+                                        zoom = (zoom * zc).coerceIn(0.55f, 6f)
                                         pan = Offset(
                                             (pan.x + pc.x).coerceIn(-bmp.width * sc / 2f, bmp.width * sc / 2f),
                                             (pan.y + pc.y).coerceIn(-bmp.height * sc / 2f, bmp.height * sc / 2f),
