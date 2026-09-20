@@ -51,7 +51,7 @@ jobs:
           fi
 
           if echo "$CHANGED" | grep -qE \
-            '^(app/|[^/]+\.gradle\.kts|gradle/|gradlew|gradlew\.bat|\.github/workflows/ci\.yml)'; then
+            '^(app/|[^/]+\.gradle\.kts|gradle/|gradlew|gradlew\.bat|gradle\.properties|scripts/release/|\.github/workflows/(ci|release-apk)\.yml)'; then
             echo "code=true" >> "$GITHUB_OUTPUT"
           else
             echo "code=false" >> "$GITHUB_OUTPUT"
@@ -72,12 +72,25 @@ jobs:
           java-version: '17'
           cache: gradle
 
-      - name: Build smoke
-        run: ./gradlew buildSmoke --no-daemon
+      - name: Build smoke and optimized release
+        run: ./gradlew buildSmoke :app:assembleRelease --no-daemon
+
+  tools:
+    name: Graph and release tools
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Validate graph and retained verification tools
+        run: |
+          python3 scripts/supervise.py validate
+          python3 -m unittest discover -s scripts/supervisor/tests
+          python3 -m unittest discover -s scripts/release -p 'test_*.py'
+          node tools/calibration/check.cjs
 
   verify:
     name: verify
-    needs: [changes, build]
+    needs: [changes, build, tools]
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -85,9 +98,16 @@ jobs:
         env:
           CHANGES_RESULT: ${{ needs.changes.result }}
           BUILD_RESULT: ${{ needs.build.result }}
+          TOOLS_RESULT: ${{ needs.tools.result }}
         run: |
           echo "changes job: $CHANGES_RESULT"
           echo "build job:   $BUILD_RESULT"
+          echo "tools job:   $TOOLS_RESULT"
+
+          if [[ "$TOOLS_RESULT" != "success" ]]; then
+            echo "ERROR: graph/release tool checks failed ($TOOLS_RESULT)"
+            exit 1
+          fi
 
           if [[ "$CHANGES_RESULT" != "success" ]]; then
             echo "ERROR: change-detection job failed ($CHANGES_RESULT)"

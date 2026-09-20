@@ -1,0 +1,17 @@
+Metrologist estimates the dimensions of a flat surface from a photo taken inside the app. Place a reference stick of known length and width on the same plane, then mark the four corners of the object and the four outside corners of the reference.
+
+Features:
+• Camera capture with tilt information
+• Wall and floor/table surface modes
+• Adjustable corner markers, zoom and a magnifier
+• Width, height, area, diagonal and corner-angle results
+• Confidence indicators and measurement diagnostics
+• Metric and imperial display units
+• Export an annotated image through Android sharing
+
+Processing happens on your device. The app requests camera access and has no ads or analytics.
+
+Use a flat reference with accurately measured dimensions, clear lighting and visible corners. Results are estimates, not certified measurements. Verify important dimensions with a ruler or tape measure.
+
+User guide and printable reference: https://cocodedk.github.io/Metrologist/user-guide.html
+Source and issue tracker: https://github.com/cocodedk/Metrologist
