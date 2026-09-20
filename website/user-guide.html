@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>User Guide — Metrologist</title>
+  <meta name="description" content="Learn to measure a wall with Metrologist: prepare a reference stick, set its dimensions, take a photo, mark both boxes and check the result.">
+  <link rel="canonical" href="https://cocodedk.github.io/Metrologist/user-guide.html">
+  <link rel="alternate" hreflang="en" href="https://cocodedk.github.io/Metrologist/user-guide.html">
+  <link rel="alternate" hreflang="fa" href="https://cocodedk.github.io/Metrologist/fa/user-guide.html">
+  <link rel="alternate" hreflang="x-default" href="https://cocodedk.github.io/Metrologist/user-guide.html">
+  <meta property="og:title" content="User Guide — Metrologist">
+  <meta property="og:description" content="Your first measurement, step by step. Reference setup, marking, results and troubleshooting.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://cocodedk.github.io/Metrologist/user-guide.html">
+  <meta property="og:image" content="https://cocodedk.github.io/Metrologist/og.png">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="guide.css">
+</head>
+<body class="guide-page">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="staff-rail" aria-hidden="true"></div>
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="./" class="nav-brand"><img class="nav-brand-icon" src="favicon.svg" alt=""><span class="nav-brand-name">Metrologist</span></a>
+      <div class="nav-actions"><a class="lang-switch" href="./">Home</a><a class="lang-switch" href="fa/user-guide.html" lang="fa" hreflang="fa">فارسی</a></div>
+    </div>
+  </nav>
+  <main id="main" class="page-wrap guide-wrap">
+    <header class="guide-hero">
+      <p class="section-label">User guide · Wall measurements · v0.0.1</p>
+      <h1>Your first measurement,<br><em>step by step.</em></h1>
+      <p>Start with a rectangular, upright surface: a door, a panel or part of a wall. A reference stick in the same plane gives the photo its real-world scale.</p>
+      <div class="guide-actions"><a class="btn-primary" href="#prepare">Start here</a><a class="btn-secondary" href="print-stick.html">Print a reference stick</a></div>
+      <p class="guide-small">Need the app? <a href="https://github.com/cocodedk/Metrologist/releases/latest/download/Metrologist.apk">Download the Android APK</a>. This guide describes the published v0.0.1 wall workflow.</p>
+    </header>
+    <div class="guide-layout">
+      <nav class="guide-toc" aria-label="On this page">
+        <h2>On this page</h2>
+        <ol>
+          <li><a href="#prepare">Prepare the reference</a></li>
+          <li><a href="#settings">Set dimensions and units</a></li>
+          <li><a href="#capture">Take the photo</a></li>
+          <li><a href="#mark">Place all eight corners</a></li>
+          <li><a href="#results">Read the result</a></li>
+          <li><a href="#save">Correct, share or start again</a></li>
+          <li><a href="#practice">Check a known measurement</a></li>
+          <li><a href="#help">Troubleshooting</a></li>
+        </ol>
+      </nav>
+      <div class="guide-content">
+        <section id="prepare" aria-labelledby="prepare-title">
+          <p class="section-label">01 · Before the photo</p><h2 id="prepare-title">Prepare the reference stick</h2>
+          <p>You need the app, a ruler or tape measure, and a flat reference with red at both ends and a checker border on all four sides. The whole stick and the object’s four corners must fit in one photo.</p>
+          <ol>
+            <li><a href="print-stick.html">Print the reference stick</a> at <strong>100% / Actual size</strong>. Turn off “Fit to page”.</li>
+            <li>Check the printed 10 cm ruler against a real ruler. The complete reference, including the checker border, should be <strong>20 cm long and 4 cm wide</strong>.</li>
+            <li>Cut along the outer border and mount it on a flat, rigid backing. Keep the checker margin and measure the full outside dimensions after mounting.</li>
+            <li>Place it flat against the same surface as the object. A stick held in front of a wall does not set the wall’s scale correctly.</li>
+          </ol>
+          <p class="guide-note">Using your own stick? Enter its measured full length and short width. Include its checker border, but not any blank paper outside it. Do not enter the length of one coloured band.</p>
+        </section>
+        <section id="settings" aria-labelledby="settings-title">
+          <p class="section-label">02 · In the app</p><h2 id="settings-title">Set both dimensions</h2>
+          <p>Open <strong>Settings</strong> from the camera screen. Choose your display units, then enter <strong>Reference stick length</strong> and <strong>Reference stick width</strong>.</p>
+          <dl class="guide-values"><div><dt>Printed stick, centimetres</dt><dd>Length <strong>20</strong> · Width <strong>4</strong></dd></div><div><dt>The same stick, metres</dt><dd>Length <strong>0.20</strong> · Width <strong>0.04</strong></dd></div></dl>
+          <p>Use the values you actually measured. Both must be positive numbers. Settings are saved between sessions; return with the back arrow.</p>
+          <p class="guide-note">The “Feet &amp; inches” setting displays results in feet and inches, but its input fields use <strong>decimal feet</strong>: 1.5 means 1 foot 6 inches. For the printed stick, entering 20 and 4 in centimetres avoids conversion rounding.</p>
+        </section>
+        <section id="capture" aria-labelledby="capture-title">
+          <p class="section-label">03 · Frame the surface</p><h2 id="capture-title">Take a clear photo</h2>
+          <ol>
+            <li>Allow camera access when Android asks. Take the photo inside Metrologist so it has the camera and tilt information for the shot.</li>
+            <li>Keep the whole object and reference visible, with space around their edges. Use even light; avoid blur, glare and shadows over the bands.</li>
+            <li>For v0.0.1, use a moderate oblique view rather than a perfectly straight-on or nearly edge-on view. Keep all corners easy to distinguish.</li>
+            <li>Hold the phone still and tap <strong>Capture</strong>.</li>
+          </ol>
+          <p>The object and reference must lie on one flat plane. A door frame, raised trim or curved surface is not the same plane as the flat panel behind it.</p>
+        </section>
+        <section id="mark" aria-labelledby="mark-title">
+          <p class="section-label">04 · Mark the photo</p><h2 id="mark-title">Two boxes. Four corners each.</h2>
+          <figure class="guide-figure">
+            <img src="marking-guide.svg" width="640" height="360" alt="Diagram: the green object box has corners 1 to 4; the red reference box has corners A to D at the four outside corners of the checker border.">
+            <figcaption>Illustration, not a measurement target. Mark the object’s boundary and the reference’s complete outer boundary.</figcaption>
+          </figure>
+          <p>First, put the <strong>green box</strong> around the object you want to measure. Put its four dots on the object's four corners. Then adjust the <strong>red box</strong> around the stick, as shown below.</p>
+          <h3>Put the red box around the whole stick</h3>
+          <p>Think of the red box as a fence. <strong>Keep every checker square inside it.</strong> The four red dots go on the four outside corners, labelled A, B, C and D below. The two yellow dots halfway along the ends are <strong>not corners</strong>.</p>
+          <figure class="guide-figure">
+            <img src="reference-alignment.svg" width="640" height="260" alt="The whole stick with four red corner handles A, B, C and D. The outside dimensions, including the checker border, are 20 by 4 centimetres.">
+            <figcaption>Use the full outside size: <strong>20 cm long and 4 cm wide</strong> for a correctly printed stick. Check it with a real ruler first.</figcaption>
+          </figure>
+          <ol>
+            <li>Zoom in with two fingers until the stick is easy to see.</li>
+            <li>Drag dot A to the top-left outside corner. Then place B, C and D on the other three outside corners. The letters are only in this guide; they are not printed on the stick.</li>
+            <li>The centre of each dot must sit where the two outside edges of the thin black line meet. Use the little magnifier to see the corner.</li>
+            <li>Look along all four sides. The red lines should follow the outside edges, with all the checkers inside. Then tap <strong>Measure</strong>.</li>
+          </ol>
+          <figure class="guide-figure">
+            <img src="reference-corner.svg" width="640" height="260" alt="Close-up of corner A: a red handle is centred on the outside top-left corner of the black outline, enclosing the checker border.">
+            <figcaption>Corner A, enlarged: put the <strong>centre of the handle</strong> exactly where the two outside edges of the thin black outline meet. The dashed lines follow the reference boundary. Repeat at the other three corners; do not use the centres of checker squares.</figcaption>
+          </figure>
+          <figure class="guide-figure">
+            <img src="reference-right-wrong.svg" width="640" height="330" alt="Right: the red box encloses the whole stick. Wrong: the red box is too small and excludes the checker margin.">
+            <figcaption>Top, green tick: <strong>right</strong> — the whole checker border is inside. Bottom, red cross: <strong>wrong</strong> — the box cuts off the checkers and only surrounds the coloured middle.</figcaption>
+          </figure>
+          <p class="guide-note">The current automatic detector expects the older band pattern. For this checker design, align all four red handles manually before measuring. The initial green box is a placeholder, not a detected object.</p>
+        </section>
+        <section id="results" aria-labelledby="results-title">
+          <p class="section-label">05 · Check the reading</p><h2 id="results-title">Understand the result</h2>
+          <dl class="guide-definitions">
+            <dt>Width and height</dt><dd>The averages of the two opposite edge lengths. On a rectangle, these are its usual width and height.</dd>
+            <dt>Area</dt><dd>The area inside the four marked object corners. The reference stick is not added to it.</dd>
+            <dt>Diagonal</dt><dd>The average of the two corner-to-corner diagonal lengths.</dd>
+            <dt>Corner angles</dt><dd>90° describes a square corner. Start with rectangular objects; one photo cannot resolve every four-sided shape reliably.</dd>
+            <dt>Confidence and notes</dt><dd>Read the confidence label, percentage and caveats together. A high confidence score is a quality indicator, <strong>not a guaranteed error percentage</strong>.</dd>
+          </dl>
+          <p>Low confidence, a fallback-method note or inconsistent readings are reasons to check the marks and take another photo. Check important dimensions with a ruler or tape.</p>
+        </section>
+        <section id="save" aria-labelledby="save-title">
+          <p class="section-label">06 · Next action</p><h2 id="save-title">Correct or keep the measurement</h2>
+          <ul>
+            <li><strong>Re-mark:</strong> return to the same photo, adjust the boxes, then measure again.</li>
+            <li><strong>Export:</strong> open Android’s share sheet with an annotated PNG containing the photo and measurement summary. Choose a sharing or saving app available on your phone.</li>
+            <li><strong>New:</strong> return to the camera for another measurement.</li>
+            <li>On the marking screen, <strong>Retake</strong> takes a new photo; <strong>Reset</strong> restores the starting boxes and zoom, discarding your adjustments.</li>
+          </ul>
+          <p>If the app cannot produce a usable result, correct the photo, reference dimensions or marks before exporting. Do not treat a failed or zero-sized reading as a measurement.</p>
+        </section>
+        <section id="practice" aria-labelledby="practice-title">
+          <p class="section-label">07 · A useful first test</p><h2 id="practice-title">Measure something you can check</h2>
+          <p>Use a flat rectangular panel or board placed upright. Measure its width and height with a ruler, then repeat with the app and the reference on its face.</p>
+          <ol><li>Compare the app’s width and height with the ruler values in the same units.</li><li>Re-mark carefully, then take a second photo from a slightly different angle.</li><li>If readings disagree, recheck the reference dimensions, its position and all eight handles.</li></ol>
+          <p class="guide-note">Error (%) = |app value − ruler value| ÷ ruler value × 100. For example, 50.5 cm against a known 50 cm is a 1% error. This example is not an accuracy guarantee.</p>
+        </section>
+        <section id="help" aria-labelledby="help-title">
+          <p class="section-label">08 · Troubleshooting</p><h2 id="help-title">When a measurement looks wrong</h2>
+          <details><summary>The reference was not detected</summary><p>Place the red box manually around all four outside corners. Improve lighting and keep every band visible for the next photo.</p></details>
+          <details><summary>The result is much too large or small</summary><p>Check the selected units, full reference length and short width. Make sure you did not enter one band’s length. Keep the reference on the same plane as the object.</p></details>
+          <details><summary>A straight-on photo fails</summary><p>The published v0.0.1 can reject straight-on rectangle views. Retake from a moderate angle while keeping all corners clear. Do not compensate by moving the marks away from the real edges.</p></details>
+          <details><summary>The corners overlap or the shape cannot be measured</summary><p>Spread the handles onto four distinct outer corners. Avoid crossed edges and corners on one straight line. Zoom in to check both boxes, or retake a less oblique photo.</p></details>
+          <details><summary>Can I measure a floor or table?</summary><p>v0.0.1’s marking screen uses wall mode. Do not use that mode for a floor or tabletop. If a newer build offers <strong>Wall</strong> and <strong>Floor / table</strong>, select the option that matches the physical surface.</p></details>
+          <details><summary>Export is disabled, or Capture will not retry</summary><p>Export needs a usable result. Re-mark or retake first. If capture remains stuck in v0.0.1, return to the camera or reopen the app, check camera permission and try again.</p></details>
+          <details><summary>Still stuck?</summary><p>Open <a href="https://github.com/cocodedk/Metrologist/issues">a GitHub issue</a> with your app version, phone model, Android version, reference dimensions and the steps that failed. Include a photo only if you are comfortable sharing it publicly.</p></details>
+        </section>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer page-wrap"><div class="footer-inner"><p class="footer-copy">Metrologist · Cocode · Apache-2.0</p><div class="footer-links"><a href="./">Home</a><a href="print-stick.html">Print reference stick</a><a href="privacy.html">Privacy policy</a><a href="#main">Back to top</a></div></div></footer>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 260" width="640" height="260">
+  <title>Place the centre of the handle on the outside corner of the black outline</title>
+  <rect width="640" height="260" fill="#efefea"/>
+  <defs><pattern id="checks" x="120" y="56" width="40" height="40" patternUnits="userSpaceOnUse">
+    <rect width="40" height="40" fill="#fff"/><path d="M0 0h20v20H0zM20 20h20v20H20z" fill="#000"/>
+  </pattern><clipPath id="crop"><rect x="120" y="56" width="488" height="176"/></clipPath></defs>
+  <!-- Enlarged top-left corner, cropped on the right and bottom. -->
+  <g clip-path="url(#crop)">
+    <rect x="120" y="56" width="600" height="400" fill="url(#checks)"/>
+    <rect x="160" y="96" width="540" height="320" fill="#f00"/>
+    <path d="M121.5 456V57.5H720" fill="none" stroke="#000" stroke-width="3"/>
+  </g>
+  <path d="M120 20V232M82 56H608" fill="none" stroke="#d32f2f" stroke-width="2" stroke-dasharray="6 5"/>
+  <circle cx="120" cy="56" r="16" fill="none" stroke="#d32f2f" stroke-width="3"/>
+  <circle cx="120" cy="56" r="3" fill="#d32f2f"/>
+  <text x="83" y="31" font-family="sans-serif" font-size="22" font-weight="bold" fill="#a00">A</text>
+</svg>

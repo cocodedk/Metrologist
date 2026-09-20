@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200mm" height="40mm" viewBox="0 0 200 40">
+  <title>Metrologist reference: 200 by 40 millimetres including checker border</title>
+  <desc>Red-white-red-white-red centre. A four-millimetre checker margin surrounds all four sides. Mark the four outside corners.</desc>
+  <defs>
+    <pattern id="checker" width="4" height="4" patternUnits="userSpaceOnUse">
+      <rect width="4" height="4" fill="#fff"/>
+      <path d="M0 0h2v2H0zM2 2h2v2H2z" fill="#000"/>
+    </pattern>
+  </defs>
+  <rect width="200" height="40" fill="url(#checker)"/>
+  <rect x="4" y="4" width="192" height="32" fill="#f00"/>
+  <path d="M42.4 4h38.4v32H42.4zM119.2 4h38.4v32H119.2z" fill="#fff"/>
+  <!-- Stroke remains inside the 200 x 40 mm reference boundary. -->
+  <rect x=".15" y=".15" width="199.7" height="39.7" fill="none" stroke="#000" stroke-width=".3"/>
+</svg>

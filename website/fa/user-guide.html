@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>راهنمای کاربر — متروژیست</title>
+  <meta name="description" content="راهنمای اندازه‌گیری دیوار با متروژیست: آماده‌کردن نوار مرجع، تنظیم ابعاد، عکاسی، علامت‌گذاری گوشه‌ها و بررسی نتیجه.">
+  <link rel="canonical" href="https://cocodedk.github.io/Metrologist/fa/user-guide.html">
+  <link rel="alternate" hreflang="en" href="https://cocodedk.github.io/Metrologist/user-guide.html">
+  <link rel="alternate" hreflang="fa" href="https://cocodedk.github.io/Metrologist/fa/user-guide.html">
+  <link rel="alternate" hreflang="x-default" href="https://cocodedk.github.io/Metrologist/user-guide.html">
+  <meta property="og:title" content="راهنمای کاربر — متروژیست">
+  <meta property="og:description" content="اولین اندازه‌گیری، قدم‌به‌قدم: تنظیم مرجع، علامت‌گذاری، خواندن نتیجه و رفع مشکل.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://cocodedk.github.io/Metrologist/fa/user-guide.html">
+  <meta property="og:image" content="https://cocodedk.github.io/Metrologist/og.png">
+  <meta property="og:locale" content="fa_IR">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../guide.css">
+</head>
+<body class="guide-page">
+  <a class="skip-link" href="#main">رفتن به محتوای اصلی</a>
+  <div class="staff-rail" aria-hidden="true"></div>
+  <nav class="site-nav" aria-label="ناوبری اصلی">
+    <div class="nav-inner">
+      <a href="./" class="nav-brand"><img class="nav-brand-icon" src="../favicon.svg" alt=""><span class="nav-brand-name">Metrologist</span></a>
+      <div class="nav-actions"><a class="lang-switch" href="./">خانه</a><a class="lang-switch" href="../user-guide.html" lang="en" hreflang="en">English</a></div>
+    </div>
+  </nav>
+  <main id="main" class="page-wrap guide-wrap">
+    <header class="guide-hero">
+      <p class="section-label">راهنمای کاربر · اندازه‌گیری دیوار · نسخهٔ <bdi>v0.0.1</bdi></p>
+      <h1>اولین اندازه‌گیری،<br><em>قدم‌به‌قدم.</em></h1>
+      <p>از یک سطح مستطیلی و عمودی شروع کنید؛ مثلاً در، تخته یا بخشی از دیوار. نوار مرجعی که روی همان سطح قرار دارد، مقیاس واقعی عکس را مشخص می‌کند.</p>
+      <div class="guide-actions"><a class="btn-primary" href="#prepare">از اینجا شروع کنید</a><a class="btn-secondary" href="print-stick.html">چاپ نوار مرجع</a></div>
+      <p class="guide-small">اپ را ندارید؟ <a href="https://github.com/cocodedk/Metrologist/releases/latest/download/Metrologist.apk">فایل APK اندروید را دانلود کنید</a>. این راهنما روش اندازه‌گیری دیوار در نسخهٔ منتشرشدهٔ <bdi>v0.0.1</bdi> را توضیح می‌دهد.</p>
+    </header>
+    <div class="guide-layout">
+      <nav class="guide-toc" aria-label="فهرست این صفحه">
+        <h2>در این صفحه</h2>
+        <ol>
+          <li><a href="#prepare">آماده‌کردن نوار مرجع</a></li>
+          <li><a href="#settings">تنظیم ابعاد و واحد</a></li>
+          <li><a href="#capture">گرفتن عکس</a></li>
+          <li><a href="#mark">جای‌گذاری هر هشت گوشه</a></li>
+          <li><a href="#results">خواندن نتیجه</a></li>
+          <li><a href="#save">اصلاح، اشتراک‌گذاری یا شروع دوباره</a></li>
+          <li><a href="#practice">آزمایش با ابعاد معلوم</a></li>
+          <li><a href="#help">رفع مشکل</a></li>
+        </ol>
+      </nav>
+      <div class="guide-content">
+        <section id="prepare" aria-labelledby="prepare-title">
+          <p class="section-label">۰۱ · پیش از عکاسی</p><h2 id="prepare-title">نوار مرجع را آماده کنید</h2>
+          <p>به اپ، خط‌کش یا متر و یک نوار صاف با دو سر قرمز و حاشیهٔ شطرنجی در هر چهار طرف نیاز دارید. تمام نوار و چهار گوشهٔ شیء باید در یک عکس دیده شوند.</p>
+          <ol>
+            <li><a href="print-stick.html">نوار مرجع را چاپ کنید</a>؛ مقیاس چاپ را روی <strong>۱۰۰٪ / Actual size</strong> بگذارید و گزینهٔ «Fit to page» را خاموش کنید.</li>
+            <li>خط‌کش ۱۰ سانتی‌متری چاپ‌شده را با خط‌کش واقعی بررسی کنید. طول کل نوار با حاشیهٔ شطرنجی باید <strong>۲۰ سانتی‌متر و عرض آن ۴ سانتی‌متر</strong> باشد.</li>
+            <li>دور نوار را از مرز بیرونی ببرید و روی تکیه‌گاهی صاف و محکم بچسبانید. حاشیهٔ شطرنجی را نگه دارید و سپس ابعاد کامل بیرونی را اندازه بگیرید.</li>
+            <li>نوار را صاف روی همان سطح شیء قرار دهید. نگه‌داشتن نوار جلوتر از دیوار، مقیاس درستی برای دیوار نمی‌دهد.</li>
+          </ol>
+          <p class="guide-note">اگر نوار خودتان را می‌سازید، طول کامل و عرض کوتاه آن را اندازه بگیرید و وارد کنید. حاشیهٔ شطرنجی جزو مرجع است، اما کاغذ سفید بیرون آن نیست. طول یک بخش رنگی را به جای کل نوار وارد نکنید.</p>
+        </section>
+        <section id="settings" aria-labelledby="settings-title">
+          <p class="section-label">۰۲ · داخل اپ</p><h2 id="settings-title">هر دو بُعد را تنظیم کنید</h2>
+          <p>در صفحهٔ دوربین، <strong><bdi>Settings</bdi> (تنظیمات)</strong> را باز کنید. ابتدا واحد نمایش را انتخاب کنید، سپس <strong><bdi>Reference stick length</bdi> (طول مرجع)</strong> و <strong><bdi>Reference stick width</bdi> (عرض مرجع)</strong> را وارد کنید.</p>
+          <dl class="guide-values"><div><dt>نوار چاپی، با واحد سانتی‌متر</dt><dd>طول <strong>۲۰</strong> · عرض <strong>۴</strong></dd></div><div><dt>همان نوار، با واحد متر</dt><dd>طول <strong>۰٫۲۰</strong> · عرض <strong>۰٫۰۴</strong></dd></div></dl>
+          <p>ابعادی را وارد کنید که واقعاً اندازه گرفته‌اید. هر دو مقدار باید عدد مثبت باشند. تنظیمات برای دفعات بعد ذخیره می‌شوند؛ با پیکان بازگشت به دوربین برگردید.</p>
+          <p class="guide-note">در گزینهٔ <bdi>Feet &amp; inches</bdi>، نتیجه به فوت و اینچ نمایش داده می‌شود، اما ورودی‌ها بر حسب <strong>فوت اعشاری</strong> هستند: <bdi>1.5</bdi> یعنی ۱ فوت و ۶ اینچ. برای نوار چاپی، واردکردن ۲۰ و ۴ با واحد سانتی‌متر از خطای گردکردن تبدیل جلوگیری می‌کند. از ارقام انگلیسی و نقطهٔ اعشار مثل <bdi>0.20</bdi> استفاده کنید.</p>
+        </section>
+        <section id="capture" aria-labelledby="capture-title">
+          <p class="section-label">۰۳ · کادربندی سطح</p><h2 id="capture-title">عکس واضح بگیرید</h2>
+          <ol>
+            <li>وقتی اندروید درخواست کرد، اجازهٔ دسترسی به دوربین را بدهید. عکس را داخل متروژیست بگیرید تا اطلاعات دوربین و شیب گوشی همراه آن ثبت شود.</li>
+            <li>تمام شیء و نوار مرجع را با کمی فاصله از لبه‌های عکس در کادر نگه دارید. نور یکنواخت باشد؛ از تاری، بازتاب نور و سایه روی نوار پرهیز کنید.</li>
+            <li>در نسخهٔ <bdi>v0.0.1</bdi> از زاویه‌ای مایل و متوسط عکس بگیرید، نه کاملاً روبه‌رو یا تقریباً از کنار. هر چهار گوشه باید واضح بمانند.</li>
+            <li>گوشی را ثابت نگه دارید و <strong><bdi>Capture</bdi> (عکاسی)</strong> را بزنید.</li>
+          </ol>
+          <p>شیء و مرجع باید روی یک صفحهٔ تخت باشند. قاب در، لبهٔ برجسته یا سطح منحنی با صفحهٔ صاف پشت خود هم‌سطح نیست.</p>
+        </section>
+        <section id="mark" aria-labelledby="mark-title">
+          <p class="section-label">۰۴ · علامت‌گذاری عکس</p><h2 id="mark-title">دو کادر؛ هر کدام چهار گوشه.</h2>
+          <figure class="guide-figure">
+            <img src="../marking-guide.svg" width="640" height="360" alt="نمودار: کادر سبز شیء با گوشه‌های ۱ تا ۴، و کادر قرمز مرجع با گوشه‌های A تا D روی چهار گوشهٔ بیرونی حاشیهٔ شطرنجی.">
+            <figcaption>این تصویر فقط برای توضیح است، نه هدف اندازه‌گیری. مرز شیء و مرز کامل بیرونی نوار را مشخص کنید.</figcaption>
+          </figure>
+          <p>اول <strong>کادر سبز</strong> را دور شیئی بگذارید که می‌خواهید اندازه بگیرید؛ چهار نقطه را روی چهار گوشهٔ شیء قرار دهید. سپس <strong>کادر قرمز</strong> را مانند تصویرهای زیر دور نوار تنظیم کنید.</p>
+          <h3>کادر قرمز را دور تمام نوار بگذارید</h3>
+          <p>کادر قرمز را مثل یک حصار در نظر بگیرید. <strong>تمام خانه‌های شطرنجی باید داخل آن باشند.</strong> چهار نقطهٔ قرمز روی چهار گوشهٔ بیرونی قرار می‌گیرند؛ در تصویر زیر آن‌ها را A، B، C و D نامیده‌ایم. دو نقطهٔ زرد وسط دو سر نوار، <strong>گوشه نیستند</strong>.</p>
+          <figure class="guide-figure">
+            <img src="../reference-alignment.svg" width="640" height="260" alt="تمام نوار با چهار دستگیرهٔ قرمز A، B، C و D روی گوشه‌های بیرونی. ابعاد کامل با حاشیهٔ شطرنجی ۲۰ در ۴ سانتی‌متر است.">
+            <figcaption>ابعاد کامل بیرونی را وارد کنید: برای چاپ درست، <strong>طول ۲۰ و عرض ۴ سانتی‌متر</strong>. اول با خط‌کش واقعی بررسی کنید.</figcaption>
+          </figure>
+          <ol>
+            <li>با دو انگشت بزرگ‌نمایی کنید تا نوار را خوب ببینید.</li>
+            <li>نقطهٔ A را روی گوشهٔ بیرونی بالا و چپ بگذارید. سپس B، C و D را روی سه گوشهٔ بیرونی دیگر قرار دهید. این حرف‌ها فقط در راهنما هستند و روی نوار چاپ نشده‌اند.</li>
+            <li>مرکز هر نقطه باید دقیقاً روی محل برخورد دو لبهٔ بیرونی خط سیاه نازک باشد. با ذره‌بین کوچک، گوشه را بهتر ببینید.</li>
+            <li>هر چهار ضلع را نگاه کنید. خط‌های قرمز باید روی لبه‌های بیرونی باشند و همهٔ خانه‌های شطرنجی داخل کادر بمانند. سپس <strong><bdi>Measure</bdi> (اندازه‌گیری)</strong> را بزنید.</li>
+          </ol>
+          <figure class="guide-figure">
+            <img src="../reference-corner.svg" width="640" height="260" alt="نمای نزدیک گوشهٔ A: مرکز دستگیرهٔ قرمز روی گوشهٔ بیرونی بالا و چپ خط سیاه است و حاشیهٔ شطرنجی داخل کادر قرار دارد.">
+            <figcaption>گوشهٔ A با بزرگ‌نمایی: <strong>مرکز دستگیره</strong> را دقیقاً روی محل برخورد دو لبهٔ بیرونی خط سیاه نازک بگذارید. خط‌چین‌ها مرز مرجع را نشان می‌دهند. برای سه گوشهٔ دیگر تکرار کنید؛ مرکز خانه‌های شطرنجی محل علامت‌گذاری نیست.</figcaption>
+          </figure>
+          <figure class="guide-figure">
+            <img src="../reference-right-wrong.svg" width="640" height="330" alt="درست: کادر قرمز دور تمام نوار است. غلط: کادر کوچک است و حاشیهٔ شطرنجی بیرون آن مانده است.">
+            <figcaption>بالا، تیک سبز: <strong>درست</strong> — تمام حاشیهٔ شطرنجی داخل کادر است. پایین، ضربدر قرمز: <strong>غلط</strong> — کادر فقط بخش رنگی وسط را گرفته و خانه‌های شطرنجی بیرون مانده‌اند.</figcaption>
+          </figure>
+          <p class="guide-note">تشخیص خودکار فعلی برای طرح رنگی قدیمی است. برای طرح شطرنجی، هر چهار دستگیرهٔ قرمز را دستی تنظیم کنید. کادر سبز اولیه جای‌نگهدار است؛ اپ هنوز مرز شیء شما را تشخیص نداده است.</p>
+        </section>
+        <section id="results" aria-labelledby="results-title">
+          <p class="section-label">۰۵ · بررسی عددها</p><h2 id="results-title">نتیجه را درست بخوانید</h2>
+          <dl class="guide-definitions">
+            <dt>طول و عرض سطح</dt><dd>مقادیر <bdi>Width</bdi> و <bdi>Height</bdi> میانگین طول دو ضلع مقابل‌اند. برای مستطیل، همان ابعاد معمول آن هستند.</dd>
+            <dt>مساحت</dt><dd><bdi>Area</bdi> مساحت داخل چهار گوشهٔ علامت‌گذاری‌شدهٔ شیء است. مساحت نوار مرجع به آن اضافه نمی‌شود.</dd>
+            <dt>قطر</dt><dd><bdi>Diagonal</bdi> میانگین طول دو قطر بین گوشه‌های مقابل است.</dd>
+            <dt>زاویهٔ گوشه‌ها</dt><dd>۹۰ درجه یعنی گوشهٔ قائمه. از شیء مستطیلی شروع کنید؛ یک عکس برای اندازه‌گیری مطمئن هر شکل چهارضلعی کافی نیست.</dd>
+            <dt>اطمینان و توضیحات</dt><dd>برچسب اطمینان، درصد و توضیحات را با هم بخوانید. اطمینان بالا نشانه‌ای از کیفیت محاسبه است، <strong>نه تضمین درصد خطای اندازه‌گیری</strong>.</dd>
+          </dl>
+          <p>اطمینان پایین، استفاده از روش جایگزین یا تفاوت زیاد میان نتایج یعنی باید علامت‌ها را بررسی و عکس دیگری بگیرید. ابعاد مهم را با خط‌کش یا متر هم کنترل کنید.</p>
+        </section>
+        <section id="save" aria-labelledby="save-title">
+          <p class="section-label">۰۶ · قدم بعد</p><h2 id="save-title">اصلاح یا نگه‌داشتن نتیجه</h2>
+          <ul>
+            <li><strong><bdi>Re-mark</bdi>:</strong> به همان عکس برگردید، کادرها را اصلاح کنید و دوباره اندازه بگیرید.</li>
+            <li><strong><bdi>Export</bdi>:</strong> پنجرهٔ اشتراک‌گذاری اندروید را برای یک تصویر PNG شامل عکس و خلاصهٔ اندازه‌ها باز می‌کند. یکی از برنامه‌های موجود گوشی را برای ذخیره یا ارسال انتخاب کنید.</li>
+            <li><strong><bdi>New</bdi>:</strong> برای اندازه‌گیری جدید به دوربین برگردید.</li>
+            <li>در صفحهٔ علامت‌گذاری، <strong><bdi>Retake</bdi></strong> برای عکس جدید است؛ <strong><bdi>Reset</bdi></strong> کادرها و بزرگ‌نمایی را به حالت اولیه برمی‌گرداند و تنظیم دستی شما را پاک می‌کند.</li>
+          </ul>
+          <p>اگر نتیجهٔ قابل استفاده‌ای به دست نیامد، پیش از خروجی‌گرفتن عکس، ابعاد مرجع یا علامت‌ها را اصلاح کنید. نتیجهٔ ناموفق یا اندازهٔ صفر را اندازه‌گیری معتبر حساب نکنید.</p>
+        </section>
+        <section id="practice" aria-labelledby="practice-title">
+          <p class="section-label">۰۷ · اولین آزمایش</p><h2 id="practice-title">چیزی را اندازه بگیرید که می‌توانید کنترل کنید</h2>
+          <p>یک تخته یا صفحهٔ صاف مستطیلی را عمودی قرار دهید. طول و عرض آن را با خط‌کش اندازه بگیرید، سپس با مرجع روی همان سطح، اندازه‌گیری را در اپ تکرار کنید.</p>
+          <ol><li>ابعاد اپ را با اندازه‌های خط‌کش و با واحد یکسان مقایسه کنید.</li><li>علامت‌ها را دقیق‌تر بگذارید و سپس از زاویه‌ای کمی متفاوت عکس دوم بگیرید.</li><li>اگر نتایج متفاوت‌اند، ابعاد و محل مرجع و هر هشت دستگیره را دوباره بررسی کنید.</li></ol>
+          <p class="guide-note">درصد خطا = قدرمطلق اختلاف مقدار اپ و خط‌کش ÷ مقدار خط‌کش × ۱۰۰. مثلاً ۵۰٫۵ سانتی‌متر در برابر مقدار واقعی ۵۰ سانتی‌متر، خطای ۱٪ است. این مثال تضمین دقت اپ نیست.</p>
+        </section>
+        <section id="help" aria-labelledby="help-title">
+          <p class="section-label">۰۸ · رفع مشکل</p><h2 id="help-title">وقتی نتیجه درست به نظر نمی‌رسد</h2>
+          <details><summary>نوار مرجع تشخیص داده نشد</summary><p>چهار گوشهٔ کادر قرمز را دستی روی گوشه‌های بیرونی نوار بگذارید. برای عکس بعد نور را بهتر کنید و همهٔ بخش‌های رنگی را در کادر نگه دارید.</p></details>
+          <details><summary>اندازه خیلی بزرگ یا کوچک است</summary><p>واحد، طول کامل مرجع و عرض کوتاه آن را بررسی کنید. طول یک بخش رنگی را به جای کل نوار وارد نکنید. مرجع باید روی همان صفحهٔ شیء باشد.</p></details>
+          <details><summary>عکس روبه‌رو جواب نمی‌دهد</summary><p>نسخهٔ منتشرشدهٔ <bdi>v0.0.1</bdi> ممکن است نمای کاملاً روبه‌روی مستطیل را رد کند. از زاویه‌ای مایل و متوسط دوباره عکس بگیرید. برای گرفتن نتیجه، علامت‌ها را از لبه‌های واقعی جابه‌جا نکنید.</p></details>
+          <details><summary>گوشه‌ها روی هم افتاده‌اند یا شکل قابل اندازه‌گیری نیست</summary><p>دستگیره‌ها را روی چهار گوشهٔ بیرونی و جدا بگذارید. ضلع‌ها نباید متقاطع باشند یا گوشه‌ها روی یک خط قرار بگیرند. هر دو کادر را با بزرگ‌نمایی بررسی کنید یا از زاویه‌ای کمتر مایل عکس بگیرید.</p></details>
+          <details><summary>می‌توانم کف یا میز را اندازه بگیرم؟</summary><p>صفحهٔ علامت‌گذاری در <bdi>v0.0.1</bdi> از حالت دیوار استفاده می‌کند؛ آن را برای کف یا روی میز به کار نبرید. اگر نسخه‌ای جدیدتر گزینه‌های <strong><bdi>Wall</bdi></strong> و <strong><bdi>Floor / table</bdi></strong> دارد، گزینهٔ متناسب با سطح واقعی را انتخاب کنید.</p></details>
+          <details><summary>خروجی غیرفعال است یا عکاسی دوباره کار نمی‌کند</summary><p>خروجی به نتیجهٔ قابل استفاده نیاز دارد؛ ابتدا علامت‌ها را اصلاح کنید یا عکس تازه بگیرید. اگر عکاسی در <bdi>v0.0.1</bdi> گیر کرد، به دوربین برگردید یا اپ را دوباره باز کنید، مجوز دوربین را بررسی کنید و دوباره تلاش کنید.</p></details>
+          <details><summary>هنوز مشکل دارید؟</summary><p>در <a href="https://github.com/cocodedk/Metrologist/issues">گیت‌هاب گزارش مشکل ثبت کنید</a> و نسخهٔ اپ، مدل گوشی، نسخهٔ اندروید، ابعاد مرجع و مراحل رخ‌دادن مشکل را بنویسید. عکس را فقط زمانی اضافه کنید که با انتشار عمومی آن مشکلی ندارید.</p></details>
+        </section>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer page-wrap"><div class="footer-inner"><p class="footer-copy">متروژیست · Cocode · Apache-2.0</p><div class="footer-links"><a href="./">خانه</a><a href="print-stick.html">چاپ نوار مرجع</a><a href="../privacy.html">حریم خصوصی</a><a href="#main">بازگشت به بالا</a></div></div></footer>
+</body>
+</html>

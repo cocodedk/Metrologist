@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 260" width="640" height="260">
+  <title>Four handles on the four outside corners; the complete stick measures 20 by 4 centimetres</title>
+  <rect width="640" height="260" fill="#efefea"/>
+  <defs><pattern id="checker" width="4" height="4" patternUnits="userSpaceOnUse">
+  <rect width="4" height="4" fill="#fff"/><path d="M0 0h2v2H0zM2 2h2v2H2z" fill="#000"/>
+</pattern><g id="stick"><rect width="200" height="40" fill="url(#checker)"/>
+  <rect x="4" y="4" width="192" height="32" fill="#f00"/>
+  <path d="M42.4 4h38.4v32H42.4zM119.2 4h38.4v32H119.2z" fill="#fff"/>
+  <rect x=".15" y=".15" width="199.7" height="39.7" fill="none" stroke="#000" stroke-width=".3"/>
+</g></defs>
+  <use href="#stick" transform="translate(70 65) scale(2.4)"/>
+  <path d="M70 65H550V161H70Z" fill="none" stroke="#dc2828" stroke-width="2"/>
+  <g fill="#e8a020"><circle cx="70" cy="113" r="6"/><circle cx="550" cy="113" r="6"/></g>
+  <g fill="none" stroke="#dc2828" stroke-width="3">
+    <circle cx="70" cy="65" r="10"/><circle cx="550" cy="65" r="10"/>
+    <circle cx="550" cy="161" r="10"/><circle cx="70" cy="161" r="10"/>
+  </g>
+  <g fill="#a00" font-family="sans-serif" font-size="22" font-weight="bold" text-anchor="middle">
+    <text x="70" y="38">A</text><text x="550" y="38">B</text>
+    <text x="550" y="195">C</text><text x="70" y="195">D</text>
+  </g>
+  <path d="M70 209v18m0 -9H550m0 -9v18M574 65h18m-9 0v96m-9 0h18" fill="none" stroke="#222" stroke-width="2"/>
+  <g fill="#111" font-family="sans-serif" font-size="20" text-anchor="middle">
+    <text x="310" y="245">20 cm</text><text x="612" y="120" transform="rotate(-90 612 120)">4 cm</text>
+  </g>
+</svg>
