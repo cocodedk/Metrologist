@@ -1,0 +1,3 @@
+The marking screen is almost all photo now: the controls float over it, the hint hides behind
+the (i) button, and the app reads the camera's angle to tell a wall from a floor instead of
+asking. Photos are taken in 16:9 so they fill the screen. New icon: the checker reference stick.

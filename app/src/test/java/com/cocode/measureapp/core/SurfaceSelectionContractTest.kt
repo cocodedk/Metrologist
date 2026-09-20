@@ -53,7 +53,7 @@ class SurfaceSelectionContractTest {
         val flow = MarkingFlow().captured()
         assertEquals(VERTICAL, flow.orientation)
         assertEquals("Wall", surfaceLabel(flow.orientation))
-        assertEquals("Floor / table", surfaceLabel(HORIZONTAL))
+        assertEquals("Floor", surfaceLabel(HORIZONTAL))
         flow.pressMeasure()
         assertEquals(VERTICAL, requests.single().orientation)
     }

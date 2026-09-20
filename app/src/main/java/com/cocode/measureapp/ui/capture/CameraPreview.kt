@@ -5,6 +5,8 @@ import androidx.camera.camera2.interop.ExperimentalCamera2Interop
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
+import androidx.camera.core.resolutionselector.AspectRatioStrategy
+import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.runtime.Composable
@@ -36,7 +38,14 @@ internal fun CameraPreview(
             providerFuture.addListener({
                 try {
                     val provider = providerFuture.get()
-                    val preview = Preview.Builder().build()
+                    // Matches the capture's 16:9, so what the user frames is what is measured.
+                    val preview = Preview.Builder()
+                        .setResolutionSelector(
+                            ResolutionSelector.Builder()
+                                .setAspectRatioStrategy(AspectRatioStrategy.RATIO_16_9_FALLBACK_AUTO_STRATEGY)
+                                .build(),
+                        )
+                        .build()
                     preview.setSurfaceProvider(previewView.surfaceProvider)
                     provider.unbindAll()
                     val camera = provider.bindToLifecycle(

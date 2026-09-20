@@ -17,6 +17,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -53,15 +54,14 @@ internal fun CameraControls(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            OutlinedButton(onClick = onSettings) {
-                Icon(Icons.Default.Settings, contentDescription = "Settings", Modifier.size(18.dp))
-                Spacer(Modifier.width(4.dp))
-                Text("Settings")
+            // Icons without labels: the words pushed this row past the screen at a larger system
+            // font, which clipped the capture button's own label. The gear and the (i) carry the
+            // meaning on their own, and the label survives as the accessibility description.
+            OutlinedIconButton(onClick = onSettings) {
+                Icon(Icons.Default.Settings, contentDescription = "Settings", Modifier.size(22.dp))
             }
-            OutlinedButton(onClick = onHelp) {
-                Icon(Icons.Default.Info, contentDescription = "Help", Modifier.size(18.dp))
-                Spacer(Modifier.width(4.dp))
-                Text("Help")
+            OutlinedIconButton(onClick = onHelp) {
+                Icon(Icons.Default.Info, contentDescription = "Help", Modifier.size(22.dp))
             }
             Button(
                 enabled = captureEnabled,
@@ -69,7 +69,7 @@ internal fun CameraControls(
                 colors = ButtonDefaults.buttonColors(containerColor = StaffRed),
                 modifier = Modifier.height(48.dp),
             ) {
-                Text(if (capturing) "Capturing…" else "Capture")
+                Text(if (capturing) "Capturing…" else "Capture", maxLines = 1)
             }
         }
     }
