@@ -1,0 +1,6 @@
+{
+  "report_gate": "satisfied",
+  "live_engine_fixed": "gap",
+  "tiny_intrinsics_rejected": "gap",
+  "projection_rejection_tested": "gap"
+}

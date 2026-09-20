@@ -1,0 +1,143 @@
+{
+  "worker": ["fish", "-c", "cyp $argv", "--", "--model", "opus", "--effort", "high", "--print", "--safe-mode", "--strict-mcp-config", "--mcp-config", "{\"mcpServers\":{}}", "--no-chrome", "--no-session-persistence", "--tools", "Read,Glob,Grep,Edit,Write", "--disallowedTools", "Agent,Task,Advisor", "--output-format", "stream-json", "--verbose", "--include-partial-messages", "--json-schema", "{\"type\":\"object\",\"properties\":{\"status\":{\"type\":\"string\",\"enum\":[\"completed\",\"blocked\"]},\"summary\":{\"type\":\"string\"},\"changed_files\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"tests\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"blockers\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}},\"required\":[\"status\",\"summary\",\"changed_files\",\"tests\",\"blockers\"],\"additionalProperties\":false}"],
+  "max_workers": 3,
+  "poll_seconds": 2,
+  "timeout_seconds": 1800,
+  "prompt": "docs/supervisor/worker-prompt.md",
+  "worker_protocol": "claude-stream-json",
+  "background": "docs/supervisor/background.md",
+  "tasks": [
+    {
+      "id": "schema05",
+      "node": "N05",
+      "depends": [],
+      "specs": ["docs/logic-contracts/05-measurement-failure-handling.md"],
+      "brief": "Define the shared pure outcome type and revision-based invalidation state, with no solver or UI integration yet.",
+      "files": ["app/src/main/java/com/cocode/measureapp/geometry/MeasurementOutcome.kt", "app/src/main/java/com/cocode/measureapp/core/MeasurementSession.kt", "app/src/test/java/com/cocode/measureapp/geometry/MeasurementOutcomeContractTest.kt", "app/src/test/java/com/cocode/measureapp/core/MeasurementSessionContractTest.kt"],
+      "required_tests": ["app/src/test/java/com/cocode/measureapp/geometry/MeasurementOutcomeContractTest.kt", "app/src/test/java/com/cocode/measureapp/core/MeasurementSessionContractTest.kt"],
+      "check": ["python3", "scripts/supervisor/check.py", "schema05"],
+      "context_behind": ["docs/logic-contracts/03-solver-eligibility-confidence.md", "docs/logic-contracts/06-marker-geometry-validation.md", "docs/logic-contracts/09-reference-dimensions.md"],
+      "context_ahead": ["docs/logic-contracts/03-solver-eligibility-confidence.md", "docs/logic-contracts/04-surface-orientation.md", "docs/logic-contracts/08-capture-recovery.md"]
+    },
+    {
+      "id": "markers06",
+      "node": "N06",
+      "depends": ["schema05"],
+      "specs": ["docs/logic-contracts/06-marker-geometry-validation.md"],
+      "brief": "Implement pure object/stick validation and both stick windings. UI consumption belongs to recovery05.",
+      "files": ["app/src/main/java/com/cocode/measureapp/core/CornerOrdering.kt", "app/src/main/java/com/cocode/measureapp/core/validation/", "app/src/main/java/com/cocode/measureapp/geometry/Measurements.kt", "app/src/main/java/com/cocode/measureapp/geometry/Tolerances.kt", "app/src/main/java/com/cocode/measureapp/stick/StickBox.kt", "app/src/test/java/com/cocode/measureapp/core/MarkerValidationContractTest.kt", "app/src/test/java/com/cocode/measureapp/core/CornerOrderingTest.kt", "app/src/test/java/com/cocode/measureapp/stick/StickBoxTest.kt"],
+      "required_tests": ["app/src/test/java/com/cocode/measureapp/core/MarkerValidationContractTest.kt"],
+      "check": ["python3", "scripts/supervisor/check.py", "markers06"],
+      "context_behind": [],
+      "context_ahead": ["docs/logic-contracts/01-rectangle-vanishing-points.md", "docs/logic-contracts/03-solver-eligibility-confidence.md", "docs/logic-contracts/05-measurement-failure-handling.md"]
+    },
+    {
+      "id": "dimensions09",
+      "node": "N09",
+      "depends": ["schema05"],
+      "specs": ["docs/logic-contracts/09-reference-dimensions.md"],
+      "brief": "Validate finite positive dimensions at input, storage and model boundaries.",
+      "files": ["app/src/main/java/com/cocode/measureapp/core/LengthInput.kt", "app/src/main/java/com/cocode/measureapp/ui/LengthField.kt", "app/src/main/java/com/cocode/measureapp/data/SettingsRepository.kt", "app/src/main/java/com/cocode/measureapp/geometry/Model.kt", "app/src/main/java/com/cocode/measureapp/core/dimensions/", "app/src/test/java/com/cocode/measureapp/core/ReferenceDimensionsContractTest.kt", "app/src/test/java/com/cocode/measureapp/core/LengthInputTest.kt", "app/src/test/java/com/cocode/measureapp/stick/StickScaleTest.kt"],
+      "required_tests": ["app/src/test/java/com/cocode/measureapp/core/ReferenceDimensionsContractTest.kt"],
+      "check": ["python3", "scripts/supervisor/check.py", "dimensions09"],
+      "context_behind": [],
+      "context_ahead": ["docs/logic-contracts/03-solver-eligibility-confidence.md", "docs/logic-contracts/05-measurement-failure-handling.md"]
+    },
+    {
+      "id": "gravity07",
+      "node": "N07",
+      "depends": ["schema05"],
+      "specs": ["docs/logic-contracts/07-gravity-direction-level.md"],
+      "brief": "Implement physical down, valid timestamped samples, and correct level-overlay poses.",
+      "files": ["app/src/main/java/com/cocode/measureapp/capture/GravityProvider.kt", "app/src/main/java/com/cocode/measureapp/capture/gravity/", "app/src/main/java/com/cocode/measureapp/geometry/Tilt.kt", "app/src/main/java/com/cocode/measureapp/ui/CameraScreen.kt", "app/src/main/java/com/cocode/measureapp/ui/LevelOverlay.kt", "app/src/test/java/com/cocode/measureapp/geometry/GravityDirectionContractTest.kt", "app/src/test/java/com/cocode/measureapp/geometry/TiltTest.kt", "app/src/test/java/com/cocode/measureapp/geometry/CameraTiltSignTest.kt"],
+      "required_tests": ["app/src/test/java/com/cocode/measureapp/geometry/GravityDirectionContractTest.kt"],
+      "check": ["python3", "scripts/supervisor/check.py", "gravity07"],
+      "context_behind": [],
+      "context_ahead": ["docs/logic-contracts/02-capture-coordinate-frame.md"]
+    },
+    {
+      "id": "capture08",
+      "node": "N08",
+      "depends": ["schema05", "gravity07"],
+      "specs": ["docs/logic-contracts/08-capture-recovery.md"],
+      "brief": "Implement terminal capture outcomes, retry, resource closure and complete exposure metadata.",
+      "files": ["app/src/main/java/com/cocode/measureapp/ui/CameraHelpers.kt", "app/src/main/java/com/cocode/measureapp/ui/CameraScreen.kt", "app/src/main/java/com/cocode/measureapp/ui/MeasureApp.kt", "app/src/main/java/com/cocode/measureapp/ui/CapturedImage.kt", "app/src/main/java/com/cocode/measureapp/capture/recovery/", "app/src/main/java/com/cocode/measureapp/ui/capture/", "app/src/test/java/com/cocode/measureapp/core/CaptureRecoveryContractTest.kt"],
+      "required_tests": ["app/src/test/java/com/cocode/measureapp/core/CaptureRecoveryContractTest.kt"],
+      "check": ["python3", "scripts/supervisor/check.py", "capture08"],
+      "context_behind": ["docs/logic-contracts/05-measurement-failure-handling.md"],
+      "context_ahead": ["docs/logic-contracts/02-capture-coordinate-frame.md"]
+    },
+    {
+      "id": "frames02",
+      "node": "N02",
+      "depends": ["capture08", "gravity07"],
+      "specs": ["docs/logic-contracts/02-capture-coordinate-frame.md", "docs/supervisor/frames02-followup.md"],
+      "brief": "Align image pixels, intrinsics and exposure-time gravity with explicit calibration provenance.",
+      "files": ["app/src/main/java/com/cocode/measureapp/ui/CameraHelpers.kt", "app/src/main/java/com/cocode/measureapp/capture/IntrinsicsExtractor.kt", "app/src/main/java/com/cocode/measureapp/model/CapturedScene.kt", "app/src/main/java/com/cocode/measureapp/geometry/CameraIntrinsics.kt", "app/src/main/java/com/cocode/measureapp/capture/frames/", "app/src/main/java/com/cocode/measureapp/geometry/frames/", "app/src/test/java/com/cocode/measureapp/geometry/CoordinateFrameContractTest.kt", "app/src/test/java/com/cocode/measureapp/geometry/CameraIntrinsicsTest.kt", "app/src/test/java/com/cocode/measureapp/geometry/SyntheticScene.kt", "app/src/main/java/com/cocode/measureapp/ui/capture/CaptureRequest.kt", "app/src/test/java/com/cocode/measureapp/geometry/frames/"],
+      "required_tests": ["app/src/test/java/com/cocode/measureapp/geometry/CoordinateFrameContractTest.kt"],
+      "check": ["python3", "scripts/supervisor/check.py", "frames02"],
+      "context_behind": ["docs/logic-contracts/07-gravity-direction-level.md", "docs/logic-contracts/08-capture-recovery.md"],
+      "context_ahead": ["docs/logic-contracts/01-rectangle-vanishing-points.md", "docs/logic-contracts/03-solver-eligibility-confidence.md"]
+    },
+    {
+      "id": "surface04",
+      "node": "N04",
+      "depends": ["schema05", "markers06", "dimensions09"],
+      "specs": ["docs/logic-contracts/04-surface-orientation.md"],
+      "brief": "Expose wall/floor selection and bind it to the shared invalidation state. Preserve marks.",
+      "files": ["app/src/main/java/com/cocode/measureapp/ui/MarkScreen.kt", "app/src/main/java/com/cocode/measureapp/ui/MeasureApp.kt", "app/src/main/java/com/cocode/measureapp/ui/surface/", "app/src/main/java/com/cocode/measureapp/core/MeasurementPresenter.kt", "app/src/main/java/com/cocode/measureapp/geometry/GravitySolver.kt", "app/src/test/java/com/cocode/measureapp/core/SurfaceSelectionContractTest.kt", "app/src/test/java/com/cocode/measureapp/geometry/MetrologyEngineHorizontalHybridTest.kt"],
+      "required_tests": ["app/src/test/java/com/cocode/measureapp/core/SurfaceSelectionContractTest.kt"],
+      "check": ["python3", "scripts/supervisor/check.py", "surface04"],
+      "context_behind": ["docs/logic-contracts/05-measurement-failure-handling.md"],
+      "context_ahead": ["docs/logic-contracts/03-solver-eligibility-confidence.md"]
+    },
+    {
+      "id": "rectangle01",
+      "node": "N01",
+      "depends": ["frames02", "markers06"],
+      "specs": ["docs/logic-contracts/01-rectangle-vanishing-points.md", "docs/supervisor/rectangle01-followup.md"],
+      "brief": "Implement homogeneous finite and infinite vanishing points and valid plane candidates.",
+      "files": ["app/src/main/java/com/cocode/measureapp/geometry/RectangleSolver.kt", "app/src/main/java/com/cocode/measureapp/geometry/Projective.kt", "app/src/main/java/com/cocode/measureapp/geometry/rectangle/", "app/src/test/java/com/cocode/measureapp/geometry/VanishingPointContractTest.kt", "app/src/test/java/com/cocode/measureapp/geometry/RectangleSolverTest.kt", "app/src/test/java/com/cocode/measureapp/geometry/SyntheticScene.kt", "app/src/test/java/com/cocode/measureapp/geometry/MetrologyEngineGravityOracleTest.kt", "app/src/test/java/com/cocode/measureapp/geometry/rectangle/"],
+      "required_tests": ["app/src/test/java/com/cocode/measureapp/geometry/VanishingPointContractTest.kt"],
+      "check": ["python3", "scripts/supervisor/check.py", "rectangle01"],
+      "context_behind": ["docs/logic-contracts/02-capture-coordinate-frame.md", "docs/logic-contracts/06-marker-geometry-validation.md"],
+      "context_ahead": ["docs/logic-contracts/03-solver-eligibility-confidence.md"]
+    },
+    {
+      "id": "eligibility03",
+      "node": "N03",
+      "depends": ["rectangle01", "frames02", "surface04", "markers06", "dimensions09"],
+      "specs": ["docs/logic-contracts/03-solver-eligibility-confidence.md", "docs/supervisor/eligibility03-followup.md"],
+      "brief": "Apply eligibility and surface consistency before ranking. Produce the shared outcome with honest confidence and provenance.",
+      "files": ["app/src/main/java/com/cocode/measureapp/geometry/SolverSelector.kt", "app/src/main/java/com/cocode/measureapp/geometry/RectangleSolver.kt", "app/src/main/java/com/cocode/measureapp/geometry/GravitySolver.kt", "app/src/main/java/com/cocode/measureapp/geometry/MetrologyEngine.kt", "app/src/main/java/com/cocode/measureapp/geometry/eligibility/", "app/src/main/java/com/cocode/measureapp/core/DiagnosticsText.kt", "app/src/test/java/com/cocode/measureapp/geometry/SolverEligibilityContractTest.kt", "app/src/test/java/com/cocode/measureapp/geometry/SolverSelectorTest.kt", "app/src/test/java/com/cocode/measureapp/geometry/MetrologyEngineTest.kt", "app/src/test/java/com/cocode/measureapp/geometry/MetrologyEngineHybridTest.kt", "app/src/test/java/com/cocode/measureapp/geometry/MetrologyEngineClampTest.kt", "app/src/test/java/com/cocode/measureapp/geometry/MetrologyEngineHorizontalHybridTest.kt", "app/src/test/java/com/cocode/measureapp/geometry/MetrologyEngineOracleTest.kt", "app/src/test/java/com/cocode/measureapp/geometry/MetrologyEngineGravityOracleTest.kt", "app/src/test/java/com/cocode/measureapp/geometry/eligibility/", "app/src/test/java/com/cocode/measureapp/geometry/GravityOracleTest.kt", "app/src/test/java/com/cocode/measureapp/core/MeasurementPresenterTest.kt", "app/src/test/java/com/cocode/measureapp/geometry/VanishingPointContractTest.kt"],
+      "required_tests": ["app/src/test/java/com/cocode/measureapp/geometry/SolverEligibilityContractTest.kt"],
+      "check": ["python3", "scripts/supervisor/check.py", "eligibility03"],
+      "context_behind": ["docs/logic-contracts/01-rectangle-vanishing-points.md", "docs/logic-contracts/02-capture-coordinate-frame.md", "docs/logic-contracts/04-surface-orientation.md", "docs/logic-contracts/05-measurement-failure-handling.md", "docs/logic-contracts/06-marker-geometry-validation.md", "docs/logic-contracts/09-reference-dimensions.md"],
+      "context_ahead": ["docs/logic-contracts/05-measurement-failure-handling.md"]
+    },
+    {
+      "id": "recovery05",
+      "node": "N05",
+      "depends": ["eligibility03"],
+      "specs": ["docs/logic-contracts/05-measurement-failure-handling.md", "docs/supervisor/recovery05-followup.md"],
+      "brief": "Wire real producer outcomes, marker/settings errors and revision-bound invalidation through presenter and UI. Keep correction and retake usable.",
+      "files": ["app/src/main/java/com/cocode/measureapp/ui/MarkScreen.kt", "app/src/main/java/com/cocode/measureapp/ui/MeasureApp.kt", "app/src/main/java/com/cocode/measureapp/ui/ResultsScreen.kt", "app/src/main/java/com/cocode/measureapp/ui/measurement/", "app/src/main/java/com/cocode/measureapp/core/MeasurementPresenter.kt", "app/src/main/java/com/cocode/measureapp/core/MeasurementSession.kt", "app/src/main/java/com/cocode/measureapp/geometry/MetrologyEngine.kt", "app/src/main/java/com/cocode/measureapp/stick/StickScale.kt", "app/src/test/java/com/cocode/measureapp/core/MeasurementRecoveryContractTest.kt", "app/src/test/java/com/cocode/measureapp/core/MeasurementPresenterTest.kt", "app/src/main/java/com/cocode/measureapp/ui/surface/MarkingFlow.kt", "app/src/main/java/com/cocode/measureapp/ui/SettingsScreen.kt", "app/src/main/java/com/cocode/measureapp/core/measurement/", "app/src/test/java/com/cocode/measureapp/core/recovery/"],
+      "required_tests": ["app/src/test/java/com/cocode/measureapp/core/MeasurementRecoveryContractTest.kt"],
+      "check": ["python3", "scripts/supervisor/check.py", "recovery05"],
+      "context_behind": ["docs/logic-contracts/03-solver-eligibility-confidence.md", "docs/logic-contracts/06-marker-geometry-validation.md", "docs/logic-contracts/09-reference-dimensions.md"],
+      "context_ahead": ["docs/logic-contracts/03-solver-eligibility-confidence.md", "docs/logic-contracts/04-surface-orientation.md", "docs/logic-contracts/08-capture-recovery.md"]
+    },
+    {
+      "id": "integration",
+      "node": "N00",
+      "depends": ["recovery05"],
+      "specs": ["docs/supervisor/integration-brief.md"],
+      "brief": "Implement all C01-C15 Android flow assertions; verify the combined revision, JVM regressions, Android build and lint. Report device limitations.",
+      "files": ["app/src/androidTest/java/com/cocode/measureapp/contracts/"],
+      "required_tests": ["app/src/androidTest/java/com/cocode/measureapp/contracts/LogicContractsFlowTest.kt"],
+      "check": ["python3", "scripts/supervisor/check.py", "integration"],
+      "context_behind": [],
+      "context_ahead": []
+    }
+  ]
+}

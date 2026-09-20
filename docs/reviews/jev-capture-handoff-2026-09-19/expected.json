@@ -1,0 +1,7 @@
+{
+  "frame_assembly_scope": "gap",
+  "close_on_conversion_failure": "satisfied",
+  "failure_retry": "satisfied",
+  "retake_invalidation": "gap",
+  "no_gravity_fabrication": "gap"
+}

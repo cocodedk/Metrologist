@@ -1,200 +1,73 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Measure App — Screen Calibration Target</title>
-<style>
-  * { margin: 0; box-sizing: border-box; }
-  html, body { height: 100%; }
-  body { background: #2b2b2b; color: #eee; overflow: hidden; user-select: none;
-    font: 14px/1.45 system-ui, -apple-system, sans-serif; }
-
-  /* Step 1 — measure the screen by matching a real card */
-  #cal { position: fixed; inset: 0; z-index: 30; background: #1c1c1c; padding: 20px;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 16px; text-align: center; }
-  #cal.done { display: none; }
-  .card { background: linear-gradient(135deg, #3a6ea5, #2b4d72); border-radius: 10px;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, .5); position: relative; }
-  .card::after { content: ""; position: absolute; left: 12%; top: 38%; width: 18%; height: 24%;
-    background: #d8c06a; border-radius: 4px; }
-  /* inward-pointing edge markers, just outside the card template, to align a real card */
-  .arr { position: absolute; width: 0; height: 0; pointer-events: none; }
-  .arr-t { left: 50%; top: -18px; transform: translateX(-50%);
-    border-left: 9px solid transparent; border-right: 9px solid transparent; border-top: 13px solid #ffd24d; }
-  .arr-b { left: 50%; bottom: -18px; transform: translateX(-50%);
-    border-left: 9px solid transparent; border-right: 9px solid transparent; border-bottom: 13px solid #ffd24d; }
-  .arr-l { top: 50%; left: -18px; transform: translateY(-50%);
-    border-top: 9px solid transparent; border-bottom: 9px solid transparent; border-left: 13px solid #ffd24d; }
-  .arr-r { top: 50%; right: -18px; transform: translateY(-50%);
-    border-top: 9px solid transparent; border-bottom: 9px solid transparent; border-right: 13px solid #ffd24d; }
-  .crow { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: center; }
-  input[type=range] { width: min(80vw, 420px); }
-  input[type=number] { width: 92px; padding: 5px; }
-  button { padding: 8px 14px; border: 0; border-radius: 7px; cursor: pointer; font-weight: 600; }
-  .muted { color: #aaa; font-size: 13px; max-width: 460px; }
-
-  /* Step 2 — the measured target */
-  #app { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
-  .wall { position: relative; background: #d6d6d6; border: 2px solid #111; }
-  .corner { position: absolute; width: 30px; height: 30px; margin: -15px 0 0 -15px;
-    background: linear-gradient(#111, #111) center / 100% 2px no-repeat,
-                linear-gradient(#111, #111) center / 2px 100% no-repeat; }
-  .corner.tl { top: 0; left: 0; }    .corner.tr { top: 0; left: 100%; }
-  .corner.br { top: 100%; left: 100%; } .corner.bl { top: 100%; left: 0; }
-  .stick { position: absolute; left: 50%; bottom: 11%; transform: translateX(-50%);
-    display: flex; border: 3px solid #000; }
-  .stick > div { flex: 1 1 0; }
-  .r { background: #ff0000; } .w { background: #ffffff; }
-
-  #panel { position: fixed; top: 12px; left: 12px; z-index: 20; max-width: 350px;
-    background: rgba(0, 0, 0, .66); padding: 12px 14px; border-radius: 10px; }
-  #panel.hidden { display: none; }
-  .row { display: flex; gap: 8px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
-  .vals { margin-top: 8px; } .vals b { color: #7fe0c0; }
-  .hint { margin-top: 8px; font-size: 12px; color: #bbb; }
-  .vbar { position: relative; height: 22px; margin-top: 10px; border: 1px solid #7fe0c0; border-top: none; }
-  .vbar i { position: absolute; top: 0; width: 1px; background: #7fe0c0; }
-  .vbar span { position: absolute; top: 4px; font-size: 9px; color: #7fe0c0; transform: translateX(-50%); }
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Measurement lab · Metrologist</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="calibration/style.css">
+  <script defer src="calibration/geometry.js"></script>
+  <script defer src="calibration/display.js"></script>
+  <script defer src="calibration/app.js"></script>
 </head>
 <body>
-  <div id="cal">
-    <h2>Calibrate this screen</h2>
-    <p class="muted">Hold a bank / credit card (any ID-1 card, 85.6&nbsp;mm wide) flat against the
-      screen and resize the blue card until it matches exactly. This measures your display, so every
-      value below becomes a real, on-screen measurement.</p>
-    <div class="card" id="card" role="img" aria-label="Bank-card outline — resize to match a real ID-1 card (85.6 mm wide)">
-      <span class="arr arr-t"></span><span class="arr arr-r"></span>
-      <span class="arr arr-b"></span><span class="arr arr-l"></span>
-    </div>
-    <div class="crow">
-      <label for="cardW">Card width (pixels)</label>
-      <input type="range" id="cardW" min="120" max="1000" step="1" value="320">
-    </div>
-    <div class="crow">
-      <button id="setCard">Set from card</button>
-      <span class="muted">or, if you know it,</span>
-      <input type="number" id="ppi" placeholder="screen PPI" min="50" max="900">
-      <button id="setPpi">Use PPI</button>
-    </div>
-    <div class="muted" id="calLive" aria-live="polite" aria-atomic="true"></div>
-  </div>
-
-  <div id="app">
-    <div class="wall" id="wall">
-      <div class="corner tl"></div><div class="corner tr"></div>
-      <div class="corner br"></div><div class="corner bl"></div>
-      <div class="stick" id="stick">
-        <div class="r"></div><div class="w"></div><div class="r"></div><div class="w"></div>
-      </div>
-    </div>
-  </div>
-
-  <div id="panel" class="hidden">
-    <h2 style="font-size:14px;font-weight:700;margin-bottom:4px;">Measured on this screen</h2>
-    <div class="vals">
-      Screen: <b id="vScreen"></b> (<span id="vPpcm"></span> px/cm)<br>
-      Wall (target): <b id="vWall"></b><br>
-      Diagonal: <b id="vDiag"></b> &middot; Area: <b id="vArea"></b><br>
-      Stick (set in app): <b id="vStick"></b> · band <span id="vBand"></span> cm
-    </div>
-    <div class="vbar" id="vbar" aria-hidden="true"></div>
-    <div class="hint" id="diag"></div>
-    <div class="row">
-      <button id="fs">Fullscreen</button>
-      <button id="hide">Hide UI (h)</button>
-      <button id="recal">Recalibrate</button>
-    </div>
-    <div class="hint">Hide the UI, photograph the target at a moderate angle with the app, then mark
-      the 4 corner crosshairs + the 2 stick ends and compare the app's numbers to these.</div>
-  </div>
-
-<script>
-  const $ = id => document.getElementById(id);
-  const ID1_W = 85.6;        // ISO/IEC 7810 ID-1 card width in mm
-  const STICK_LEN_MM = 200, STICK_WID_MM = 40;  // fixed 20.0 × 4.0 cm target (matches the printable stick)
-  let pxPerMm = parseFloat(localStorage.getItem('pxPerMm')) || 0;
-
-  const card = $('card'), cardW = $('cardW');
-  function drawCard() {
-    const w = +cardW.value;
-    card.style.width = w + 'px';
-    card.style.height = (w * 53.98 / ID1_W) + 'px';
-    $('calLive').textContent = `Card box: ${w} px  →  ${(w / ID1_W).toFixed(2)} px/mm`;
-  }
-  cardW.addEventListener('input', drawCard);
-  $('setCard').onclick = () => calibrate(+cardW.value / ID1_W);
-  $('setPpi').onclick = () => { const p = +$('ppi').value; if (p > 0) calibrate(p / 25.4); };
-  function calibrate(ppm) {
-    pxPerMm = ppm;
-    localStorage.setItem('pxPerMm', String(ppm));
-    $('cal').classList.add('done');
-    $('panel').classList.remove('hidden');
-    layout();
-    $('fs').focus();
-  }
-
-  const wall = $('wall'), stick = $('stick');
-  function layout() {
-    const wpx = Math.round(innerWidth * 0.94), hpx = Math.round(innerHeight * 0.86);
-    wall.style.width = wpx + 'px';
-    wall.style.height = hpx + 'px';
-    let spx, swpx;
-    if (pxPerMm > 0 && STICK_LEN_MM * pxPerMm < wpx * 0.9) {
-      spx = Math.round(STICK_LEN_MM * pxPerMm);      // fixed 20 cm when it fits the screen
-      swpx = Math.round(STICK_WID_MM * pxPerMm);
-    } else {
-      spx = Math.round(wpx * 0.45);                  // fall back to adaptive on small screens
-      swpx = Math.max(14, Math.round(spx * 0.11));
-    }
-    stick.style.width = spx + 'px';
-    stick.style.height = swpx + 'px';
-    if (pxPerMm > 0) report(wpx, hpx, spx, swpx);
-  }
-  function report(wpx, hpx, spx, swpx) {
-    const cm = px => px / pxPerMm / 10;
-    const W = cm(wpx), H = cm(hpx), L = cm(spx);
-    $('vScreen').textContent = `${cm(screen.width).toFixed(1)} × ${cm(screen.height).toFixed(1)} cm`;
-    $('vPpcm').textContent = (pxPerMm * 10).toFixed(1);
-    $('vWall').textContent = `${W.toFixed(1)} × ${H.toFixed(1)} cm`;
-    $('vDiag').textContent = `${Math.hypot(W, H).toFixed(1)} cm`;
-    $('vArea').textContent = `${(W * H).toFixed(0)} cm²`;
-    $('vStick').textContent = `${L.toFixed(1)} × ${cm(swpx).toFixed(1)} cm`;
-    $('vBand').textContent = (L / 4).toFixed(2);
-    drawVerify();
-  }
-  function drawVerify() {  // 5 cm bar the user checks against a physical ruler
-    const bar = $('vbar'); bar.innerHTML = '';
-    if (pxPerMm <= 0) return;
-    bar.style.width = (pxPerMm * 50) + 'px';   // 5 cm
-    for (let c = 0; c <= 5; c++) {
-      const x = c * 10 * pxPerMm;
-      const t = document.createElement('i');
-      t.style.left = x + 'px'; t.style.height = (c % 5 === 0 ? 14 : 8) + 'px';
-      bar.appendChild(t);
-      const s = document.createElement('span'); s.style.left = x + 'px'; s.textContent = c;
-      bar.appendChild(s);
-    }
-    const ppi = (pxPerMm * 25.4).toFixed(0);
-    $('diag').textContent = 'Hold a ruler on the bar — it must read 5 cm. ' +
-      `(dpr ${window.devicePixelRatio}, screen ${screen.width}×${screen.height}px, ~${ppi} ppi)`;
-  }
-  addEventListener('resize', layout);
-  $('fs').onclick = () =>
-    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
-  $('hide').onclick = () => $('panel').classList.add('hidden');
-  $('recal').onclick = () => { $('cal').classList.remove('done'); $('panel').classList.add('hidden'); };
-  addEventListener('keydown', e => {
-    if (e.key === 'h' && !['INPUT','BUTTON','SELECT','TEXTAREA'].includes(e.target.tagName)) {
-      $('panel').classList.toggle('hidden');
-    }
-  });
-
-  drawCard();
-  if (pxPerMm > 0) { $('cal').classList.add('done'); $('panel').classList.remove('hidden'); }
-  layout();
-</script>
+  <header><strong><span class="logo">M</span> Metrologist</strong><span class="eyebrow">MEASUREMENT LAB</span><button id="fullscreen">Fullscreen</button></header>
+  <main>
+    <aside aria-label="Test controls">
+      <h1>A known target.<br>A measurable result.</h1>
+      <p>Photograph the target with the app. Compare its result with the exact geometry shown here.</p>
+      <section>
+        <h2><span>1</span> Check screen scale</h2>
+        <p id="scale-status" role="status">Preview only · calibration needed</p>
+        <button id="calibrate">Match a card or ruler</button>
+        <p class="small">Check again after changing browser zoom or moving to another display.</p>
+      </section>
+      <section>
+        <h2><span>2</span> Choose the target</h2>
+        <label for="scenario">Test case</label>
+        <select id="scenario"><option value="front">Rectangle · straight on</option><option value="angle">Rectangle · angled view</option><option value="quad">Non-rectangle · shape check</option></select>
+        <p id="case-note" class="small"></p>
+        <div class="pair"><label>Target width (cm)<input id="width" type="number" min="4" step="0.1" value="23"></label><label>Target height (cm)<input id="height" type="number" min="3" step="0.1" value="15"></label></div>
+        <h3><i class="swatch"></i> Reference · set both values in the app</h3>
+        <div class="pair"><label>Length (cm)<input id="length" type="number" min="1" step="0.1" value="10"></label><label>Width (cm)<input id="stick-width" type="number" min="0.1" step="0.1" value="2"></label></div>
+        <p id="error" class="error" role="alert" hidden></p>
+        <button id="fit">Fit target and reference to this window</button>
+        <p id="fit-note" class="small" role="status"></p>
+      </section>
+      <section>
+        <h2><span>3</span> Photograph and measure</h2>
+        <ol><li>Set the app's reference length and width to the values above.</li><li>Select <b>Wall</b> for an upright screen.</li><li>Mark the four object crosshair centres and all four outside corners of the checker border.</li></ol>
+        <button id="photo" class="primary" disabled>Hide controls for photo</button>
+        <div class="buttons"><button id="svg">Save SVG target</button><button id="print">Print target</button></div>
+      </section>
+      <details><summary>4 · Compare an app result</summary>
+        <p class="small">Use centimetres. Width and height are the averages of opposite edges; diagonal is the average of both diagonals.</p>
+        <div class="pair"><label>App width (cm)<input id="actual-width" type="number" min="0" step="any"></label><label>App height (cm)<input id="actual-height" type="number" min="0" step="any"></label></div>
+        <div class="pair"><label>App area (cm²), optional<input id="actual-area" type="number" min="0" step="any"></label><label>Tolerance (%)<input id="tolerance" type="number" min="0.1" max="20" step="0.1" value="2"></label></div>
+        <button id="compare">Compare measurements</button>
+        <div id="result" role="status"></div><button id="record" disabled>Save test record</button>
+      </details>
+    </aside>
+    <section class="workspace" aria-label="Measurement target">
+      <div class="stage-heading"><div><span class="eyebrow">GROUND TRUTH</span><h2 id="target-title">Rectangle</h2></div><span id="badge">Preview scale</span></div>
+      <div id="stage"><div id="target"></div><p id="stage-message" hidden></p></div>
+      <dl><div><dt>Width</dt><dd id="truth-width">—</dd></div><div><dt>Height</dt><dd id="truth-height">—</dd></div><div><dt>Area</dt><dd id="truth-area">—</dd></div><div><dt>Mean diagonal</dt><dd id="truth-diagonal">—</dd></div></dl>
+      <p id="angles" class="small"></p>
+      <p class="foot">Crosshair centres define the object. The outside of the checker border defines the reference. Hiding controls never resizes the target.</p>
+    </section>
+  </main>
+  <button id="exit-photo" hidden>Show controls · Esc</button>
+  <dialog id="calibration" aria-labelledby="cal-title">
+    <form method="dialog"><button class="close" aria-label="Close calibration">✕</button></form>
+    <span class="eyebrow">PHYSICAL SCREEN SCALE</span><h2 id="cal-title">Match something you can measure</h2>
+    <p>Hold an ID-1 bank card against the screen, or use a ruler. Adjust until the outer edges match.</p>
+    <label for="method">Reference</label><select id="method"><option value="card">Bank card · 85.6 × 53.98 mm</option><option value="ruler">Ruler · 100 mm line</option></select>
+    <div id="sample-space"><div id="sample" role="img" aria-label="Physical reference outline"></div></div>
+    <label for="scale-range">Adjust reference width</label><input id="scale-range" type="range" min="120" max="900" step="0.5" value="323.5">
+    <div class="buttons"><button id="minus" aria-label="Reduce width by half a pixel">−</button><output id="scale-value" aria-live="polite"></output><button id="plus" aria-label="Increase width by half a pixel">+</button></div>
+    <button id="confirm" class="primary">The reference matches</button>
+    <p class="small">A saved scale is only a starting point. Confirm it each time you open the page.</p>
+  </dialog>
+  <p id="print-note">Print at 100% / Actual size. Disable “Fit to page”. Check the reference dimensions with a ruler before testing.</p>
 </body>
 </html>

@@ -1,0 +1,6 @@
+frame_assembly_scope: gap  (certainty 0.92)
+close_on_conversion_failure: satisfied  (certainty 0.93)
+failure_retry: satisfied  (certainty 1.00)
+retake_invalidation: gap  (certainty 0.84)
+no_gravity_fabrication: gap  (certainty 0.70)  <- below gate
+[typesafe/jev-1.13-20260917 0.65s cost $0.000616266]

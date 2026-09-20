@@ -1,0 +1,21 @@
+{
+  "criteria_count": 12,
+  "requests": 27,
+  "judgments": 36,
+  "max_request_bytes": 9489,
+  "confidence_threshold": 0.8,
+  "expectations_frozen_before_calls": true,
+  "retries": 0,
+  "source_after_sha256": {
+    "00-logic-map.md": "300016a43b3fd264e55445dfb3e33bbc4c3ef7715d9285ffb1de46c3dc78ae6e",
+    "05-measurement-failure-handling.md": "b260e8ef9274669787be460fcd06d21d016ae170f6dc996e39a96b20c1a7cd29",
+    "06-marker-geometry-validation.md": "be040a8ebd822f2c651db6d9af6f8c8e4aaaf12a7b09d13b6fca061aa3d78e07",
+    "01-rectangle-vanishing-points.md": "7a4dbd2e8cc1248dcd96c107af01b4165551ba5e2c7b886300114eda0910afca",
+    "08-capture-recovery.md": "7290e9bf3292a1a204e0c9f0807ebd5f0e9ce5ac9640ac2d77edd221bc6837e5",
+    "04-surface-orientation.md": "938a7748b13326a0c1adbeb1f8b8873232da820055e17f65d39d565cdc6efa83",
+    "03-solver-eligibility-confidence.md": "11db04e69302de67a1a2a7e42cf262aafcff002cf84349701dc509e42ded1d46",
+    "07-gravity-direction-level.md": "fea2b679df7e4abf717e752858d71fc765ff24e3c186d51e5d928b4c308158ef",
+    "02-capture-coordinate-frame.md": "39050e75ff20737c835901cadd75e6c7254060df369c54bcf6d2557a039e200f",
+    "09-reference-dimensions.md": "f61f91ec16fec7722552aca04594c917819cf289dffec2fb469a6b59a2f03c46"
+  }
+}
