@@ -8,6 +8,8 @@ import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.ImageCapture
+import androidx.camera.core.resolutionselector.AspectRatioStrategy
+import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -79,7 +81,18 @@ fun CameraScreen(
             if (controller.released) captureExecutor.shutdown()
         }
     }
-    val imageCapture = remember { ImageCapture.Builder().build() }
+    // 16:9, not CameraX's 4:3 default: the marking screen shows the photo whole, and a 4:3 frame
+    // left a quarter of a tall phone screen as empty bands around it. The scene loses its top and
+    // bottom edges, which the framing already had to allow for.
+    val imageCapture = remember {
+        ImageCapture.Builder()
+            .setResolutionSelector(
+                ResolutionSelector.Builder()
+                    .setAspectRatioStrategy(AspectRatioStrategy.RATIO_16_9_FALLBACK_AUTO_STRATEGY)
+                    .build(),
+            )
+            .build()
+    }
     var boundCameraId by remember { mutableStateOf<String?>(null) }
     var bindError by remember { mutableStateOf<String?>(null) }
     var tilt by remember { mutableStateOf(levelReadingOf(gravity.latestSample(), 0)) }

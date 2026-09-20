@@ -1,6 +1,7 @@
 package com.cocode.measureapp.ui
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.calculatePan
@@ -18,9 +19,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.input.pointer.pointerInput
@@ -30,7 +33,10 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.cocode.measureapp.detect.DeferredStickDetector
 import com.cocode.measureapp.detect.StickDetector
+import com.cocode.measureapp.capture.gravity.GravitySample
 import com.cocode.measureapp.geometry.SurfaceOrientation
+import com.cocode.measureapp.geometry.levelTiltFromDeviceDown
+import com.cocode.measureapp.geometry.surfaceFromTilt
 import com.cocode.measureapp.geometry.Vec2
 import com.cocode.measureapp.stick.StickBox
 import com.cocode.measureapp.ui.measurement.MarkControls
@@ -64,6 +70,14 @@ fun MarkScreen(
     failureMessage: String? = null,
     onSettings: () -> Unit = {},
 ) {
+    var hintShown by remember { mutableStateOf(false) }
+    val capturedTilt = remember(image) {
+        (image.metadata.gravity as? GravitySample.Available)
+            ?.let { levelTiltFromDeviceDown(it.down, image.metadata.rotationDegrees) }
+    }
+    LaunchedEffect(capturedTilt) {
+        surfaceFromTilt(capturedTilt)?.let(onOrientationChanged)
+    }
     val reportMarks by rememberUpdatedState(onMarkChanged)
     val bmp = image.bitmap
     val img = remember(bmp) { bmp.asImageBitmap() }
@@ -105,17 +119,21 @@ fun MarkScreen(
         }
     }
 
+    // Fill the screen rather than fit inside it: a 16:9 photo on a 20:9 screen left a fifth of
+    // the view as empty bands, and the marks live in image coordinates either way. Pinching
+    // below 1 zooms out past the fill, which is how the edges of the frame stay reachable.
     fun fit() = if (canvasSize.width > 0f && canvasSize.height > 0f)
-        minOf(canvasSize.width / bmp.width, canvasSize.height / bmp.height) else 1f
+        maxOf(canvasSize.width / bmp.width, canvasSize.height / bmp.height) else 1f
     fun sNow() = fit() * zoom
     fun txNow() = (canvasSize.width - bmp.width * sNow()) / 2f + pan.x
     fun tyNow() = (canvasSize.height - bmp.height * sNow()) / 2f + pan.y
     fun toScreen(p: Vec2) = Offset(p.x.toFloat() * sNow() + txNow(), p.y.toFloat() * sNow() + tyNow())
     fun handlePos(i: Int) = if (i in 0..3) corners[i] else stick[i - 4]
 
-    Column(Modifier.fillMaxSize()) {
-        MarkStatus(note, failureMessage, Modifier.padding(12.dp))
-        Box(Modifier.weight(1f).fillMaxWidth()) {
+    // The photo IS the screen: the controls float over it on a scrim rather than sitting in a
+    // band below it, and the hint and the surface question only appear when they are needed.
+    Box(Modifier.fillMaxSize()) {
+        Box(Modifier.fillMaxSize()) {
             Canvas(
                 Modifier
                     .fillMaxSize()
@@ -133,7 +151,7 @@ fun MarkScreen(
                                     val zc = e.calculateZoom(); val pc = e.calculatePan()
                                     if (zc != 1f || pc != Offset.Zero) {
                                         val sc = sNow()
-                                        zoom = (zoom * zc).coerceIn(1f, 6f)
+                                        zoom = (zoom * zc).coerceIn(0.55f, 6f)
                                         pan = Offset(
                                             (pan.x + pc.x).coerceIn(-bmp.width * sc / 2f, bmp.width * sc / 2f),
                                             (pan.y + pc.y).coerceIn(-bmp.height * sc / 2f, bmp.height * sc / 2f),
@@ -170,19 +188,34 @@ fun MarkScreen(
                 if (active >= 0) drawMagnifier(img, handlePos(active), toScreen(handlePos(active)), sNow())
             }
         }
-        SurfaceSelector(orientation, onOrientationChanged, Modifier.padding(top = 8.dp))
-        MarkControls(
-            onReset = {
-                resetGen++
-                corners.clear(); corners.addAll(defCorners())
-                stick.clear(); stick.addAll(defStick())
-                zoom = 1f; pan = Offset.Zero; note = cornerDragHint
-                reportMarks(corners.toList(), stick.toList())
-            },
-            onRetake = onBack,
-            onSettings = onSettings,
-            // Validation belongs to the measurement producer; invalid marks return as a failure.
-            onMeasure = { onMeasure(corners.toList(), stick.toList()) },
-        )
+        if (hintShown || failureMessage != null) {
+            MarkStatus(note, failureMessage, Modifier.align(Alignment.TopStart))
+        }
+        Column(
+            Modifier
+                .align(Alignment.BottomCenter)
+                .background(Color.Black.copy(alpha = 0.55f)),
+        ) {
+            // Asked only when the camera's pitch leaves the answer open; otherwise the phone
+            // already knows whether it was pointed at a wall or at a floor.
+            if (surfaceFromTilt(capturedTilt) == null) {
+                SurfaceSelector(orientation, onOrientationChanged)
+            }
+            MarkControls(
+                onReset = {
+                    resetGen++
+                    corners.clear(); corners.addAll(defCorners())
+                    stick.clear(); stick.addAll(defStick())
+                    zoom = 1f; pan = Offset.Zero; note = cornerDragHint
+                    reportMarks(corners.toList(), stick.toList())
+                },
+                onRetake = onBack,
+                onSettings = onSettings,
+                onToggleHint = { hintShown = !hintShown },
+                hintShown = hintShown,
+                // Validation belongs to the measurement producer; invalid marks return as a failure.
+                onMeasure = { onMeasure(corners.toList(), stick.toList()) },
+            )
+        }
     }
 }

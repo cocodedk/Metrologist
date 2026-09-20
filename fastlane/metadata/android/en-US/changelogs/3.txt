@@ -1,0 +1,4 @@
+The marking screen is almost all photo now: the picture fills the screen, the controls float
+over it, the hint hides behind the (i) button, and the app reads the camera's angle to tell a
+wall from a floor instead of asking. Pinch out to see the edges of the frame. New icon: the
+checker reference stick.
