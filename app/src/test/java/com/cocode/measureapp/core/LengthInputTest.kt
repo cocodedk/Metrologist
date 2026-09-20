@@ -55,6 +55,16 @@ class LengthInputTest {
         assertNull(LengthInput.parseToMeters("-1", LengthUnit.CENTIMETERS))
     }
 
+    @Test fun parseRejectsNonFinite() {
+        for (text in listOf("NaN", "Infinity", "-Infinity", "1e309")) {
+            assertNull(text, LengthInput.parseToMeters(text, LengthUnit.METERS))
+        }
+    }
+
+    @Test fun parseRejectsValueThatUnderflowsToZeroMeters() {
+        assertNull(LengthInput.parseToMeters("1e-323", LengthUnit.CENTIMETERS))
+    }
+
     @Test fun parseAcceptsWhitespaceAroundNumber() {
         assertEquals(2.0, LengthInput.parseToMeters("  2 ", LengthUnit.METERS)!!, 1e-12)
     }

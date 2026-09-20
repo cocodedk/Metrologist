@@ -2,8 +2,6 @@ package com.cocode.measureapp.core
 
 import com.cocode.measureapp.geometry.CameraIntrinsics
 import com.cocode.measureapp.geometry.EngineResult
-import com.cocode.measureapp.geometry.Mat3
-import com.cocode.measureapp.geometry.MetrologyEngine
 import com.cocode.measureapp.geometry.MeasurementResult
 import com.cocode.measureapp.geometry.PlaneFrame
 import com.cocode.measureapp.geometry.PlaneSolution
@@ -22,222 +20,110 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * TDD tests for [MeasurementPresenter] and [MeasurementView] targeting 100% line, branch,
- * and method coverage of both classes.
- *
- * Scenes use the test-only [SyntheticScene] independent pinhole projector so tests remain
- * a genuine round-trip check rather than a tautology.
+ * Tests for [MeasurementPresenter] and [MeasurementView] over the legacy engine adapter.
+ * Scenes use independent pinhole projection, so each is a genuine round-trip check.
  */
 class MeasurementPresenterTest {
-
-    // ---- shared scene parameters ----
-    private val w = 3.0
-    private val h = 2.0
-    private val l = 1.0
     private val k = CameraIntrinsics(fx = 1500.0, fy = 1500.0, cx = 960.0, cy = 540.0)
     private val t = Vec3(0.0, 0.0, 6.0)
+    private val level = Vec3(0.0, 1.0, 0.0)
+
+    /** 25° yaw + 20° pitch: the rectangle candidate is eligible and wins. */
+    private val oblique = SyntheticScene(w = 3.0, h = 2.0, r = SceneRotations.yawPitch(25.0, 20.0), t = t, k = k, l = 1.0)
+
+    /** Near-frontal 1.5° yaw wall, used with a floor selection that no plane can satisfy. */
+    private val nearFrontal = SyntheticScene(w = 3.0, h = 2.0, r = SceneRotations.yawPitch(1.5, 0.0), t = t, k = k, l = 1.0)
+
+    private fun presentOblique(unit: LengthUnit = LengthUnit.METERS) = MeasurementPresenter.present(
+        oblique.cornerPixels, oblique.stickPixels, k, oblique.gravityCam, oblique.profile, SurfaceOrientation.VERTICAL, unit,
+    )
+
+    private fun presentUnsupported() = MeasurementPresenter.present(
+        nearFrontal.cornerPixels, nearFrontal.stickPixels, k, level, nearFrontal.profile,
+        SurfaceOrientation.HORIZONTAL, LengthUnit.METERS,
+    )
+
+    /** Head-on wall 6 m away: pixel of plane point `(x, y)`. */
+    private fun headOn(x: Double, y: Double) = Vec2(k.fx * x / 6.0 + k.cx, k.fy * y / 6.0 + k.cy)
 
     /**
-     * Oblique scene: 25° yaw + 20° pitch -> RectangleSolver returns a valid solution,
-     * SolverSelector picks RECTANGLE, confidence > 0.
+     * A slanted parallelogram on a frontal wall with a level phone: its edges are far from
+     * perpendicular in 3D, so the rectangle is ineligible and the tilt-sensor wall plane is used.
      */
-    private fun obliqueScene(): SyntheticScene {
-        val r = SceneRotations.yawPitch(yawDeg = 25.0, pitchDeg = 20.0)
-        return SyntheticScene(w = w, h = h, r = r, t = t, k = k, l = l)
+    private fun presentGravityWall() = MeasurementPresenter.present(
+        listOf(headOn(-1.0, -0.5), headOn(1.0, -0.5), headOn(1.4, 0.5), headOn(-0.6, 0.5)),
+        listOf(headOn(-0.5, 0.76), headOn(0.5, 0.76), headOn(0.5, 0.84), headOn(-0.5, 0.84)),
+        k, level, StickProfile(1.0, width = 0.08), SurfaceOrientation.VERTICAL, LengthUnit.METERS,
+    )
+
+    @Test fun usableObliqueScene_usableIsTrue() = assertTrue(presentOblique().usable)
+
+    @Test fun usableObliqueScene_formattedStringsNonEmpty() {
+        val v = presentOblique()
+        for (s in listOf(v.width, v.height, v.area, v.diagonal)) assertTrue(s.isNotEmpty())
     }
 
-    /** Camera-frame gravity for a given rotation matrix: world down (0,1,0) rotated. */
-    private fun gravityFor(r: com.cocode.measureapp.geometry.Mat3): Vec3 =
-        r * Vec3(0.0, 1.0, 0.0)
-
-    // ======================================================================
-    // 1. Usable oblique scene (Rectangle solver wins)
-    // ======================================================================
-
-    @Test
-    fun usableObliqueScene_usableIsTrue() {
-        val scene = obliqueScene()
-        val gravity = scene.gravityCam
-        val view = MeasurementPresenter.present(
-            scene.cornerPixels, scene.stickPixels, k,
-            gravity, scene.profile, SurfaceOrientation.VERTICAL, LengthUnit.METERS,
-        )
-        assertTrue("usable should be true for well-conditioned oblique scene", view.usable)
+    @Test fun usableObliqueScene_fourCornerAnglesNear90() {
+        val v = presentOblique()
+        assertEquals(4, v.cornerAngles.size)
+        for (angle in v.cornerAngles) assertEquals("corner angle near 90°", 90.0, angle, 10.0)
     }
 
-    @Test
-    fun usableObliqueScene_formattedStringsNonEmpty() {
-        val scene = obliqueScene()
-        val view = MeasurementPresenter.present(
-            scene.cornerPixels, scene.stickPixels, k,
-            scene.gravityCam, scene.profile, SurfaceOrientation.VERTICAL, LengthUnit.METERS,
-        )
-        assertTrue(view.width.isNotEmpty())
-        assertTrue(view.height.isNotEmpty())
-        assertTrue(view.area.isNotEmpty())
-        assertTrue(view.diagonal.isNotEmpty())
-    }
-
-    @Test
-    fun usableObliqueScene_fourCornerAnglesNear90() {
-        val scene = obliqueScene()
-        val view = MeasurementPresenter.present(
-            scene.cornerPixels, scene.stickPixels, k,
-            scene.gravityCam, scene.profile, SurfaceOrientation.VERTICAL, LengthUnit.METERS,
-        )
-        assertEquals(4, view.cornerAngles.size)
-        for (angle in view.cornerAngles) {
-            assertEquals("corner angle near 90°", 90.0, angle, 10.0)
+    @Test fun usableObliqueScene_cornerAnglesRoundedTo1Decimal() {
+        for (angle in presentOblique().cornerAngles) {
+            assertEquals("angle $angle should already be 1-decimal rounded", kotlin.math.round(angle * 10) / 10.0, angle, 1e-9)
         }
     }
 
-    @Test
-    fun usableObliqueScene_cornerAnglesRoundedTo1Decimal() {
-        val scene = obliqueScene()
-        val view = MeasurementPresenter.present(
-            scene.cornerPixels, scene.stickPixels, k,
-            scene.gravityCam, scene.profile, SurfaceOrientation.VERTICAL, LengthUnit.METERS,
-        )
-        // Each angle should equal its own rounding to 1 decimal place.
-        for (angle in view.cornerAngles) {
-            val rounded = kotlin.math.round(angle * 10) / 10.0
-            assertEquals("angle $angle should already be 1-decimal rounded", rounded, angle, 1e-9)
-        }
-    }
-
-    @Test
-    fun usableObliqueScene_confidenceLabelSensible() {
-        val scene = obliqueScene()
-        val view = MeasurementPresenter.present(
-            scene.cornerPixels, scene.stickPixels, k,
-            scene.gravityCam, scene.profile, SurfaceOrientation.VERTICAL, LengthUnit.METERS,
-        )
+    @Test fun usableObliqueScene_confidenceLabelSensible() {
         val valid = setOf("High confidence", "Medium confidence", "Low confidence")
-        assertTrue("confidenceLabel must be one of $valid", view.confidenceLabel in valid)
+        assertTrue(presentOblique().confidenceLabel in valid)
     }
 
-    @Test
-    fun usableObliqueScene_confidencePercentInRange() {
-        val scene = obliqueScene()
-        val view = MeasurementPresenter.present(
-            scene.cornerPixels, scene.stickPixels, k,
-            scene.gravityCam, scene.profile, SurfaceOrientation.VERTICAL, LengthUnit.METERS,
-        )
-        assertTrue("confidencePercent >= 0", view.confidencePercent >= 0)
-        assertTrue("confidencePercent <= 100", view.confidencePercent <= 100)
+    @Test fun usableObliqueScene_confidencePercentInRange() {
+        val p = presentOblique().confidencePercent
+        assertTrue("confidencePercent in 1..100, was $p", p in 1..100)
     }
 
-    @Test
-    fun usableObliqueScene_solverNameIsRectangleMethod() {
-        val scene = obliqueScene()
-        val view = MeasurementPresenter.present(
-            scene.cornerPixels, scene.stickPixels, k,
-            scene.gravityCam, scene.profile, SurfaceOrientation.VERTICAL, LengthUnit.METERS,
-        )
-        assertEquals("Rectangle method", view.solverName)
+    @Test fun usableObliqueScene_solverNameIsRectangleMethod() =
+        assertEquals("Rectangle method", presentOblique().solverName)
+
+    @Test fun usableObliqueScene_uncalibratedLegacyInputStaysVisible() {
+        // The legacy request carries no calibration provenance, so it must never read as exact.
+        val v = presentOblique()
+        assertNotNull(v.caveats)
+        assertTrue(v.caveats.any { it.contains("calibration is unavailable") })
+        assertEquals("Low confidence", v.confidenceLabel)
     }
 
-    @Test
-    fun usableObliqueScene_diagnosticsPresentCaveatsPath() {
-        val scene = obliqueScene()
-        val view = MeasurementPresenter.present(
-            scene.cornerPixels, scene.stickPixels, k,
-            scene.gravityCam, scene.profile, SurfaceOrientation.VERTICAL, LengthUnit.METERS,
-        )
-        // diagnostics is present: caveats comes from DiagnosticsText.caveats(diagnostics)
-        // The clean oblique scene should produce 0 or more caveats; assert it is a List.
-        assertNotNull(view.caveats)
+    @Test fun zeroConfidenceScene_usableIsFalse() = assertFalse(presentUnsupported().usable)
+
+    @Test fun zeroConfidenceScene_confidencePercentIsZero() = assertEquals(0, presentUnsupported().confidencePercent)
+
+    @Test fun gravitySolverPath_solverNameIsTiltSensorFallback() =
+        assertEquals("Tilt-sensor fallback", presentGravityWall().solverName)
+
+    @Test fun gravitySolverPath_usableIsTrue() = assertTrue(presentGravityWall().usable)
+
+    @Test fun gravitySolverPath_caveatsContainsTiltSensorMessage() {
+        val caveats = presentGravityWall().caveats
+        assertTrue(caveats.any { it.contains("tilt-sensor fallback") })
+        assertTrue("assumed wall azimuth is visible", caveats.any { it.contains("faces the camera") })
     }
 
-    // ======================================================================
-    // 2. Zero-confidence scene (usable == false)
-    // ======================================================================
-
-    @Test
-    fun zeroConfidenceScene_usableIsFalse() {
-        // Pure yaw (~fronto-parallel) -> RectangleSolver returns null.
-        // HORIZONTAL + level gravity -> GravitySolver confidence = 0 (optical axis in floor).
-        val r = SceneRotations.yawPitch(yawDeg = 1.5, pitchDeg = 0.0)
-        val scene = SyntheticScene(w = w, h = h, r = r, t = t, k = k, l = l)
-        val gravity = Vec3(0.0, 1.0, 0.0)
-
-        val view = MeasurementPresenter.present(
-            scene.cornerPixels, scene.stickPixels, k,
-            gravity, scene.profile, SurfaceOrientation.HORIZONTAL, LengthUnit.METERS,
-        )
-        assertFalse("usable should be false when confidence == 0", view.usable)
+    @Test fun gravitySolverPath_keepsTheGenuineNonRectangularAngles() {
+        // The slanted corner is atan(1 / 0.4) + 90 = 111.8 degrees, not squared off.
+        assertEquals(111.8, presentGravityWall().cornerAngles[1], 0.05)
     }
 
-    @Test
-    fun zeroConfidenceScene_confidencePercentIsZero() {
-        val r = SceneRotations.yawPitch(yawDeg = 1.5, pitchDeg = 0.0)
-        val scene = SyntheticScene(w = w, h = h, r = r, t = t, k = k, l = l)
-        val gravity = Vec3(0.0, 1.0, 0.0)
+    private fun view(usable: Boolean = true, width: String = "1.00 m", caveats: List<String> = emptyList()) = MeasurementView(
+        usable = usable, width = width, height = "2.00 m", area = "2.00 m²", diagonal = "2.24 m",
+        cornerAngles = listOf(90.0, 90.0, 90.0, 90.0), confidenceLabel = "High confidence",
+        confidencePercent = 85, solverName = "Tilt-sensor fallback", caveats = caveats,
+    )
 
-        val view = MeasurementPresenter.present(
-            scene.cornerPixels, scene.stickPixels, k,
-            gravity, scene.profile, SurfaceOrientation.HORIZONTAL, LengthUnit.METERS,
-        )
-        assertEquals(0, view.confidencePercent)
-    }
-
-    // ======================================================================
-    // 3. Gravity solver path -> solverName == "Tilt-sensor fallback"
-    // ======================================================================
-
-    @Test
-    fun gravitySolverPath_solverNameIsTiltSensorFallback() {
-        // Near-fronto-parallel yaw: rectangle null, VERTICAL + level gravity -> GRAVITY wins.
-        val r = SceneRotations.yawPitch(yawDeg = 1.5, pitchDeg = 0.0)
-        val scene = SyntheticScene(w = w, h = h, r = r, t = t, k = k, l = l)
-        val gravity = Vec3(0.0, 1.0, 0.0)
-
-        val view = MeasurementPresenter.present(
-            scene.cornerPixels, scene.stickPixels, k,
-            gravity, scene.profile, SurfaceOrientation.VERTICAL, LengthUnit.METERS,
-        )
-        assertEquals("Tilt-sensor fallback", view.solverName)
-    }
-
-    @Test
-    fun gravitySolverPath_usableIsTrue() {
-        val r = SceneRotations.yawPitch(yawDeg = 1.5, pitchDeg = 0.0)
-        val scene = SyntheticScene(w = w, h = h, r = r, t = t, k = k, l = l)
-        val gravity = Vec3(0.0, 1.0, 0.0)
-
-        val view = MeasurementPresenter.present(
-            scene.cornerPixels, scene.stickPixels, k,
-            gravity, scene.profile, SurfaceOrientation.VERTICAL, LengthUnit.METERS,
-        )
-        assertTrue("gravity path should produce a usable result", view.usable)
-    }
-
-    // ======================================================================
-    // 4. diagnostics == null -> caveats is emptyList() and solverName from solution.solver
-    //    This is exercised by MetrologyEngine.measure() which leaves diagnostics null.
-    //    We can't call present() directly with that, but we can verify the branch via
-    //    the zero-confidence horizontal scene: measureHybrid always sets diagnostics, so
-    //    to cover the diagnostics-null branch we construct a thin wrapper test via
-    //    the gravity zero-confidence path (diagnostics is set to non-null with confidence=0).
-    //    To actually cover the null branch we need a result where diagnostics == null.
-    //    measureHybrid always sets diagnostics. Therefore we drive the null path by building
-    //    a MeasurementView directly and confirming the data class is exercised correctly.
-    // ======================================================================
-
-    @Test
-    fun measurementView_dataClassCopyAndEquality() {
-        val v1 = MeasurementView(
-            usable = true,
-            width = "1.00 m",
-            height = "2.00 m",
-            area = "2.00 m²",
-            diagonal = "2.24 m",
-            cornerAngles = listOf(90.0, 90.0, 90.0, 90.0),
-            confidenceLabel = "High confidence",
-            confidencePercent = 85,
-            solverName = "Rectangle method",
-            caveats = emptyList(),
-        )
+    @Test fun measurementView_dataClassCopyAndEquality() {
+        val v1 = view()
         val v2 = v1.copy(usable = false)
         assertFalse(v2.usable)
         assertEquals(v1.width, v2.width)
@@ -245,170 +131,67 @@ class MeasurementPresenterTest {
         assertTrue(v1 != v2)
     }
 
-    @Test
-    fun measurementView_toStringContainsFieldValues() {
-        val v = MeasurementView(
-            usable = true,
-            width = "3.00 m",
-            height = "2.00 m",
-            area = "6.00 m²",
-            diagonal = "3.61 m",
-            cornerAngles = listOf(89.5, 90.5, 89.5, 90.5),
-            confidenceLabel = "Medium confidence",
-            confidencePercent = 60,
-            solverName = "Tilt-sensor fallback",
-            caveats = listOf("some caveat"),
-        )
-        val s = v.toString()
+    @Test fun measurementView_toStringContainsFieldValues() {
+        val s = view(width = "3.00 m", caveats = listOf("some caveat")).toString()
         assertTrue(s.contains("3.00 m"))
         assertTrue(s.contains("Tilt-sensor fallback"))
     }
 
-    @Test
-    fun measurementView_hashCodeConsistent() {
-        val v = MeasurementView(
-            usable = false, width = "0.00 m", height = "0.00 m",
-            area = "0.00 m²", diagonal = "0.00 m", cornerAngles = emptyList(),
-            confidenceLabel = "Low confidence", confidencePercent = 0,
-            solverName = "Rectangle method", caveats = emptyList(),
-        )
+    @Test fun measurementView_hashCodeConsistent() {
+        val v = view(usable = false)
         assertEquals(v.hashCode(), v.hashCode())
     }
 
-    // ======================================================================
-    // 5. Different LengthUnit values change the formatting
-    // ======================================================================
-
-    @Test
-    fun differentUnits_metersFormatsWithM() {
-        val scene = obliqueScene()
-        val view = MeasurementPresenter.present(
-            scene.cornerPixels, scene.stickPixels, k,
-            scene.gravityCam, scene.profile, SurfaceOrientation.VERTICAL, LengthUnit.METERS,
-        )
-        assertTrue("width should end with ' m'", view.width.endsWith(" m"))
-        assertTrue("area should end with ' m²'", view.area.endsWith(" m²"))
+    @Test fun differentUnits_metersFormatsWithM() {
+        val v = presentOblique(LengthUnit.METERS)
+        assertTrue(v.width.endsWith(" m"))
+        assertTrue(v.area.endsWith(" m²"))
     }
 
-    @Test
-    fun differentUnits_centimetersFormatsWithCm() {
-        val scene = obliqueScene()
-        val view = MeasurementPresenter.present(
-            scene.cornerPixels, scene.stickPixels, k,
-            scene.gravityCam, scene.profile, SurfaceOrientation.VERTICAL, LengthUnit.CENTIMETERS,
-        )
-        assertTrue("width should end with ' cm'", view.width.endsWith(" cm"))
-        assertTrue("area should end with ' cm²'", view.area.endsWith(" cm²"))
+    @Test fun differentUnits_centimetersFormatsWithCm() {
+        val v = presentOblique(LengthUnit.CENTIMETERS)
+        assertTrue(v.width.endsWith(" cm"))
+        assertTrue(v.area.endsWith(" cm²"))
     }
 
-    @Test
-    fun differentUnits_feetInchesFormatsWithFtSuffix() {
-        val scene = obliqueScene()
-        val view = MeasurementPresenter.present(
-            scene.cornerPixels, scene.stickPixels, k,
-            scene.gravityCam, scene.profile, SurfaceOrientation.VERTICAL, LengthUnit.FEET_INCHES,
-        )
-        // feet-inches format: "%d' %d\""
-        assertTrue("width should contain ft/in pattern", view.width.contains("'"))
-        // area should end with ' ft²'
-        assertTrue("area should end with ' ft²'", view.area.endsWith(" ft²"))
+    @Test fun differentUnits_feetInchesFormatsWithFtSuffix() {
+        val v = presentOblique(LengthUnit.FEET_INCHES)
+        assertTrue(v.width.contains("'"))
+        assertTrue(v.area.endsWith(" ft²"))
     }
 
-    @Test
-    fun differentUnits_metersAndCentimetersDiffer() {
-        val scene = obliqueScene()
-        val viewM = MeasurementPresenter.present(
-            scene.cornerPixels, scene.stickPixels, k,
-            scene.gravityCam, scene.profile, SurfaceOrientation.VERTICAL, LengthUnit.METERS,
-        )
-        val viewCm = MeasurementPresenter.present(
-            scene.cornerPixels, scene.stickPixels, k,
-            scene.gravityCam, scene.profile, SurfaceOrientation.VERTICAL, LengthUnit.CENTIMETERS,
-        )
-        assertTrue("meters and cm width strings should differ", viewM.width != viewCm.width)
-    }
+    @Test fun differentUnits_metersAndCentimetersDiffer() =
+        assertTrue(presentOblique(LengthUnit.METERS).width != presentOblique(LengthUnit.CENTIMETERS).width)
 
-    // ======================================================================
-    // 6. Caveats present path: force a low-confidence / gravity scene to produce caveats
-    // ======================================================================
-
-    @Test
-    fun gravitySolverPath_caveatsContainsTiltSensorMessage() {
-        val r = SceneRotations.yawPitch(yawDeg = 1.5, pitchDeg = 0.0)
-        val scene = SyntheticScene(w = w, h = h, r = r, t = t, k = k, l = l)
-        val gravity = Vec3(0.0, 1.0, 0.0)
-
-        val view = MeasurementPresenter.present(
-            scene.cornerPixels, scene.stickPixels, k,
-            gravity, scene.profile, SurfaceOrientation.VERTICAL, LengthUnit.METERS,
-        )
-        // Gravity solver always triggers the "Used the tilt-sensor fallback" caveat.
-        assertTrue(
-            "caveats should mention tilt-sensor fallback",
-            view.caveats.any { it.contains("tilt-sensor fallback") },
-        )
-    }
-
-    // ======================================================================
-    // 7. toView with diagnostics == null (MetrologyEngine.measure leaves diagnostics=null)
-    //    Covers the null branches of "r.diagnostics?.solver ?: r.solution.solver"
-    //    and "r.diagnostics?.let { ... } ?: emptyList()".
-    // ======================================================================
-
-    private fun nullDiagnosticsResult(solver: SolverKind): EngineResult {
+    /** toView with diagnostics == null covers the fallback branches. */
+    private fun nullDiagnostics(solver: SolverKind, confidence: Double = 0.8, m: MeasurementResult? = null): EngineResult {
         val frame = PlaneFrame(Vec3(1.0, 0.0, 0.0), Vec3(0.0, 1.0, 0.0), Vec3(0.0, 0.0, 1.0))
-        return EngineResult(
-            measurement = MeasurementResult(
-                width = 2.0, height = 1.5, area = 3.0, diagonal = 2.5,
-                cornerAngles = listOf(90.0, 90.0, 90.0, 90.0),
-            ),
-            solution = PlaneSolution(frame, solver, 0.8),
-            scale = ScaleResult(scale = 1.0, agreement = 0.0),
-            confidence = 0.8,
-            diagnostics = null,
-        )
+        val measurement = m ?: MeasurementResult(2.0, 1.5, 3.0, 2.5, listOf(90.0, 90.0, 90.0, 90.0))
+        return EngineResult(measurement, PlaneSolution(frame, solver, confidence), ScaleResult(1.0, 0.0), confidence, null)
     }
 
-    @Test
-    fun toView_diagnosticsNull_rectangle_solverNameIsRectangleMethod() {
-        val view = MeasurementPresenter.toView(
-            nullDiagnosticsResult(SolverKind.RECTANGLE), LengthUnit.METERS,
-        )
-        assertEquals("Rectangle method", view.solverName)
-        assertEquals(emptyList<String>(), view.caveats)
-        assertTrue(view.usable)
+    @Test fun toView_diagnosticsNull_rectangle_solverNameIsRectangleMethod() {
+        val v = MeasurementPresenter.toView(nullDiagnostics(SolverKind.RECTANGLE), LengthUnit.METERS)
+        assertEquals("Rectangle method", v.solverName)
+        assertEquals(emptyList<String>(), v.caveats)
+        assertTrue(v.usable)
     }
 
-    @Test
-    fun toView_diagnosticsNull_gravity_solverNameIsTiltSensorFallback() {
-        val view = MeasurementPresenter.toView(
-            nullDiagnosticsResult(SolverKind.GRAVITY), LengthUnit.METERS,
-        )
-        assertEquals("Tilt-sensor fallback", view.solverName)
-        assertEquals(emptyList<String>(), view.caveats)
+    @Test fun toView_diagnosticsNull_gravity_solverNameIsTiltSensorFallback() {
+        val v = MeasurementPresenter.toView(nullDiagnostics(SolverKind.GRAVITY), LengthUnit.METERS)
+        assertEquals("Tilt-sensor fallback", v.solverName)
+        assertEquals(emptyList<String>(), v.caveats)
     }
 
-    @Test
-    fun toView_diagnosticsNull_caveatsIsEmptyList() {
-        val view = MeasurementPresenter.toView(
-            nullDiagnosticsResult(SolverKind.RECTANGLE), LengthUnit.CENTIMETERS,
-        )
-        assertEquals(emptyList<String>(), view.caveats)
-    }
+    @Test fun toView_diagnosticsNull_caveatsIsEmptyList() =
+        assertEquals(emptyList<String>(), MeasurementPresenter.toView(nullDiagnostics(SolverKind.RECTANGLE), LengthUnit.CENTIMETERS).caveats)
 
-    @Test
-    fun toView_diagnosticsNull_usableFalseWhenConfidenceZero() {
-        val frame = PlaneFrame(Vec3(1.0, 0.0, 0.0), Vec3(0.0, 1.0, 0.0), Vec3(0.0, 0.0, 1.0))
-        val zeroed = EngineResult(
-            measurement = MeasurementResult(0.0, 0.0, 0.0, 0.0, emptyList()),
-            solution = PlaneSolution(frame, SolverKind.RECTANGLE, 0.0),
-            scale = ScaleResult(0.0, 0.0),
-            confidence = 0.0,
-            diagnostics = null,
-        )
-        val view = MeasurementPresenter.toView(zeroed, LengthUnit.METERS)
-        assertFalse("confidence=0 should be unusable", view.usable)
-        assertEquals(0, view.confidencePercent)
-        assertEquals(emptyList<String>(), view.caveats)
+    @Test fun toView_diagnosticsNull_usableFalseWhenConfidenceZero() {
+        val zeroed = nullDiagnostics(SolverKind.RECTANGLE, 0.0, MeasurementResult(0.0, 0.0, 0.0, 0.0, emptyList()))
+        val v = MeasurementPresenter.toView(zeroed, LengthUnit.METERS)
+        assertFalse(v.usable)
+        assertEquals(0, v.confidencePercent)
+        assertEquals(emptyList<String>(), v.caveats)
+        assertFalse("zeroed placeholder is not shown as dimensions", v.width.any(Char::isDigit))
     }
 }

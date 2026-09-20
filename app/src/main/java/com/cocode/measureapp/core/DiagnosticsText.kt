@@ -2,6 +2,9 @@ package com.cocode.measureapp.core
 
 import com.cocode.measureapp.geometry.MeasurementDiagnostics
 import com.cocode.measureapp.geometry.SolverKind
+import com.cocode.measureapp.geometry.eligibility.PlaneAssumption
+import com.cocode.measureapp.geometry.eligibility.SurfaceConsistency
+import com.cocode.measureapp.geometry.frames.CalibrationStatus
 import kotlin.math.abs
 
 /**
@@ -32,6 +35,30 @@ object DiagnosticsText {
         }
         if (abs(d.cameraTiltDeg) > 60.0) {
             add("Camera is tilted steeply; re-shoot closer to level for best accuracy.")
+        }
+        addAll(evidenceCaveats(d))
+    }
+
+    /** Eligibility evidence that must stay visible; nothing is added for unreported (null) fields. */
+    private fun evidenceCaveats(d: MeasurementDiagnostics): List<String> = buildList {
+        when (d.calibration?.status) {
+            CalibrationStatus.APPROXIMATE -> add(
+                "Camera calibration is approximate (${d.calibration?.origin}); treat dimensions as estimates.",
+            )
+            CalibrationStatus.UNAVAILABLE -> add(
+                "Camera calibration is unavailable for this photo; dimensions are rough estimates.",
+            )
+            CalibrationStatus.CALIBRATED, null -> Unit
+        }
+        if (d.surfaceConsistency == SurfaceConsistency.UNVERIFIED_NO_GRAVITY) {
+            val why = d.gravityUnavailable?.let { " ($it)" } ?: ""
+            add("No tilt reading at capture$why; the wall/floor choice could not be verified.")
+        }
+        if (d.assumption == PlaneAssumption.WALL_FACES_CAMERA) {
+            add("Assumed the wall faces the camera squarely; the tilt sensor cannot tell its direction.")
+        }
+        if (d.referenceChecked == false) {
+            add("Stick width unknown; the reference shape was not cross-checked.")
         }
     }
 }

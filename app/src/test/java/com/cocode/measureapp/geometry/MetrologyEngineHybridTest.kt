@@ -2,7 +2,6 @@ package com.cocode.measureapp.geometry
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import kotlin.math.asin
@@ -60,32 +59,33 @@ class MetrologyEngineHybridTest {
     }
 
     @Test fun levelGravityGivesZeroCameraTilt() {
-        // Near-fronto-parallel pure yaw: rectangle returns null, so the level-camera
-        // VERTICAL gravity solution (confidence 1.0) is selected and still measures.
+        // Near-fronto-parallel pure yaw: the image-parallel vertical edges are a vanishing
+        // point at infinity, which the rectangle candidate supports. It is eligible and
+        // consistent with the level wall, so it outranks the gravity plane, whose wall azimuth
+        // would only be assumed.
         val r = SceneRotations.yawPitch(yawDeg = 1.5, pitchDeg = 0.0)
         val scene = SyntheticScene(w = w, h = h, r = r, t = t, k = k, l = l)
         // Level camera looking along z: world down is exactly camera down.
         val gravity = Vec3(0.0, 1.0, 0.0)
-
-        assertNull("rectangle must be null here", RectangleSolver.solve(scene.cornerPixels, scene.k))
 
         val result = MetrologyEngine.measureHybrid(
             scene.cornerPixels, scene.stickPixels, scene.k, scene.profile,
             gravity, SurfaceOrientation.VERTICAL,
         )
 
-        assertEquals(SolverKind.GRAVITY, result.solution.solver)
-        assertTrue("finite width", result.measurement.width.isFinite() && result.measurement.width > 0.0)
-        assertTrue("finite area", result.measurement.area.isFinite())
+        assertEquals(SolverKind.RECTANGLE, result.solution.solver)
+        assertEquals("width", w, result.measurement.width, w * 1e-6)
+        assertEquals("height", h, result.measurement.height, h * 1e-6)
         val diag = result.diagnostics!!
-        assertEquals(SolverKind.GRAVITY, diag.solver)
+        assertEquals(SolverKind.RECTANGLE, diag.solver)
         // Level camera -> optical axis perpendicular to world up -> zero pitch.
         assertEquals(0.0, diag.cameraTiltDeg, 1e-9)
     }
 
     @Test fun zeroConfidenceSelectionReturnsZeroedResultWithDiagnostics() {
-        // Pure yaw -> rectangle null; HORIZONTAL + level gravity -> gravity confidence 0.0
-        // (optical axis lies in the floor). Selector falls through to that zero solution.
+        // HORIZONTAL + level gravity: the wall rectangle contradicts the floor selection and the
+        // floor plane has marks on both sides of the horizon, so neither candidate is eligible.
+        // The legacy adapter reports that failure zeroed, with diagnostics.
         val r = SceneRotations.yawPitch(yawDeg = 1.5, pitchDeg = 0.0)
         val scene = SyntheticScene(w = w, h = h, r = r, t = t, k = k, l = l)
         val gravity = Vec3(0.0, 1.0, 0.0)

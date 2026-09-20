@@ -39,20 +39,12 @@ object Measurements {
         val width = (tr.distanceTo(tl) + br.distanceTo(bl)) / 2.0
         val height = (bl.distanceTo(tl) + br.distanceTo(tr)) / 2.0
         val diagonal = (br.distanceTo(tl) + bl.distanceTo(tr)) / 2.0
-        val area = shoelace(corners)
+        // Engine-boundary guard shared with marker validation: a collapsed (e.g. collinear)
+        // quad must never become a zero-area "measurement", whatever the caller.
+        require(QuadMetrics.hasResolvedArea(corners)) { "degenerate quad: zero enclosed area" }
+        val area = abs(QuadMetrics.signedArea(corners))
         val angles = corners.indices.map { interiorAngleDeg(corners, it) }
         return MeasurementResult(width, height, area, diagonal, angles)
-    }
-
-    /** Absolute polygon area via the shoelace formula. */
-    private fun shoelace(p: List<Vec2>): Double {
-        var sum = 0.0
-        for (i in p.indices) {
-            val a = p[i]
-            val b = p[(i + 1) % p.size]
-            sum += a.x * b.y - b.x * a.y
-        }
-        return abs(sum) / 2.0
     }
 
     /**
@@ -74,5 +66,35 @@ object Measurements {
         }
         val cos = (prev.dot(next) / (pn * nn)).coerceIn(-1.0, 1.0)
         return acos(cos) * 180.0 / PI
+    }
+}
+
+/**
+ * Coordinate-agnostic polygon metrics shared by [Measurements] and the marker validation
+ * rules, so both apply the same area rule. Scale-relative checks use [Tolerances].
+ */
+object QuadMetrics {
+    /**
+     * Shoelace area with sign: positive for a clockwise cycle in a y-down frame (e.g.
+     * `TL, TR, BR, BL`), negative for counter-clockwise.
+     */
+    fun signedArea(p: List<Vec2>): Double {
+        var sum = 0.0
+        for (i in p.indices) {
+            val a = p[i]
+            val b = p[(i + 1) % p.size]
+            sum += a.x * b.y - b.x * a.y
+        }
+        return sum / 2.0
+    }
+
+    /** Largest vertex-to-vertex distance: the length scale for relative tolerances. */
+    fun diameter(p: List<Vec2>): Double =
+        p.indices.maxOf { i -> p.indices.maxOf { j -> p[i].distanceTo(p[j]) } }
+
+    /** Enclosed area exceeds [Tolerances.MARKER_MIN_AREA_FRACTION] of the squared diameter. */
+    fun hasResolvedArea(p: List<Vec2>): Boolean {
+        val d = diameter(p)
+        return abs(signedArea(p)) > Tolerances.MARKER_MIN_AREA_FRACTION * d * d
     }
 }

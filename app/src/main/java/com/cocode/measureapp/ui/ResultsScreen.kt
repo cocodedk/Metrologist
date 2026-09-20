@@ -31,6 +31,8 @@ fun ResultsScreen(
     onExport: () -> Unit,
     onRemark: () -> Unit,
     onDone: () -> Unit,
+    /** Export eligibility of the current revision; never inferred from a stale result. */
+    exportEnabled: Boolean = view.usable,
 ) {
     Column(
         Modifier
@@ -43,7 +45,7 @@ fun ResultsScreen(
         Spacer(Modifier.height(4.dp))
         if (!view.usable) {
             Text(
-                "Could not measure confidently — check the markers and try a moderate angle.",
+                view.message ?: "Could not measure confidently — check the markers and try a moderate angle.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = StaffRed,
             )
@@ -95,7 +97,7 @@ fun ResultsScreen(
 
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             OutlinedButton(onClick = onRemark) { Text("Re-mark") }
-            OutlinedButton(onClick = onExport, enabled = view.usable) { Text("Export") }
+            OutlinedButton(onClick = onExport, enabled = exportEnabled && view.usable) { Text("Export") }
             Button(
                 onClick = onDone,
                 colors = ButtonDefaults.buttonColors(containerColor = StaffRed),

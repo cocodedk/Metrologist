@@ -107,6 +107,15 @@ class CornerOrderingTest {
         assertTrue(ex.message!!.contains("distinct"))
     }
 
+    // Finding F6: four distinct points are not enough; collapsed or concave quads fail loudly.
+    @Test fun collinearOrConcaveQuadThrowsInsteadOfOrdering() {
+        val collinear = listOf(Vec2(800.0, 600.0), Vec2(900.0, 600.0), Vec2(1000.0, 600.0), Vec2(1100.0, 600.0))
+        val concave = listOf(Vec2(0.0, 0.0), Vec2(10.0, 0.0), Vec2(5.0, 6.0), Vec2(5.0, 1.0))
+        for (quad in listOf(collinear, concave)) for (perm in permutations(quad)) {
+            assertThrows(IllegalArgumentException::class.java) { CornerOrdering.order(perm) }
+        }
+    }
+
     @Test fun sizeNotFourThrows() {
         assertThrows(IllegalArgumentException::class.java) {
             CornerOrdering.order(listOf(tl, tr, br))

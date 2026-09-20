@@ -1,14 +1,25 @@
 package com.cocode.measureapp.geometry
 
+import com.cocode.measureapp.geometry.eligibility.EligibilityInput
+import com.cocode.measureapp.geometry.eligibility.OutcomeProducer
+import com.cocode.measureapp.geometry.eligibility.PlaneAssumption
+import com.cocode.measureapp.geometry.eligibility.SurfaceConsistency
+import com.cocode.measureapp.geometry.frames.AlignedGravity
+import com.cocode.measureapp.geometry.frames.CalibrationProvenance
+import com.cocode.measureapp.geometry.frames.GravityAlignmentReason
 import com.cocode.measureapp.stick.StickScale
-import kotlin.math.asin
 import kotlin.math.min
 
 /**
  * Per-pass summary of which solver was used and how the result was conditioned: the chosen
  * [solver], the overall [confidence], the camera pitch in degrees ([cameraTiltDeg], positive
- * looking up / negative looking down), the recovered metric-to-real [scale], and the stick
- * [scaleAgreement].
+ * looking up / negative looking down, NaN without valid gravity), the recovered metric-to-real
+ * [scale], and the stick [scaleAgreement].
+ *
+ * Evidence added by solver eligibility (null = not reported, e.g. legacy construction): the
+ * scene [calibration] provenance, [surfaceConsistency] with the wall/floor selection, the plane
+ * [assumption], why gravity was unavailable ([gravityUnavailable]), whether the stick's known
+ * aspect was cross-checked ([referenceChecked]), the input [revision] and the [selectionReason].
  */
 data class MeasurementDiagnostics(
     val solver: SolverKind,
@@ -16,6 +27,13 @@ data class MeasurementDiagnostics(
     val cameraTiltDeg: Double,
     val scale: Double,
     val scaleAgreement: Double,
+    val calibration: CalibrationProvenance? = null,
+    val surfaceConsistency: SurfaceConsistency? = null,
+    val assumption: PlaneAssumption? = null,
+    val gravityUnavailable: GravityAlignmentReason? = null,
+    val referenceChecked: Boolean? = null,
+    val revision: Int? = null,
+    val selectionReason: String? = null,
 )
 
 /**
@@ -34,8 +52,9 @@ data class EngineResult(
 
 /**
  * Turns marked image points + camera intrinsics + a known stick length into real-world
- * rectangle measurements with a confidence score, using either the rectangle solver
- * ([measure]) or an auto-selected rectangle/gravity solver ([measureHybrid]).
+ * measurements. [evaluate] is the eligibility-checked production path returning a
+ * [MeasurementOutcome]; [measureHybrid] adapts it to the legacy [EngineResult]; [measure] is
+ * the unchecked rectangle-only Plan 2 path kept for oracle tests.
  */
 object MetrologyEngine {
     /**
@@ -61,10 +80,35 @@ object MetrologyEngine {
     }
 
     /**
-     * Auto-selecting hybrid path. Solves the rectangle plane and the gravity plane, lets
-     * [SolverSelector] pick one, and (when the pick is usable) runs the shared logic and
-     * attaches [MeasurementDiagnostics]. A selected solution of `confidence == 0.0` yields a
-     * zeroed result that still carries diagnostics.
+     * Production measurement entry point (contract C10). Validates the marks, builds the
+     * rectangle candidate and the gravity plane, applies eligibility and surface consistency,
+     * ranks only eligible candidates and returns a finite success or an explanatory failure.
+     *
+     * @param corners object corners `[TL, TR, BR, BL]` in the aligned marking frame.
+     * @param stick the stick box corners in either cyclic winding.
+     * @param k intrinsics of the SAME aligned frame; [calibration] is their provenance.
+     * @param gravity aligned physical-down gravity or why it is unavailable (never a default).
+     * @param orientation the user's explicit wall/floor selection.
+     * @param revision the image/input revision the outcome belongs to (echoed in diagnostics).
+     */
+    fun evaluate(
+        corners: List<Vec2>,
+        stick: List<Vec2>,
+        k: CameraIntrinsics,
+        calibration: CalibrationProvenance,
+        gravity: AlignedGravity,
+        profile: StickProfile,
+        orientation: SurfaceOrientation,
+        revision: Int,
+    ): MeasurementOutcome = OutcomeProducer.evaluate(
+        EligibilityInput(corners, stick, k, calibration, gravity, profile, orientation), revision,
+    ).outcome
+
+    /**
+     * Legacy [EngineResult] adapter over [evaluate] for callers not yet migrated to
+     * [MeasurementOutcome]: [gravity] is treated as a valid aligned reading and [calibration]
+     * defaults to unavailable, as nothing established it. A failure is returned zeroed with
+     * `confidence == 0.0` and diagnostics (tilt); consumers must not format it.
      *
      * @param gravity unit camera-frame vector pointing along world down (level camera: `(0,1,0)`).
      * @param orientation whether the measured surface is a wall ([SurfaceOrientation.VERTICAL])
@@ -77,24 +121,27 @@ object MetrologyEngine {
         profile: StickProfile,
         gravity: Vec3,
         orientation: SurfaceOrientation,
+        calibration: CalibrationProvenance = CalibrationProvenance.UNAVAILABLE,
     ): EngineResult {
-        val rect = RectangleSolver.solve(corners, k)
-        val grav = GravitySolver.solve(gravity, orientation)
-        val sel = SolverSelector.select(rect, grav)
-        val tilt = cameraTiltDeg(gravity)
-
-        if (sel.solution.confidence == 0.0) {
-            val zero = zeroed(sel.solution.solver)
-            return zero.copy(
-                diagnostics = MeasurementDiagnostics(sel.solution.solver, 0.0, tilt, 0.0, 0.0),
+        val input = EligibilityInput(
+            corners, stick, k, calibration, AlignedGravity.Available(gravity, 0L), profile, orientation,
+        )
+        val e = OutcomeProducer.evaluate(input, revision = 0)
+        val success = e.outcome.successOrNull()
+        val chosen = e.chosen
+        if (success == null || chosen == null) {
+            return zeroed(SolverKind.RECTANGLE).copy(
+                diagnostics = MeasurementDiagnostics(
+                    SolverKind.RECTANGLE, 0.0, e.cameraTiltDeg, 0.0, 0.0, calibration = calibration,
+                ),
             )
         }
-        val result = measureWith(sel.solution, corners, stick, k, profile)
-        return result.copy(
-            diagnostics = MeasurementDiagnostics(
-                sel.solution.solver, result.confidence, tilt,
-                result.scale.scale, result.scale.agreement,
-            ),
+        return EngineResult(
+            success.measurement,
+            PlaneSolution(chosen.frame, success.solver, success.confidence),
+            success.scale,
+            success.confidence,
+            success.diagnostics,
         )
     }
 
@@ -118,17 +165,6 @@ object MetrologyEngine {
         val measurement = Measurements.compute(cornersReal)
         val confidence = solution.confidence * (1.0 - min(scale.agreement, 1.0))
         return EngineResult(measurement, solution, scale, confidence)
-    }
-
-    /**
-     * Camera pitch relative to horizontal (degrees), from `asin(opticalAxis·worldUp)`:
-     * **positive when the optical axis tips UP, above the horizon**, and **negative when the
-     * camera looks DOWN toward the floor**; exactly `0` for a level camera. (Looking down makes
-     * `gravity.z > 0`, so `worldUp.z < 0` and the `asin` is negative — see [CameraTiltSignTest].)
-     */
-    private fun cameraTiltDeg(gravity: Vec3): Double {
-        val worldUp = (gravity * -1.0).normalized()
-        return Math.toDegrees(asin(Vec3(0.0, 0.0, 1.0).dot(worldUp).coerceIn(-1.0, 1.0)))
     }
 
     /** Zeroed, zero-confidence result with a placeholder [solver] plane flagged unusable. */

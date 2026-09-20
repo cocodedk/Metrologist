@@ -1,49 +1,38 @@
 package com.cocode.measureapp.capture
 
 import android.hardware.camera2.CameraCharacteristics
-import android.util.SizeF
-import com.cocode.measureapp.geometry.CameraIntrinsics
-import kotlin.math.max
+import com.cocode.measureapp.capture.frames.ActiveArray
+import com.cocode.measureapp.capture.frames.BufferIntrinsics
+import com.cocode.measureapp.capture.frames.LensCharacteristics
+import com.cocode.measureapp.geometry.frames.ProvenancedIntrinsics
 
 /**
- * Derives pinhole [CameraIntrinsics], in pixels of the captured image, from Camera2 data.
- * Prefers the device's calibrated intrinsics, then focal-length + sensor size, then a
- * coarse FOV fallback. All paths are approximations until verified on a real device.
+ * Thin Android adapter: copies the Camera2 values the capture-frame transform needs into a pure
+ * [LensCharacteristics]. All mapping, source preference and provenance labelling happen in
+ * [BufferIntrinsics]; the result is in camera-BUFFER pixels, not yet in the marking frame.
+ * The shot's pre-correction-to-processed-image mapping is not read here, so device
+ * calibration stays approximate (see [com.cocode.measureapp.geometry.frames.ProvenanceReason]).
  */
 object IntrinsicsExtractor {
-    fun extract(
-        characteristics: CameraCharacteristics,
-        imageWidth: Int,
-        imageHeight: Int,
-    ): CameraIntrinsics {
-        val calib = characteristics.get(CameraCharacteristics.LENS_INTRINSIC_CALIBRATION)
-        val activeArray = characteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE)
-        if (calib != null && calib.size >= 5 && activeArray != null &&
-            activeArray.width() > 0 && activeArray.height() > 0
-        ) {
-            val sx = imageWidth.toDouble() / activeArray.width()
-            val sy = imageHeight.toDouble() / activeArray.height()
-            return CameraIntrinsics(
-                fx = calib[0].toDouble() * sx,
-                fy = calib[1].toDouble() * sy,
-                cx = calib[2].toDouble() * sx,
-                cy = calib[3].toDouble() * sy,
-            )
-        }
-
-        val focal = characteristics.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS)?.firstOrNull()
-        val sensor: SizeF? = characteristics.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE)
-        if (focal != null && focal > 0f && sensor != null && sensor.width > 0f && sensor.height > 0f) {
-            return CameraIntrinsics(
-                fx = focal.toDouble() / sensor.width * imageWidth,
-                fy = focal.toDouble() / sensor.height * imageHeight,
-                cx = imageWidth / 2.0,
-                cy = imageHeight / 2.0,
-            )
-        }
-
-        // Last resort: assume a typical phone field of view (~focal == long edge in px).
-        val f = max(imageWidth, imageHeight).toDouble()
-        return CameraIntrinsics(f, f, imageWidth / 2.0, imageHeight / 2.0)
+    fun read(characteristics: CameraCharacteristics): LensCharacteristics {
+        val active = characteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE)
+        val physical = characteristics.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE)
+        val pre = characteristics.get(CameraCharacteristics.SENSOR_INFO_PRE_CORRECTION_ACTIVE_ARRAY_SIZE)
+        return LensCharacteristics(
+            intrinsicCalibration = characteristics.get(CameraCharacteristics.LENS_INTRINSIC_CALIBRATION)
+                ?.map { it.toDouble() },
+            activeArray = active?.let { ActiveArray(it.width(), it.height()) },
+            focalLengthMm = characteristics.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS)
+                ?.firstOrNull()?.toDouble(),
+            sensorWidthMm = physical?.width?.toDouble(),
+            sensorHeightMm = physical?.height?.toDouble(),
+            facing = characteristics.get(CameraCharacteristics.LENS_FACING),
+            sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION),
+            timestampSource = characteristics.get(CameraCharacteristics.SENSOR_INFO_TIMESTAMP_SOURCE),
+            preCorrectionArray = pre?.let { ActiveArray(it.width(), it.height()) },
+        )
     }
+
+    fun extract(characteristics: CameraCharacteristics, bufferWidth: Int, bufferHeight: Int): ProvenancedIntrinsics =
+        BufferIntrinsics.estimate(read(characteristics), bufferWidth, bufferHeight)
 }

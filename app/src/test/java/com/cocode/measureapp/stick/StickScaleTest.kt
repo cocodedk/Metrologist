@@ -4,6 +4,7 @@ import com.cocode.measureapp.geometry.StickProfile
 import com.cocode.measureapp.geometry.Vec2
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
+import org.junit.Assert.fail
 import org.junit.Test
 
 /**
@@ -89,6 +90,22 @@ class StickScaleTest {
             Vec2(0.0, 0.0), Vec2(2.0, 0.0), Vec2(2.0, 0.0), Vec2(0.0, 0.0),
         )
         StickScale.solve(metric, StickProfile(totalLength = 1.0, width = 0.25))
+    }
+
+    @Test fun profileRejectsNonFiniteOrNonPositiveLength() {
+        for (bad in listOf(0.0, -1.0, Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY)) {
+            try {
+                StickProfile(totalLength = bad)
+                fail("accepted totalLength $bad")
+            } catch (expected: IllegalArgumentException) {
+                // invalid dimensions never reach the solver
+            }
+        }
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun profileRejectsInfiniteWidth() {
+        StickProfile(totalLength = 1.0, width = Double.POSITIVE_INFINITY)
     }
 
     @Test fun degenerateZeroShortEdgeWithUnknownWidthIsAccepted() {

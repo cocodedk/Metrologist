@@ -1,5 +1,7 @@
 package com.cocode.measureapp.core
 
+import com.cocode.measureapp.core.validation.MarkerValidation
+import com.cocode.measureapp.core.validation.MarkerValidator
 import com.cocode.measureapp.geometry.Vec2
 import kotlin.math.atan2
 
@@ -15,18 +17,31 @@ import kotlin.math.atan2
  * sum/diff heuristic collapses two corners onto one point.
  */
 object CornerOrdering {
+    /**
+     * Canonical order of a valid object quad. Throws [IllegalArgumentException] with the
+     * actionable message of [MarkerValidator.validateObject] for non-finite, coincident,
+     * collinear or concave marks instead of returning an unusable ordering.
+     */
     fun order(points: List<Vec2>): List<Vec2> {
+        require(points.size == 4) { "expected exactly 4 corners, got ${points.size}" }
+        return when (val v = MarkerValidator.validateObject(points)) {
+            is MarkerValidation.Accepted -> v.corners
+            is MarkerValidation.Rejected -> throw IllegalArgumentException(v.message)
+        }
+    }
+
+    /**
+     * The clockwise cycle starting at top-left, without any validity check. Callers must
+     * validate the result; use [order] or [MarkerValidator.validateObject] instead.
+     */
+    internal fun clockwiseCycle(points: List<Vec2>): List<Vec2> {
         require(points.size == 4) { "expected exactly 4 corners, got ${points.size}" }
         val cx = points.sumOf { it.x } / 4.0
         val cy = points.sumOf { it.y } / 4.0
         val clockwise = points.sortedBy { atan2(it.y - cy, it.x - cx) }
         val topLeft = clockwise.minWith(topLeftOrder)
         val start = clockwise.indexOf(topLeft)
-        val ordered = (0 until 4).map { clockwise[(start + it) % 4] }
-        require(ordered.toSet().size == 4) {
-            "corners are degenerate/collinear; cannot order into 4 distinct corners"
-        }
-        return ordered
+        return (0 until 4).map { clockwise[(start + it) % 4] }
     }
 
     /**

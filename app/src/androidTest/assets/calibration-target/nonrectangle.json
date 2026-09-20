@@ -1,0 +1,126 @@
+{
+  "name": "nonrectangle",
+  "source": "tools/calibration-target.html",
+  "kind": "Rendered page with synthetic pinhole metadata; not a camera capture",
+  "imageWidth": 762,
+  "imageHeight": 522,
+  "intrinsics": {
+    "fx": 1200,
+    "fy": 1200,
+    "cx": 381,
+    "cy": 261
+  },
+  "physicalDown": [
+    0,
+    1,
+    0
+  ],
+  "orientation": "VERTICAL",
+  "objectPixels": [
+    [
+      36,
+      36
+    ],
+    [
+      611,
+      36
+    ],
+    [
+      726,
+      445.0909090909091
+    ],
+    [
+      36,
+      486
+    ]
+  ],
+  "referencePixels": [
+    [
+      231,
+      328.5
+    ],
+    [
+      531,
+      328.5
+    ],
+    [
+      531,
+      388.5
+    ],
+    [
+      231,
+      388.5
+    ]
+  ],
+  "referenceLengthMetres": 0.1,
+  "referenceWidthMetres": 0.02,
+  "expected": {
+    "widthMetres": 0.21103527603963404,
+    "heightMetres": 0.14582458218506925,
+    "areaSquareMetres": 0.030318181818181817,
+    "diagonalMetres": 0.2553851322776341,
+    "anglesDegrees": [
+      90,
+      105.70126314301687,
+      77.69174792607187,
+      86.60698893091126
+    ]
+  },
+  "target": {
+    "version": 2,
+    "scenario": "quad",
+    "width": 230,
+    "height": 150,
+    "length": 100,
+    "stickWidth": 20,
+    "points": [
+      [
+        0,
+        0
+      ],
+      [
+        191.66666666666666,
+        0
+      ],
+      [
+        230,
+        136.36363636363637
+      ],
+      [
+        0,
+        150
+      ]
+    ],
+    "reference": [
+      [
+        65,
+        97.5
+      ],
+      [
+        165,
+        97.5
+      ],
+      [
+        165,
+        117.5
+      ],
+      [
+        65,
+        117.5
+      ]
+    ],
+    "margin": 12,
+    "truth": {
+      "width": 211.03527603963403,
+      "height": 145.82458218506923,
+      "area": 30318.181818181816,
+      "diagonal": 255.3851322776341,
+      "angles": [
+        90,
+        105.70126314301687,
+        77.69174792607187,
+        86.60698893091126
+      ]
+    }
+  }
+}
