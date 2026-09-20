@@ -12,19 +12,13 @@ android {
         }
     }
 
-    // Version driven by VERSION_NAME env var in CI/release; falls back to "1.0.0" locally.
-    val versionNameStr = System.getenv("VERSION_NAME") ?: "1.0.0"
-    val versionParts = versionNameStr.split(".").map { it.toIntOrNull() ?: 0 }
-    val vMajor = versionParts.getOrElse(0) { 0 }
-    val vMinor = versionParts.getOrElse(1) { 0 }
-    val vPatch = versionParts.getOrElse(2) { 0 }
-
     defaultConfig {
         applicationId = "com.cocode.measureapp"
         minSdk = 24
         targetSdk = 36
-        versionCode = vMajor * 1_000_000 + vMinor * 1_000 + vPatch
-        versionName = versionNameStr
+        // Literal source values let F-Droid discover updates from each release tag.
+        versionCode = providers.gradleProperty("VERSION_CODE").get().toInt()
+        versionName = providers.gradleProperty("VERSION_NAME").get()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -53,7 +47,9 @@ android {
             enableUnitTestCoverage = true
         }
         release {
-            isMinifyEnabled = false
+            // Optimize shipped code/resources; JNI entry points are kept explicitly.
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -71,6 +67,17 @@ android {
     }
     buildFeatures {
         compose = true
+    }
+    packaging {
+        jniLibs {
+            // Preserve prebuilt libraries byte-for-byte without an NDK strip step.
+            keepDebugSymbols += "**/*.so"
+        }
+    }
+    dependenciesInfo {
+        // F-Droid rejects AGP's encrypted dependency metadata signing block.
+        includeInApk = false
+        includeInBundle = false
     }
     lint {
         baseline = file("lint-baseline.xml")

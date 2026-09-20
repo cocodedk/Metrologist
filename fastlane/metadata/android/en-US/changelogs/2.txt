@@ -1,0 +1,5 @@
+Improve measurement validation, surface selection and capture recovery.
+Preserve reference dimensions more accurately in settings.
+Enable release optimization with OpenCV JNI keep rules.
+Make release versions and native-library packaging reproducible from source.
+Add a user guide and a printable reference with red ends and a checker border.

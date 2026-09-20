@@ -2,15 +2,13 @@ name: Release APK
 
 on:
   workflow_dispatch:
-    inputs:
-      bump:
-        description: Version bump type
-        type: choice
-        options: [patch, minor, major]
-        default: patch
 
 permissions:
   contents: write
+
+concurrency:
+  group: release-apk
+  cancel-in-progress: false
 
 jobs:
   release:
@@ -21,30 +19,9 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Compute next version
+      - name: Read and validate source version
         id: version
-        env:
-          BUMP: ${{ github.event.inputs.bump }}
-        run: |
-          LATEST=$(git tag --list 'v*' --sort=-version:refname | head -n1)
-          if [[ -z "$LATEST" ]]; then
-            LATEST="v0.0.0"
-          fi
-          VER="${LATEST#v}"
-          IFS='.' read -r MAJOR MINOR PATCH <<< "$VER"
-          MAJOR="${MAJOR:-0}"; MINOR="${MINOR:-0}"; PATCH="${PATCH:-0}"
-
-          case "$BUMP" in
-            major) MAJOR=$((MAJOR+1)); MINOR=0; PATCH=0 ;;
-            minor) MINOR=$((MINOR+1)); PATCH=0 ;;
-            patch) PATCH=$((PATCH+1)) ;;
-          esac
-
-          VERSION="${MAJOR}.${MINOR}.${PATCH}"
-          TAG="v${VERSION}"
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "tag=$TAG"         >> "$GITHUB_OUTPUT"
-          echo "Next version: $VERSION (tag $TAG)"
+        run: python3 scripts/release/version.py >> "$GITHUB_OUTPUT"
 
       - name: Set up Java 17
         uses: actions/setup-java@1bcf9fb12cf4aa7d266a90ae39939e61372fe520 # v5.4.0
@@ -66,27 +43,17 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          VERSION_NAME: ${{ steps.version.outputs.version }}
         run: ./gradlew :app:assembleRelease --no-daemon
 
-      - name: Rename APK to stable name
+      - name: Verify signed APK and use stable asset name
         run: |
-          APK=$(find app/build/outputs/apk/release -name '*.apk' | head -n1)
-          cp "$APK" Metrologist.apk
-          echo "APK path: $APK"
-
-      - name: Create and push tag
-        env:
-          TAG: ${{ steps.version.outputs.tag }}
-        run: |
-          git config user.name  "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag "$TAG"
-          git push origin "$TAG"
+          test -f app/build/outputs/apk/release/app-release.apk
+          cp app/build/outputs/apk/release/app-release.apk Metrologist.apk
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@718ea10b132b3b2eba29c1007bb80653f286566b # v3.0.1
         with:
           tag_name: ${{ steps.version.outputs.tag }}
+          target_commitish: ${{ github.sha }}
           generate_release_notes: true
           files: Metrologist.apk
