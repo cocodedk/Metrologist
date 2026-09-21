@@ -5,7 +5,7 @@
 **Last updated:** 14 July 2026
 
 > The canonical, always-current version of this policy is published at
-> **https://cocodedk.github.io/Metrologist/privacy.html**
+> **https://measure.cocode.dk/privacy.html**
 
 **Metrologist does not collect, transmit, or share any personal data.**
 It is an Android app that measures flat surfaces from a photo, and every calculation runs entirely on

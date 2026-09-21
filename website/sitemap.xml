@@ -3,63 +3,63 @@
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
   <url>
-    <loc>https://cocodedk.github.io/Metrologist/</loc>
+    <loc>https://measure.cocode.dk/</loc>
     <lastmod>2026-06-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://cocodedk.github.io/Metrologist/"/>
-    <xhtml:link rel="alternate" hreflang="fa" href="https://cocodedk.github.io/Metrologist/fa/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://cocodedk.github.io/Metrologist/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://measure.cocode.dk/"/>
+    <xhtml:link rel="alternate" hreflang="fa" href="https://measure.cocode.dk/fa/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://measure.cocode.dk/"/>
   </url>
 
   <url>
-    <loc>https://cocodedk.github.io/Metrologist/fa/</loc>
+    <loc>https://measure.cocode.dk/fa/</loc>
     <lastmod>2026-06-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://cocodedk.github.io/Metrologist/"/>
-    <xhtml:link rel="alternate" hreflang="fa" href="https://cocodedk.github.io/Metrologist/fa/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://cocodedk.github.io/Metrologist/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://measure.cocode.dk/"/>
+    <xhtml:link rel="alternate" hreflang="fa" href="https://measure.cocode.dk/fa/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://measure.cocode.dk/"/>
   </url>
 
   <url>
-    <loc>https://cocodedk.github.io/Metrologist/print-stick.html</loc>
-    <lastmod>2026-06-14</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://cocodedk.github.io/Metrologist/print-stick.html"/>
-    <xhtml:link rel="alternate" hreflang="fa" href="https://cocodedk.github.io/Metrologist/fa/print-stick.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://cocodedk.github.io/Metrologist/print-stick.html"/>
-  </url>
-
-  <url>
-    <loc>https://cocodedk.github.io/Metrologist/fa/print-stick.html</loc>
+    <loc>https://measure.cocode.dk/print-stick.html</loc>
     <lastmod>2026-06-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://cocodedk.github.io/Metrologist/print-stick.html"/>
-    <xhtml:link rel="alternate" hreflang="fa" href="https://cocodedk.github.io/Metrologist/fa/print-stick.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://cocodedk.github.io/Metrologist/print-stick.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://measure.cocode.dk/print-stick.html"/>
+    <xhtml:link rel="alternate" hreflang="fa" href="https://measure.cocode.dk/fa/print-stick.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://measure.cocode.dk/print-stick.html"/>
   </url>
 
   <url>
-    <loc>https://cocodedk.github.io/Metrologist/user-guide.html</loc>
-    <lastmod>2026-09-20</lastmod>
+    <loc>https://measure.cocode.dk/fa/print-stick.html</loc>
+    <lastmod>2026-06-14</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://cocodedk.github.io/Metrologist/user-guide.html"/>
-    <xhtml:link rel="alternate" hreflang="fa" href="https://cocodedk.github.io/Metrologist/fa/user-guide.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://cocodedk.github.io/Metrologist/user-guide.html"/>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://measure.cocode.dk/print-stick.html"/>
+    <xhtml:link rel="alternate" hreflang="fa" href="https://measure.cocode.dk/fa/print-stick.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://measure.cocode.dk/print-stick.html"/>
   </url>
 
   <url>
-    <loc>https://cocodedk.github.io/Metrologist/fa/user-guide.html</loc>
+    <loc>https://measure.cocode.dk/user-guide.html</loc>
     <lastmod>2026-09-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://cocodedk.github.io/Metrologist/user-guide.html"/>
-    <xhtml:link rel="alternate" hreflang="fa" href="https://cocodedk.github.io/Metrologist/fa/user-guide.html"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://cocodedk.github.io/Metrologist/user-guide.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://measure.cocode.dk/user-guide.html"/>
+    <xhtml:link rel="alternate" hreflang="fa" href="https://measure.cocode.dk/fa/user-guide.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://measure.cocode.dk/user-guide.html"/>
+  </url>
+
+  <url>
+    <loc>https://measure.cocode.dk/fa/user-guide.html</loc>
+    <lastmod>2026-09-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://measure.cocode.dk/user-guide.html"/>
+    <xhtml:link rel="alternate" hreflang="fa" href="https://measure.cocode.dk/fa/user-guide.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://measure.cocode.dk/user-guide.html"/>
   </url>
 
 </urlset>
