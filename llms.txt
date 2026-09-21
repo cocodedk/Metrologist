@@ -27,7 +27,7 @@ Metrologist implements a pure-Kotlin metrology engine (no Android dependencies) 
 
 ## Optional
 
-- [English website](https://cocodedk.github.io/Metrologist/): Project Pages site
-- [Persian website](https://cocodedk.github.io/Metrologist/fa/): فارسی / Persian Pages site
+- [English website](https://measure.cocode.dk/): Project Pages site
+- [Persian website](https://measure.cocode.dk/fa/): فارسی / Persian Pages site
 - [Latest APK](https://github.com/cocodedk/Metrologist/releases/latest/download/Metrologist.apk): Direct download of the stable release
 - [Cocode](https://cocode.dk): Author's studio website

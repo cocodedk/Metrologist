@@ -40,4 +40,4 @@ All 15 changed website files returned HTTP 200 and matched the commit byte-for-b
 Both live guides loaded all four marking illustrations without horizontal overflow.
 Live checks are retained in `.supervisor/site-guide/live-verification.json` and
 `live-browser-check.log`. The public guide is available at
-https://cocodedk.github.io/Metrologist/user-guide.html.
+https://measure.cocode.dk/user-guide.html.

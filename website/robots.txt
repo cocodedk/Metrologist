@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://cocodedk.github.io/Metrologist/sitemap.xml
+Sitemap: https://measure.cocode.dk/sitemap.xml

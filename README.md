@@ -7,8 +7,8 @@ Metrologist measures real-world flat surfaces — walls, doors, windows, floor a
 
 ## Website
 
-- English: <https://cocodedk.github.io/Metrologist/>
-- Persian / فارسی: <https://cocodedk.github.io/Metrologist/fa/>
+- English: <https://measure.cocode.dk/>
+- Persian / فارسی: <https://measure.cocode.dk/fa/>
 
 ## Features
 
