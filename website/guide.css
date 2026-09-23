@@ -4,7 +4,7 @@
 .guide-link { color: var(--amber); border-color: var(--amber-dim); }
 .guide-wrap { max-width: 1240px; margin-inline: auto; }
 /* Guide pages read from a slightly wider column (1240px) than the marketing .page-wrap (1200px). */
-.guide-page cocode-head, .guide-page cocode-foot { --cocode-max: 1240px; }
+.guide-page cocode-head, .guide-page cocode-foot { --cocode-max: calc(1240px - var(--rail-width)); }
 .guide-page { --text-secondary: #b5bcb4; }
 .guide-page a { text-underline-offset: .2em; }
 .guide-content a, .guide-hero p a { color: var(--amber); }
