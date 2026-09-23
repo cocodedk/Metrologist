@@ -13,16 +13,20 @@
   <link rel="stylesheet" href="../styles.css">
   <link rel="stylesheet" href="../guide.css">
   <link rel="stylesheet" href="../print-stick.css">
+  <link rel="stylesheet" href="https://brand.cocode.dk/v1.css">
+  <script type="module" src="https://brand.cocode.dk/v1.js"></script>
 </head>
 <body class="guide-page print-page">
   <a class="skip-link" href="#main">رفتن به محتوای اصلی</a>
   <div class="staff-rail" aria-hidden="true"></div>
-  <nav class="site-nav" aria-label="خانه">
-    <div class="nav-inner">
-      <a href="./" class="nav-brand"><img class="nav-brand-icon" src="../favicon.svg" alt=""><span class="nav-brand-name">Metrologist</span></a>
-      <div class="nav-actions"><a class="lang-switch" href="user-guide.html">راهنمای کاربر</a><a class="lang-switch" href="../print-stick.html">English</a></div>
-    </div>
-  </nav>
+  <!-- The cocode.dk family frame. Hidden on the printed sheet (see guide.css @media print).
+       Without JavaScript its children show instead: a way home and the User guide link. -->
+  <cocode-head project="Metrologist" accent="#E8A020" on-accent="#0D0F0E" links="خانه:./,راهنمای کاربر:user-guide.html" dark>
+    <a href="https://cocode.dk">cocode.dk</a>
+    <a href="./">خانه</a>
+    <a href="user-guide.html">راهنمای کاربر</a>
+    <a href="../print-stick.html" hreflang="en">English</a>
+  </cocode-head>
   <main id="main" class="page-wrap guide-wrap">
     <header class="guide-hero screen-only">
       <p class="section-label">نوار مرجع قابل چاپ</p><h1>دو سر قرمز.<br><em>چهار لبهٔ واضح.</em></h1>
@@ -53,6 +57,9 @@
       </article>
     </div>
   </main>
-  <footer class="site-footer page-wrap"><div class="footer-inner"><p class="footer-copy">Metrologist · <a href="https://cocode.dk">Cocode</a> · Apache-2.0 · © 2026 <a href="https://linkedin.com/in/babakbandpey">Babak Bandpey</a></p><div class="footer-links"><a href="./">خانه</a><a href="user-guide.html">راهنمای کاربر</a></div></div></footer>
+  <cocode-foot repo="cocodedk/Metrologist" dark>
+    <a href="https://cocode.dk">cocode.dk</a>
+    <a href="https://github.com/cocodedk/Metrologist">گیت‌هاب</a>
+  </cocode-foot>
 </body>
 </html>

@@ -12,6 +12,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,400&family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://brand.cocode.dk/v1.css" />
+  <script type="module" src="https://brand.cocode.dk/v1.js"></script>
   <style>
     :root {
       color-scheme: dark;
@@ -45,6 +47,9 @@
     }
     [dir="rtl"] .staff-rail { left: auto; right: 0; box-shadow: -2px 0 12px rgba(212, 43, 43, 0.25); }
     .container { width: min(760px, 92vw); margin: 0 auto; padding: 40px 0 56px; padding-left: max(0px, calc(6px)); }
+    /* The cocode.dk frame lines up with .container's column. */
+    cocode-head, cocode-foot { --cocode-max: 760px; --cocode-gutter: 22px; }
+    @media (min-width: 768px) { cocode-head, cocode-foot { --cocode-gutter: 6px; } }
     .mono { font-family: 'DM Mono', 'Courier New', monospace; }
     .back {
       display: inline-block; margin-bottom: 22px; text-decoration: none;
@@ -99,15 +104,15 @@
     section[dir="rtl"] { font-family: 'Vazirmatn', 'Crimson Pro', sans-serif; text-align: right; }
     section[dir="rtl"] h1, section[dir="rtl"] h2 { font-family: 'Vazirmatn', 'DM Mono', sans-serif; letter-spacing: 0; }
     section[dir="rtl"] .meta { font-family: 'Vazirmatn', 'DM Mono', monospace; }
-    footer {
-      font-family: 'DM Mono', monospace; color: var(--text-dim);
-      font-size: 0.72rem; letter-spacing: 0.06em; margin-top: 36px; text-align: center;
-    }
-    footer a { color: var(--text-secondary); }
   </style>
 </head>
 <body>
   <div class="staff-rail" aria-hidden="true"></div>
+  <!-- The cocode.dk family frame. Without JavaScript its child shows instead: a way home.
+       The page's own "&larr; Metrologist" link already goes back to this site's homepage. -->
+  <cocode-head project="Metrologist" accent="#E8A020" on-accent="#0D0F0E" dark>
+    <a href="https://cocode.dk">cocode.dk</a>
+  </cocode-head>
   <div class="container">
     <a class="back" href="./index.html">&larr; Metrologist</a>
     <div class="card">
@@ -246,7 +251,11 @@
       </section>
 
     </div>
-    <footer>© 2026 CoCode.dk — Babak Bandpey · <a href="./index.html">Metrologist</a></footer>
   </div>
+
+  <cocode-foot repo="cocodedk/Metrologist" dark>
+    <a href="https://cocode.dk">cocode.dk</a>
+    <a href="https://github.com/cocodedk/Metrologist">GitHub</a>
+  </cocode-foot>
 </body>
 </html>

@@ -83,6 +83,14 @@ body::after {
   z-index: 9999;
 }
 
+/* The cocode.dk frame lines up with the .page-wrap column; keep the gutters in step.
+   No extra z-index: the staff-rail (z-index 100) already draws over the old nav the
+   same way, and should keep doing that over the frame too. */
+cocode-head, cocode-foot { --cocode-max: 1200px; --cocode-gutter: 16px; }
+@media (min-width: 640px) { cocode-head, cocode-foot { --cocode-gutter: 28px; } }
+@media (min-width: 768px) { cocode-head, cocode-foot { --cocode-gutter: 40px; } }
+@media (min-width: 1024px) { cocode-head, cocode-foot { --cocode-gutter: 60px; } }
+
 /* ── Staff rail (fixed left edge) ── */
 .staff-rail {
   position: fixed;

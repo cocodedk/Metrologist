@@ -3,6 +3,8 @@
 .nav-actions { flex-wrap: wrap; margin-inline-start: auto; }
 .guide-link { color: var(--amber); border-color: var(--amber-dim); }
 .guide-wrap { max-width: 1240px; margin-inline: auto; }
+/* Guide pages read from a slightly wider column (1240px) than the marketing .page-wrap (1200px). */
+.guide-page cocode-head, .guide-page cocode-foot { --cocode-max: 1240px; }
 .guide-page { --text-secondary: #b5bcb4; }
 .guide-page a { text-underline-offset: .2em; }
 .guide-content a, .guide-hero p a { color: var(--amber); }
@@ -62,6 +64,7 @@
   .guide-page { color: #111; background: white; font-size: 11pt; }
   .guide-page::after, .guide-page .staff-rail, .guide-page .site-nav,
   .guide-page .guide-toc, .guide-page .guide-actions, .guide-page .site-footer { display: none; }
+  .guide-page cocode-head, .guide-page cocode-foot { display: none; }
   .guide-page .page-wrap { padding: 0; }
   .guide-hero { padding-block: 0 1rem; }
   .guide-layout { display: block; }
