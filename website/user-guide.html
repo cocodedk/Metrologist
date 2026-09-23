@@ -17,16 +17,20 @@
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="guide.css">
+  <link rel="stylesheet" href="https://brand.cocode.dk/v1.css">
+  <script type="module" src="https://brand.cocode.dk/v1.js"></script>
 </head>
 <body class="guide-page">
   <a class="skip-link" href="#main">Skip to content</a>
   <div class="staff-rail" aria-hidden="true"></div>
-  <nav class="site-nav" aria-label="Main navigation">
-    <div class="nav-inner">
-      <a href="./" class="nav-brand"><img class="nav-brand-icon" src="favicon.svg" alt=""><span class="nav-brand-name">Metrologist</span></a>
-      <div class="nav-actions"><a class="lang-switch" href="./">Home</a><a class="lang-switch" href="fa/user-guide.html" lang="fa" hreflang="fa">فارسی</a></div>
-    </div>
-  </nav>
+  <!-- The cocode.dk family frame. Without JavaScript its children show instead: a way home
+       and the Home link (the old top bar's language switch is now built from the hreflang
+       tags in <head>). -->
+  <cocode-head project="Metrologist" accent="#E8A020" on-accent="#0D0F0E" links="Home:./" dark>
+    <a href="https://cocode.dk">cocode.dk</a>
+    <a href="./">Home</a>
+    <a href="fa/user-guide.html" hreflang="fa">فارسی</a>
+  </cocode-head>
   <main id="main" class="page-wrap guide-wrap">
     <header class="guide-hero">
       <p class="section-label">User guide · Wall measurements · v0.0.1</p>
@@ -147,6 +151,11 @@
       </div>
     </div>
   </main>
-  <footer class="site-footer page-wrap"><div class="footer-inner"><p class="footer-copy">Metrologist · Cocode · Apache-2.0</p><div class="footer-links"><a href="./">Home</a><a href="print-stick.html">Print reference stick</a><a href="privacy.html">Privacy policy</a><a href="#main">Back to top</a></div></div></footer>
+  <footer class="site-footer page-wrap"><div class="footer-inner"><div class="footer-links"><a href="print-stick.html">Print reference stick</a><a href="privacy.html">Privacy policy</a><a href="#main">Back to top</a></div></div></footer>
+
+  <cocode-foot repo="cocodedk/Metrologist" dark>
+    <a href="https://cocode.dk">cocode.dk</a>
+    <a href="https://github.com/cocodedk/Metrologist">GitHub</a>
+  </cocode-foot>
 </body>
 </html>
