@@ -84,9 +84,17 @@ body::after {
 }
 
 /* The cocode.dk frame lines up with the .page-wrap column; keep the gutters in step.
+   .page-wrap reserves --rail-width for the staff rail on one side only (the side dir
+   flips it to), so the frame's own host element reserves the same space the same way --
+   a plain --cocode-gutter is symmetric and can't do that alone. --cocode-max drops by
+   --rail-width to keep the bar's total footprint matching .page-wrap's.
    No extra z-index: the staff-rail (z-index 100) already draws over the old nav the
    same way, and should keep doing that over the frame too. */
-cocode-head, cocode-foot { --cocode-max: 1200px; --cocode-gutter: 16px; }
+cocode-head, cocode-foot {
+  --cocode-max: calc(1200px - var(--rail-width));
+  --cocode-gutter: 16px;
+  padding-inline-start: var(--rail-width);
+}
 @media (min-width: 640px) { cocode-head, cocode-foot { --cocode-gutter: 28px; } }
 @media (min-width: 768px) { cocode-head, cocode-foot { --cocode-gutter: 40px; } }
 @media (min-width: 1024px) { cocode-head, cocode-foot { --cocode-gutter: 60px; } }

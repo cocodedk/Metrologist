@@ -1,6 +1,6 @@
 /* One physical drawing is shared by the screen preview and both print pages. */
 .print-page .guide-wrap { max-width: 1000px; }
-.print-page cocode-head, .print-page cocode-foot { --cocode-max: 1000px; }
+.print-page cocode-head, .print-page cocode-foot { --cocode-max: calc(1000px - var(--rail-width)); }
 .print-page .guide-hero { padding-bottom: 1rem; }
 .print-page .guide-content { padding-bottom: 3rem; }
 .reference-sheet { background: white; color: #111; padding: clamp(1rem, 4vw, 2.5rem); margin-block: 2rem; border-radius: 4px; }

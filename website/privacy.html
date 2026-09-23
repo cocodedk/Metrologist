@@ -47,9 +47,16 @@
     }
     [dir="rtl"] .staff-rail { left: auto; right: 0; box-shadow: -2px 0 12px rgba(212, 43, 43, 0.25); }
     .container { width: min(760px, 92vw); margin: 0 auto; padding: 40px 0 56px; padding-left: max(0px, calc(6px)); }
-    /* The cocode.dk frame lines up with .container's column. */
-    cocode-head, cocode-foot { --cocode-max: 760px; --cocode-gutter: 22px; }
-    @media (min-width: 768px) { cocode-head, cocode-foot { --cocode-gutter: 6px; } }
+    /* The cocode.dk frame lines up with .container's column: min(760px, 92vw), 6px of that
+       reserved on the left for the rail, 0 on the right. That's not a plain symmetric gutter,
+       so the two ends are set independently on the host itself (in front of .container's own
+       6px/0px split) with a matching --cocode-max and no gutter of the frame's own. */
+    cocode-head, cocode-foot {
+      --cocode-max: 754px;
+      --cocode-gutter: 0px;
+      padding-inline-start: 22px;
+      padding-inline-end: 16px;
+    }
     .mono { font-family: 'DM Mono', 'Courier New', monospace; }
     .back {
       display: inline-block; margin-bottom: 22px; text-decoration: none;
