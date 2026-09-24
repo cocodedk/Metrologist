@@ -64,7 +64,10 @@
   .guide-page { color: #111; background: white; font-size: 11pt; }
   .guide-page::after, .guide-page .staff-rail, .guide-page .site-nav,
   .guide-page .guide-toc, .guide-page .guide-actions, .guide-page .site-footer { display: none; }
-  .guide-page cocode-head, .guide-page cocode-foot { display: none; }
+  /* !important: the frame's own host class carries ID-level specificity
+     (StyleX's `:not(#\#)` trick), which otherwise beats this rule regardless
+     of source order. */
+  .guide-page cocode-head, .guide-page cocode-foot { display: none !important; }
   .guide-page .page-wrap { padding: 0; }
   .guide-hero { padding-block: 0 1rem; }
   .guide-layout { display: block; }
