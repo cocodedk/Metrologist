@@ -5,6 +5,14 @@
 
 Metrologist measures real-world flat surfaces — walls, doors, windows, floor areas — from a single photo taken with your Android camera. Place a red-white-red-white reference stick of known length against the surface, shoot in-app, tap the four corners, and the app recovers the plane geometry from the perspective distortion to report width, height, area, diagonal, and corner angles in metres, centimetres, or feet and inches. Accuracy is typically 1–5 % with careful marking. The result screen shows which solver was used, a confidence score, and an approximate error band; you can export an annotated PNG to share or archive.
 
+## Download
+
+<!-- cocode-apps:install:start -->
+- Coming to F-Droid
+- [Download the APK from GitHub](https://github.com/cocodedk/Metrologist/releases/latest/download/Metrologist.apk)
+- [Auto-update the GitHub APK with Obtainium](https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/cocodedk/Metrologist)
+<!-- cocode-apps:install:end -->
+
 ## Website
 
 - English: <https://measure.cocode.dk/>
@@ -22,15 +30,24 @@ Metrologist measures real-world flat surfaces — walls, doors, windows, floor a
 - **PNG export** — annotated photo with the measurement summary overlaid; shared via the standard Android share sheet.
 - **Honest confidence** — every result shows solver type, confidence percentage, camera tilt, viewing angle, and pixel-to-real scale.
 
-## Download
+## How it works
 
-Stable release APK (sideload):
+1. **Capture** — shoot in-app. CameraX records the frame together with the lens intrinsics from Camera2 and the gravity vector from the device IMU.
+2. **Detect** — OpenCV segments the red HSV bands, fits a principal axis through the stick body, and locates two ends and three band joints. If detection confidence is low, the app asks you to tap the endpoints manually.
+3. **Mark** — tap the four surface corners on the photo. A loupe magnifier helps with precision; handles can be dragged to adjust.
+4. **Solve** — the rectangle solver derives the plane tilt from how opposite surface edges converge to vanishing points, combined with the lens intrinsics. If corners are too skewed or the view angle is too shallow, the gravity solver takes over, using the IMU vector and a vertical-wall / horizontal-floor assumption instead.
+5. **Scale** — the five stick points are projected into the recovered plane. Each of the four equal sub-segments gives an independent scale estimate; their median fixes real scale and their spread flags a non-coplanar stick or a misdetection.
+6. **Measure** — every marked point maps to real-world plane coordinates, giving width, height, area (shoelace formula), diagonal, and interior corner angles.
 
-```
-https://github.com/cocodedk/Metrologist/releases/latest/download/Metrologist.apk
-```
+## Privacy
 
-## Build from Source
+Metrologist does not collect, transmit, or share any personal data. Every calculation runs on your device,
+photos are processed in memory and are not uploaded, and the app requests no internet permission. The only
+runtime permission is the camera. There is no analytics, crash reporting, or advertising.
+
+Read the full [privacy policy](https://measure.cocode.dk/privacy/).
+
+## Build
 
 **Prerequisites:** JDK 17, Android SDK with build-tools matching `AGP 9.1.1`, and an internet connection for Gradle to fetch dependencies.
 
@@ -58,15 +75,6 @@ cd Metrologist
 ```
 
 The output APK lands at `app/build/outputs/apk/debug/app-debug.apk`.
-
-## How it works
-
-1. **Capture** — shoot in-app. CameraX records the frame together with the lens intrinsics from Camera2 and the gravity vector from the device IMU.
-2. **Detect** — OpenCV segments the red HSV bands, fits a principal axis through the stick body, and locates two ends and three band joints. If detection confidence is low, the app asks you to tap the endpoints manually.
-3. **Mark** — tap the four surface corners on the photo. A loupe magnifier helps with precision; handles can be dragged to adjust.
-4. **Solve** — the rectangle solver derives the plane tilt from how opposite surface edges converge to vanishing points, combined with the lens intrinsics. If corners are too skewed or the view angle is too shallow, the gravity solver takes over, using the IMU vector and a vertical-wall / horizontal-floor assumption instead.
-5. **Scale** — the five stick points are projected into the recovered plane. Each of the four equal sub-segments gives an independent scale estimate; their median fixes real scale and their spread flags a non-coplanar stick or a misdetection.
-6. **Measure** — every marked point maps to real-world plane coordinates, giving width, height, area (shoelace formula), diagonal, and interior corner angles.
 
 ## Architecture
 
@@ -113,6 +121,12 @@ app/src/main/java/com/cocode/measureapp/
 | JUnit 4 | ~219 unit tests |
 | JaCoCo | 100 % line/branch/method on geometry/core/stick |
 | minSdk / targetSdk | 24 / 36 |
+
+## Contributing
+
+Local setup, the Git hooks, the build and test commands, coding style, branch naming and the pull request
+checklist are in [CONTRIBUTING.md](CONTRIBUTING.md). Bugs and ideas go to the
+[issues page](https://github.com/cocodedk/Metrologist/issues).
 
 ## Author
 

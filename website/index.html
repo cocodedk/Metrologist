@@ -45,6 +45,7 @@
   <!-- Styles -->
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="guide.css">
+  <link rel="stylesheet" href="cocode-apps.css">
   <link rel="stylesheet" href="https://brand.cocode.dk/v1.css">
   <script type="module" src="https://brand.cocode.dk/v1.js"></script>
 
@@ -85,8 +86,6 @@
   </script>
 </head>
 <body>
-  <a class="skip-link" href="#main">Skip to content</a>
-
   <!-- Fixed staff rail -->
   <div class="staff-rail" aria-hidden="true"></div>
 
@@ -98,6 +97,21 @@
     <a href="user-guide.html">User guide</a>
     <a href="fa/" hreflang="fa">فارسی</a>
   </cocode-head>
+
+  <!-- The shared cocode-apps navigation (written by tools.render; do not edit between the markers). -->
+  <header class="site-menu page-wrap">
+    <!-- cocode-apps:nav:start -->
+<link rel="stylesheet" href="/css/cocode-nav.css">
+<a class="skip" href="#main">Skip to content</a>
+<nav class="cocode-nav" aria-label="Metrologist">
+  <a class="brand" href="/" data-nav="home" aria-current="page"><img src="/img/icon.png" alt="" width="32" height="32">Metrologist</a>
+  <a href="/#how" data-nav="how">How it works</a>
+  <a href="/#install" data-nav="install">Install</a>
+  <a href="/privacy/" data-nav="privacy">Privacy</a>
+  <a href="https://cocode.dk/" data-nav="more">More apps</a>
+</nav>
+<!-- cocode-apps:nav:end -->
+  </header>
 
   <!-- Main content -->
   <main id="main">
@@ -133,14 +147,14 @@
           Photograph a flat surface with a red-white reference stick. Mark all four corners of the object and all four corners of the stick. Metrologist returns width, height, area, diagonal, and angles. No internet needed. Ever.
         </p>
         <div class="hero-actions">
-          <a href="https://github.com/cocodedk/Metrologist/releases/latest/download/Metrologist.apk"
+          <a href="#install"
              class="btn-primary"
-             aria-label="Download Metrologist APK">
+             aria-label="Get the Metrologist app">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
               <path d="M8 12l-4-4h2.5V3h3v5H12L8 12z"/>
               <rect x="2" y="13" width="12" height="1.5" rx="0.75"/>
             </svg>
-            Download APK
+            Get the app
           </a>
           <a href="https://github.com/cocodedk/Metrologist"
              class="btn-tertiary"
@@ -167,7 +181,7 @@
     <div class="staff-divider" aria-hidden="true"></div>
 
     <!-- How it works -->
-    <section aria-labelledby="how-heading">
+    <section id="how" aria-labelledby="how-heading">
       <div class="page-wrap">
         <p class="section-label">How it works</p>
         <h2 id="how-heading">Three steps from photo to measurement</h2>
@@ -318,6 +332,26 @@
 
     <div class="staff-divider" aria-hidden="true"></div>
 
+    <!-- Install -->
+    <section id="install" aria-labelledby="install-heading">
+      <div class="page-wrap">
+        <p class="section-label">Install</p>
+        <h2 id="install-heading">Get Metrologist on your phone</h2>
+
+        <div class="install-wrap reveal">
+          <!-- cocode-apps:install:start -->
+<ul class="install" role="list">
+  <li><p class="fdroid-soon">Coming to F-Droid</p></li>
+  <li><a href="https://github.com/cocodedk/Metrologist/releases/latest/download/Metrologist.apk">Download the APK from GitHub</a></li>
+  <li><a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/cocodedk/Metrologist">Auto-update the GitHub APK with Obtainium</a></li>
+</ul>
+<!-- cocode-apps:install:end -->
+        </div>
+      </div>
+    </section>
+
+    <div class="staff-divider" aria-hidden="true"></div>
+
     <!-- Open source -->
     <section aria-labelledby="opensource-heading">
       <div class="page-wrap">
@@ -340,17 +374,20 @@
 
   </main>
 
-  <!-- Slim footer: what the old footer carried besides author/copyright/source, which
-       cocode-foot now covers. -->
-  <footer class="site-footer page-wrap">
-    <div class="footer-inner">
-      <div class="footer-links">
-        <a href="https://github.com/cocodedk/Metrologist/releases/latest/download/Metrologist.apk" aria-label="Download Metrologist APK">Download</a>
-        <a href="print-stick.html">Print Stick</a>
-        <a href="privacy.html">Privacy Policy</a>
-      </div>
+  <!-- The shared cocode-apps footer (written by tools.render). It replaces the old slim footer; the
+       cocode-foot below still carries author, copyright and source. -->
+  <div class="page-wrap">
+    <div class="site-footer footer-inner">
+      <!-- cocode-apps:footer:start -->
+<footer class="cocode-footer">
+  <a href="https://github.com/cocodedk/Metrologist">Source code</a> ·
+  <a href="/privacy/">Privacy</a> ·
+  License: Apache-2.0 ·
+  <a href="https://cocode.dk/">Made by Cocode (cocode.dk)</a>
+</footer>
+<!-- cocode-apps:footer:end -->
     </div>
-  </footer>
+  </div>
 
   <cocode-foot repo="cocodedk/Metrologist" dark>
     <a href="https://cocode.dk">cocode.dk</a>

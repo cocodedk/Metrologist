@@ -62,4 +62,11 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://measure.cocode.dk/user-guide.html"/>
   </url>
 
+  <url>
+    <loc>https://measure.cocode.dk/privacy/</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
 </urlset>
