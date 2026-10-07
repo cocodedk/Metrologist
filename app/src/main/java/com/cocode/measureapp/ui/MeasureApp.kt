@@ -25,9 +25,9 @@ import com.cocode.measureapp.ui.surface.MarkingFlow
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-private enum class Step { Capture, Mark, Results, Settings, Help }
+private enum class Step { Capture, Mark, Results, Settings, Help, About }
 
-/** Top-level flow: capture -> mark -> results, with settings + help side-screens. */
+/** Top-level flow: capture -> mark -> results, with settings, help and about side-screens. */
 @Composable
 fun MeasureApp() {
     val context = LocalContext.current
@@ -84,9 +84,12 @@ fun MeasureApp() {
                     },
                     onSettings = { settingsReturn = Step.Capture; step = Step.Settings },
                     onHelp     = { step = Step.Help },
+                    onAbout    = { step = Step.About },
                 )
 
                 Step.Help -> HelpScreen(onBack = { step = Step.Capture })
+
+                Step.About -> AboutScreen(onBack = { step = Step.Capture })
 
                 Step.Mark -> {
                     val img = captured
