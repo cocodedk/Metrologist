@@ -1,0 +1,65 @@
+<resources>
+    <string name="app_name">Metrologist</string>
+
+    <!-- Shared -->
+    <string name="action_back">Tilbage</string>
+    <string name="action_settings">Indstillinger</string>
+    <string name="action_help">Hjælp</string>
+    <string name="action_about">Om Metrologist</string>
+    <string name="list_item">•  %1$s</string>
+
+    <!-- Camera screen -->
+    <string name="camera_capture">Tag foto</string>
+    <string name="camera_capturing">Tager foto…</string>
+    <string name="camera_permission_needed">Metrologist skal have lov til at bruge kameraet, så du kan tage det foto, der skal måles.</string>
+    <string name="camera_permission_grant">Tillad kameraadgang</string>
+    <string name="camera_permission_open_settings">Åbn Android-indstillinger</string>
+    <string name="level_reading">↕ %1$d°   ↔ %2$d°</string>
+    <string name="level_unavailable">Ingen data fra hældningssensoren</string>
+
+    <!-- Marking screen -->
+    <string name="mark_hint">Træk i et hjørne for at justere det. Brug to fingre til at zoome og flytte fotoet.</string>
+    <string name="mark_detecting">Leder efter stokken…</string>
+    <string name="mark_detected">Stokken er fundet (%1$d&#160;%% sikker). Træk i dens hjørner for at finjustere.</string>
+    <string name="mark_label_object">Genstand</string>
+    <string name="mark_label_stick">Stok</string>
+    <string name="mark_reset">Nulstil</string>
+    <string name="mark_retake">Tag nyt foto</string>
+    <string name="mark_measure">Mål op</string>
+    <string name="mark_help_show">Hjælp til markering</string>
+    <string name="mark_help_hide">Skjul hjælp til markering</string>
+    <string name="surface_label">Overflade:</string>
+    <string name="surface_wall">Væg</string>
+    <string name="surface_floor">Gulv</string>
+
+    <!-- Results screen -->
+    <string name="results_title">Målinger</string>
+    <string name="results_width">Bredde</string>
+    <string name="results_height">Højde</string>
+    <string name="results_area">Areal</string>
+    <string name="results_diagonal">Diagonal</string>
+    <string name="results_confidence">Sikkerhed: %1$s (%2$d&#160;%%)</string>
+    <string name="results_method">Metode: %1$s</string>
+    <string name="method_tilt_sensor">Hældningsmetoden</string>
+    <string name="results_corner_angles">Hjørnevinkler: %1$s  (90° = ret vinkel)</string>
+    <string name="results_remark">Markér igen</string>
+    <string name="results_export">Eksportér</string>
+    <string name="results_new">Ny</string>
+
+    <!-- Settings screen -->
+    <string name="settings_title">Indstillinger</string>
+    <string name="settings_stick_length">Referencestokkens længde (%1$s)</string>
+    <string name="settings_stick_width">Referencestokkens bredde (%1$s)</string>
+    <string name="settings_length_error">Skriv et tal større end nul. Brug punktum som decimaltegn, for eksempel 1.5.</string>
+    <string name="settings_feet_hint">I fod skriver du decimaler: 1.5 betyder 1 fod og 6 tommer.</string>
+    <string name="settings_units">Visningsenheder</string>
+    <string name="unit_meters">Meter</string>
+    <string name="unit_centimeters">Centimeter</string>
+    <string name="unit_feet_inches">Fod og tommer</string>
+
+    <!-- Exported picture -->
+    <string name="export_width">Bredde %1$s</string>
+    <string name="export_height">Højde %1$s</string>
+    <string name="export_area">Areal %1$s</string>
+    <string name="export_share_title">Del denne måling</string>
+</resources>

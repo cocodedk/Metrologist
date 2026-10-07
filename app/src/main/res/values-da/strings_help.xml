@@ -1,0 +1,48 @@
+<resources>
+    <string name="help_title">Sådan måler du</string>
+
+    <string name="help_stick_title">Referencestokken</string>
+    <string name="help_stick_intro">Referencestokken er en flad lineal med røde og hvide striber. Du kender dens længde, så appen kan omregne det, den ser på fotoet, til rigtige mål.</string>
+    <string name="help_stick_flat">Læg stokken fladt på den samme overflade som det, du vil måle.</string>
+    <string name="help_stick_settings">Før du begynder, skal du skrive stokkens rigtige længde og bredde i Indstillinger (tandhjulsknappen på kameraskærmen).</string>
+    <string name="help_stick_same_surface">Lad stokken ligge helt fladt mod overfladen. Den må ikke stå skråt eller være støttet op.</string>
+    <string name="help_stick_border">Hvis din stok har en kant, skal kanten med, når du skriver længde og bredde, og når du placerer den røde ramme.</string>
+
+    <string name="help_photo_title">Tag fotoet</string>
+    <string name="help_photo_intro">Få genstanden og stokken med på samme foto, og tryk så på Tag foto.</string>
+    <string name="help_photo_angle">Tag fotoet fra en moderat vinkel. Lige forfra er fint, men undgå vinkler, hvor du næsten ser overfladen fra siden.</string>
+    <string name="help_photo_inview">Sørg for, at alle fire hjørner af genstanden og hele stokken er med.</string>
+    <string name="help_photo_light">Godt lys og en rolig hånd giver et bedre resultat.</string>
+
+    <string name="help_mark_title">Markér genstanden og stokken</string>
+    <string name="help_mark_intro">Når du har taget fotoet, kommer der to rammer frem på det.</string>
+    <string name="help_mark_object">Den grønne ramme, mærket Genstand, er til genstanden. Træk dens fire hjørner hen på genstandens fire hjørner.</string>
+    <string name="help_mark_stick">Den røde ramme, mærket Stok, er til stokken. Appen prøver selv at finde stokken og lægge rammen om den. Tjek, at rammen følger stokken, og træk i dens hjørner, hvis den ikke gør.</string>
+    <string name="help_mark_drag">Træk i et hjørne for at flytte det. Mens du trækker, kommer et forstørrelsesglas frem, så du kan placere hjørnet præcist.</string>
+    <string name="help_mark_zoom">Brug to fingre til at zoome ind eller flytte fotoet, så du lettere kan placere hjørner, der er svære at nå.</string>
+    <string name="help_mark_surface">Hvis du ser et valg af overflade (Væg eller Gulv), så vælg det, du måler på. Appen finder ofte selv ud af det ud fra, hvordan du holdt telefonen.</string>
+    <string name="help_mark_buttons">Tryk på Mål op, når begge rammer sidder rigtigt. Nulstil flytter begge rammer til faste startplaceringer (rammen Genstand midt på fotoet, rammen Stok lavt i midten) og nulstiller zoom. Det flytter dem ikke tilbage dertil, hvor appen fandt stokken, eller hvor du havde placeret dem. Tag nyt foto fører dig tilbage til kameraet.</string>
+
+    <string name="help_settings_title">Indstillinger</string>
+    <string name="help_settings_intro">Før din første måling skal du åbne Indstillinger (tandhjulsknappen) og tjekke disse ting:</string>
+    <string name="help_settings_length">Referencestokkens længde: stokkens fulde længde fra ende til ende, inklusive en eventuel kant.</string>
+    <string name="help_settings_width">Referencestokkens bredde: stokkens korte side, inklusive en eventuel kant.</string>
+    <string name="help_settings_units">Visningsenheder: meter, centimeter eller fod og tommer. Du kan skifte, når du vil. I fod skriver du mål som decimaler: 1.5 betyder 1 fod og 6 tommer.</string>
+    <string name="help_settings_saved">Appen husker dine valg, næste gang du åbner den.</string>
+
+    <string name="help_result_title">Sådan læser du resultatet</string>
+    <string name="help_result_intro">Når du har trykket på Mål op, viser skærmen Målinger:</string>
+    <string name="help_result_sizes">Bredde, Højde, Areal og Diagonal i den enhed, du har valgt.</string>
+    <string name="help_result_angles">Hjørnevinkler. Et hjørne på præcis 90° er ret, så vinklerne viser, om genstanden virkelig er et rektangel.</string>
+    <string name="help_result_confidence">Sikkerhed: Høj ved 70 procent eller mere, Middel fra 40 procent til lige under 70 og Lav under 40 procent. Procenten er ingen garanti for, at målet er rigtigt.</string>
+    <string name="help_result_method">Metode. Den linje vises kun, når appen har brugt telefonens hældningssensor i stedet for formen på de hjørner, du markerede (rektangelmetoden). Tjek sikkerheden og noterne.</string>
+    <string name="help_result_notes">Noterne under resultatet forklarer ting som et kraftigt hældet kamera, skønnede oplysninger om linsen eller en manglende aflæsning fra hældningssensoren.</string>
+    <string name="help_result_buttons">Markér igen fører dig tilbage, så du kan justere rammerne. Eksportér deler fotoet med tallene på. Ny starter forfra med et nyt foto.</string>
+
+    <string name="help_tips_title">Tips og nøjagtighed</string>
+    <string name="help_tips_accuracy">Nøjagtigheden afhænger af telefonen, fotoet og af, hvor omhyggeligt du placerer stokken og hjørnerne. Tjek vigtige mål med en lineal eller et målebånd.</string>
+    <string name="help_tips_flat">Alt, du måler, skal ligge fladt på den samme overflade som stokken. Hævede kanter og buede overflader giver forkerte resultater.</string>
+    <string name="help_tips_shadows">Undgå skygger henover stokken. Appen finder striberne ud fra kontrasten.</string>
+    <string name="help_tips_low">Hvis sikkerheden er Lav, så prøv en anden vinkel, eller læg stokken tættere på genstanden.</string>
+    <string name="help_tips_stick_size">Selve stokken er ikke en del af den målte størrelse.</string>
+</resources>

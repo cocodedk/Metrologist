@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>User Guide — Metrologist</title>
-  <meta name="description" content="Learn to measure a wall with Metrologist: prepare a reference stick, set its dimensions, take a photo, mark both boxes and check the result.">
+  <meta name="description" content="Learn to measure a wall, floor or table with Metrologist: prepare a reference stick, set its dimensions, take a photo, mark both boxes and check the result.">
   <link rel="canonical" href="https://measure.cocode.dk/user-guide.html">
   <link rel="alternate" hreflang="en" href="https://measure.cocode.dk/user-guide.html">
   <link rel="alternate" hreflang="fa" href="https://measure.cocode.dk/fa/user-guide.html">
@@ -33,11 +33,11 @@
   </cocode-head>
   <main id="main" class="page-wrap guide-wrap">
     <header class="guide-hero">
-      <p class="section-label">User guide · Wall measurements · v0.0.1</p>
+      <p class="section-label">User guide · Walls, floors and tables · v0.0.3</p>
       <h1>Your first measurement,<br><em>step by step.</em></h1>
-      <p>Start with a rectangular, upright surface: a door, a panel or part of a wall. A reference stick in the same plane gives the photo its real-world scale.</p>
+      <p>Start with a flat, rectangular surface: a door, a panel, part of a wall, a floor or a table top. A reference stick on the same surface gives the photo its real-world scale.</p>
       <div class="guide-actions"><a class="btn-primary" href="#prepare">Start here</a><a class="btn-secondary" href="print-stick.html">Print a reference stick</a></div>
-      <p class="guide-small">Need the app? <a href="https://github.com/cocodedk/Metrologist/releases/latest/download/Metrologist.apk">Download the Android APK</a>. This guide describes the published v0.0.1 wall workflow.</p>
+      <p class="guide-small">Need the app? <a href="https://github.com/cocodedk/Metrologist/releases/latest/download/Metrologist.apk">Download the Android APK</a>. This guide describes version v0.0.3.</p>
     </header>
     <div class="guide-layout">
       <nav class="guide-toc" aria-label="On this page">
@@ -69,7 +69,7 @@
           <p class="section-label">02 · In the app</p><h2 id="settings-title">Set both dimensions</h2>
           <p>Open <strong>Settings</strong> from the camera screen. Choose your display units, then enter <strong>Reference stick length</strong> and <strong>Reference stick width</strong>.</p>
           <dl class="guide-values"><div><dt>Printed stick, centimetres</dt><dd>Length <strong>20</strong> · Width <strong>4</strong></dd></div><div><dt>The same stick, metres</dt><dd>Length <strong>0.20</strong> · Width <strong>0.04</strong></dd></div></dl>
-          <p>Use the values you actually measured. Both must be positive numbers. Settings are saved between sessions; return with the back arrow.</p>
+          <p>Use the values you actually measured. Both must be numbers greater than zero; use a point for decimals. Settings are saved between sessions; return with the back arrow.</p>
           <p class="guide-note">The “Feet &amp; inches” setting displays results in feet and inches, but its input fields use <strong>decimal feet</strong>: 1.5 means 1 foot 6 inches. For the printed stick, entering 20 and 4 in centimetres avoids conversion rounding.</p>
         </section>
         <section id="capture" aria-labelledby="capture-title">
@@ -77,7 +77,7 @@
           <ol>
             <li>Allow camera access when Android asks. Take the photo inside Metrologist so it has the camera and tilt information for the shot.</li>
             <li>Keep the whole object and reference visible, with space around their edges. Use even light; avoid blur, glare and shadows over the bands.</li>
-            <li>For v0.0.1, use a moderate oblique view rather than a perfectly straight-on or nearly edge-on view. Keep all corners easy to distinguish.</li>
+            <li>Shoot at a moderate angle. Straight on is fine, but avoid nearly edge-on views, where you see the surface almost from the side. Keep all corners easy to distinguish. For a floor or a table, point the camera down at it.</li>
             <li>Hold the phone still and tap <strong>Capture</strong>.</li>
           </ol>
           <p>The object and reference must lie on one flat plane. A door frame, raised trim or curved surface is not the same plane as the flat panel behind it.</p>
@@ -110,6 +110,7 @@
             <figcaption>Top, green tick: <strong>right</strong> — the whole checker border is inside. Bottom, red cross: <strong>wrong</strong> — the box cuts off the checkers and only surrounds the coloured middle.</figcaption>
           </figure>
           <p class="guide-note">The current automatic detector expects the older band pattern. For this checker design, align all four red handles manually before measuring. The initial green box is a placeholder, not a detected object.</p>
+          <p>If you see <strong>Surface</strong> buttons, tap <strong>Wall</strong> for an upright surface or <strong>Floor</strong> for a floor or tabletop. The app often decides this from your phone’s tilt and hides the buttons.</p>
         </section>
         <section id="results" aria-labelledby="results-title">
           <p class="section-label">05 · Check the reading</p><h2 id="results-title">Understand the result</h2>
@@ -118,9 +119,9 @@
             <dt>Area</dt><dd>The area inside the four marked object corners. The reference stick is not added to it.</dd>
             <dt>Diagonal</dt><dd>The average of the two corner-to-corner diagonal lengths.</dd>
             <dt>Corner angles</dt><dd>90° describes a square corner. Start with rectangular objects; one photo cannot resolve every four-sided shape reliably.</dd>
-            <dt>Confidence and notes</dt><dd>Read the confidence label, percentage and caveats together. A high confidence score is a quality indicator, <strong>not a guaranteed error percentage</strong>.</dd>
+            <dt>Confidence and notes</dt><dd>Read the confidence label, the percentage and any notes together. A high confidence score is a quality indicator, <strong>not a guaranteed error percentage</strong>.</dd>
           </dl>
-          <p>Low confidence, a fallback-method note or inconsistent readings are reasons to check the marks and take another photo. Check important dimensions with a ruler or tape.</p>
+          <p>Low confidence, a note that the tilt-sensor method was used, or readings that disagree are reasons to check the marks and take another photo. Check important dimensions with a ruler or tape.</p>
         </section>
         <section id="save" aria-labelledby="save-title">
           <p class="section-label">06 · Next action</p><h2 id="save-title">Correct or keep the measurement</h2>
@@ -128,7 +129,7 @@
             <li><strong>Re-mark:</strong> return to the same photo, adjust the boxes, then measure again.</li>
             <li><strong>Export:</strong> open Android’s share sheet with an annotated PNG containing the photo and measurement summary. Choose a sharing or saving app available on your phone.</li>
             <li><strong>New:</strong> return to the camera for another measurement.</li>
-            <li>On the marking screen, <strong>Retake</strong> takes a new photo; <strong>Reset</strong> restores the starting boxes and zoom, discarding your adjustments.</li>
+            <li>On the marking screen, <strong>Retake</strong> goes back to the camera, where you tap <strong>Capture</strong> to take a new photo. <strong>Reset</strong> moves both boxes back to their starting places and resets the zoom, discarding your adjustments.</li>
           </ul>
           <p>If the app cannot produce a usable result, correct the photo, reference dimensions or marks before exporting. Do not treat a failed or zero-sized reading as a measurement.</p>
         </section>
@@ -142,10 +143,9 @@
           <p class="section-label">08 · Troubleshooting</p><h2 id="help-title">When a measurement looks wrong</h2>
           <details><summary>The reference was not detected</summary><p>Place the red box manually around all four outside corners. Improve lighting and keep every band visible for the next photo.</p></details>
           <details><summary>The result is much too large or small</summary><p>Check the selected units, full reference length and short width. Make sure you did not enter one band’s length. Keep the reference on the same plane as the object.</p></details>
-          <details><summary>A straight-on photo fails</summary><p>The published v0.0.1 can reject straight-on rectangle views. Retake from a moderate angle while keeping all corners clear. Do not compensate by moving the marks away from the real edges.</p></details>
-          <details><summary>The corners overlap or the shape cannot be measured</summary><p>Spread the handles onto four distinct outer corners. Avoid crossed edges and corners on one straight line. Zoom in to check both boxes, or retake a less oblique photo.</p></details>
-          <details><summary>Can I measure a floor or table?</summary><p>v0.0.1’s marking screen uses wall mode. Do not use that mode for a floor or tabletop. If a newer build offers <strong>Wall</strong> and <strong>Floor / table</strong>, select the option that matches the physical surface.</p></details>
-          <details><summary>Export is disabled, or Capture will not retry</summary><p>Export needs a usable result. Re-mark or retake first. If capture remains stuck in v0.0.1, return to the camera or reopen the app, check camera permission and try again.</p></details>
+          <details><summary>The corners overlap or the shape cannot be measured</summary><p>Spread the handles onto four distinct outer corners. Avoid crossed edges and corners on one straight line. Zoom in to check both boxes. If the app still cannot measure the view, tap <strong>Retake</strong> and shoot from a moderate angle. Do not move the marks away from the real edges to get a result.</p></details>
+          <details><summary>Can I measure a floor or table?</summary><p>Yes. Lay the reference stick on the same floor or table top and point the camera down at it. The app reads your phone’s tilt and chooses <strong>Floor</strong> by itself when the angle is clear. If it shows a <strong>Surface</strong> choice, tap <strong>Wall</strong> for an upright surface or <strong>Floor</strong> for a floor or tabletop.</p></details>
+          <details><summary>Export is disabled, or Capture will not retry</summary><p>Export needs a usable result. Re-mark or retake first. If capture stays stuck, return to the camera or close and reopen the app, check camera permission and try again.</p></details>
           <details><summary>Still stuck?</summary><p>Open <a href="https://github.com/cocodedk/Metrologist/issues">a GitHub issue</a> with your app version, phone model, Android version, reference dimensions and the steps that failed. Include a photo only if you are comfortable sharing it publicly.</p></details>
         </section>
       </div>

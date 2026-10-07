@@ -7,7 +7,7 @@ Thank you for considering a contribution. This document covers everything you ne
 **Requirements:**
 
 - JDK 17 (any distribution — Eclipse Temurin works well)
-- Android SDK with build-tools matching AGP 9.1.1 (set `ANDROID_HOME` or `local.properties`)
+- Android SDK Platform 36.1 and SDK Build Tools compatible with AGP 9.1.1 (set `ANDROID_HOME` or `local.properties`)
 - Git
 
 ```bash
@@ -24,7 +24,7 @@ The hook installer sets `core.hooksPath` to `.githooks`, which activates pre-com
 # Debug APK
 ./gradlew :app:assembleDebug
 
-# Unit tests (~219 tests, JVM only — no device needed)
+# Unit tests (JVM only, no device needed)
 ./gradlew :app:testDebugUnitTest
 
 # Lint
@@ -71,14 +71,14 @@ Use kebab-case: `feature/gravity-solver-fallback`, not `feature/GravitySolverFal
 
 ## Git Hooks Caveats
 
-`core.hooksPath` is a local Git config key — it is not committed to the repo, so every person who clones the repo must run `./scripts/install-hooks.sh` to activate the hooks. Running `git commit --no-verify` bypasses all hooks; only use that flag to recover from a broken hook, not to skip legitimate checks.
+`core.hooksPath` is a local Git config key — it is not committed to the repo, so every person who clones the repo must run `./scripts/install-hooks.sh` to activate the hooks. Running `git commit --no-verify` skips the pre-commit and commit-msg hooks. The pre-push hook is separate and runs when you push; only `git push --no-verify` skips it. Use these flags only to recover from a broken hook, not to skip legitimate checks.
 
 ## Pull Request Checklist
 
 Before requesting a review, confirm:
 
 - [ ] `./gradlew buildSmoke` passes locally (build + tests + lint).
-- [ ] New pure-Kotlin logic in `geometry`, `core`, or `stick` has JVM unit tests; coverage stays at 100 % line/branch/method for those packages.
+- [ ] New pure-Kotlin logic in `geometry`, `core`, or `stick` has JVM unit tests, and the JaCoCo report (`./gradlew :app:jacocoTestReport`) shows its lines covered.
 - [ ] No file exceeds 200 lines.
 - [ ] No Android imports in `geometry`, `core`, or `stick`.
 - [ ] Commit messages follow Conventional Commits.

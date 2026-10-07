@@ -29,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
@@ -47,12 +48,13 @@ import kotlinx.coroutines.launch
 @Composable
 fun AboutScreen(onBack: () -> Unit) {
     val context = LocalContext.current
+    val language = LocalConfiguration.current.locales[0].language
     val version = remember(context) { appVersion(context) }
     val snackbar = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val noBrowser = stringResource(R.string.about_no_browser)
     val open = { link: AboutLink ->
-        if (!openLink(context, aboutUrl(link, context.packageName))) {
+        if (!openLink(context, aboutUrl(link, context.packageName, language))) {
             scope.launch { snackbar.showSnackbar(noBrowser) }
         }
     }

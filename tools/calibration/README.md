@@ -5,7 +5,8 @@ From the project root, run `python3 tools/calibration/serve.py` and open
 
 1. Match the on-screen reference against a real bank card or 100 mm ruler.
 2. Enter the displayed reference length and width in the measurement app.
-3. Select Wall for an upright display. Photograph the target; mark the four
+3. For an upright display, choose Wall if the Surface buttons appear; otherwise
+   the app picks the mode from your phone's tilt. Photograph the target; mark the four
    crosshair centres and all four outside corners of the checker border.
    Reference dimensions include that entire border. Align it manually: the
    current automatic detector assumes the older band pattern.

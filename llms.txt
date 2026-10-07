@@ -1,8 +1,8 @@
 # Metrologist
 
-> Android app that measures real flat surfaces (walls, doors, windows, floor areas) from a single photo, using a red-white-red-white reference stick of known length for scale and single-view planar metrology to recover real-world dimensions.
+> Android app that estimates the size of flat surfaces (walls, doors, windows, floors, tables) from a single photo, using a reference stick of known length and width for scale and single-view planar metrology to recover real-world dimensions. Results are estimates.
 
-Metrologist implements a pure-Kotlin metrology engine (no Android dependencies) backed by ~219 unit tests at 100% line/branch/method coverage. The engine has two plane solvers — a rectangle solver based on vanishing-point geometry and a gravity solver based on the device IMU vector — auto-selected per shot. The Android shell (CameraX capture, OpenCV stick detection, Jetpack Compose marking UI, DataStore settings, PNG export) is intentionally thin. Package `com.cocode.measureapp`, minSdk 24, targetSdk 36, Kotlin 2.2.10, AGP 9.1.1.
+Metrologist implements a pure-Kotlin metrology engine (no Android dependencies) with JVM unit tests; run :app:testDebugUnitTest and :app:jacocoTestReport for current test results and coverage. The engine has two plane solvers — a rectangle solver based on vanishing-point geometry and a gravity solver based on the device IMU vector — auto-selected per shot. The Android shell (CameraX capture, OpenCV stick detection, Jetpack Compose marking UI, DataStore settings, PNG export) is intentionally thin. Package `com.cocode.measureapp`, minSdk 24, targetSdk 36, Kotlin 2.2.10, AGP 9.1.1.
 
 ## Docs
 
@@ -28,6 +28,7 @@ Metrologist implements a pure-Kotlin metrology engine (no Android dependencies) 
 ## Optional
 
 - [English website](https://measure.cocode.dk/): Project Pages site
+- [Danish website](https://measure.cocode.dk/da/): Dansk / Danish Pages site
 - [Persian website](https://measure.cocode.dk/fa/): فارسی / Persian Pages site
 - [Latest APK](https://github.com/cocodedk/Metrologist/releases/latest/download/Metrologist.apk): Direct download of the stable release
 - [Cocode](https://cocode.dk): Author's studio website

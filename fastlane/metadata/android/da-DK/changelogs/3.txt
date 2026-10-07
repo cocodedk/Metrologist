@@ -1,0 +1,1 @@
+Markeringsskærmen er nu næsten kun foto. Billedet fylder hele skærmen, knapperne ligger oven på det, og hjælpeteksten gemmer sig bag (i)-knappen. Appen aflæser kameraets hældning og vælger selv Væg eller Gulv, når vinklen er tydelig. Den spørger dig kun, når den ikke er det. Knib to fingre sammen for at zoome ud og se fotoets kanter. Nyt ikon: den skakternede referencestok.

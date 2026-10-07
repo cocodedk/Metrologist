@@ -4,10 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Privacy Policy — Metrologist</title>
-  <meta name="description" content="Privacy policy for Metrologist (com.cocode.measureapp): the camera is used only to measure on your device, nothing is uploaded, and no personal data is collected." />
+  <meta name="description" content="Privacy policy for Metrologist (com.cocode.measureapp): the camera is used only to measure on your device, the app uploads nothing by itself, and no personal data is collected." />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://measure.cocode.dk/privacy/" />
   <link rel="alternate" hreflang="en" href="https://measure.cocode.dk/privacy/" />
+  <link rel="alternate" hreflang="da" href="https://measure.cocode.dk/da/privacy/" />
+  <link rel="alternate" hreflang="x-default" href="https://measure.cocode.dk/privacy/" />
   <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -132,6 +134,7 @@
   <a href="/#how" data-nav="how">How it works</a>
   <a href="/#install" data-nav="install">Install</a>
   <a href="/privacy/" data-nav="privacy" aria-current="page">Privacy</a>
+  <a href="/da/privacy/" hreflang="da" lang="da" data-nav="lang">Dansk</a>
   <a href="https://cocode.dk/" data-nav="more">More apps</a>
 </nav>
 <!-- cocode-apps:nav:end -->
@@ -145,40 +148,45 @@
       <section lang="en">
         <h1>Privacy Policy</h1>
         <p class="meta">Metrologist &middot; <span class="mono">com.cocode.measureapp</span></p>
-        <p class="meta">Last updated: 14 July 2026</p>
+        <p class="meta">Last updated: 7 October 2026</p>
 
-        <p class="lede"><strong>Metrologist does not collect, transmit, or share any personal data.</strong>
+        <p class="lede"><strong>Metrologist does not collect personal data, and it does not upload your photos or measurements by itself.</strong>
         It is an Android app that measures flat surfaces from a photo, and every calculation runs
-        entirely on your device.</p>
+        entirely on your device. A picture leaves the app only when you tap Export and choose where it goes.</p>
 
         <h2>Camera</h2>
         <p>Metrologist uses your device camera for one purpose: to photograph the surface you want to
         measure, together with the printed reference stick. That image is analysed <strong>on your
-        device</strong> to work out width, height, area, diagonal, and angles. The camera is never used
-        to record or send anything in the background — it is active only while you are on the capture
-        screen, and only after you grant the camera permission.</p>
+        device</strong> to work out width, height, area, diagonal, and angles. The camera does not record
+        video or send anything in the background. It is on while Metrologist is open on your screen, including
+        when you move between the app's screens, and it turns off when you switch to another app or close
+        Metrologist. It starts only after you grant the camera permission, and a photo is taken only when you
+        tap Capture.</p>
 
         <h2>Your photos stay on your device</h2>
         <ul>
           <li>Captured photos are processed <strong>in memory on your device</strong> and are <strong>not uploaded</strong> anywhere.</li>
           <li>The app does <strong>not</strong> save your measurement photos to your gallery or shared storage on its own.</li>
-          <li>The image analysis (via the bundled OpenCV library) happens locally; no image, pixel, or measurement ever leaves the app.</li>
+          <li>The image analysis (via the bundled OpenCV library) happens locally. A picture leaves the app only when you tap Export and choose where it goes (see "Sharing a result" below).</li>
         </ul>
 
         <h2>Settings you choose</h2>
         <p>Your preferences — the reference stick's length and width and your preferred display unit
-        (centimetres, inches, or metres) — are saved in a small private settings file on your own
-        device. This never leaves your phone and is removed when you uninstall the app or clear its data.</p>
+        (centimetres, feet and inches, or metres) — are saved in a small private settings file on your own
+        device. The app never sends this file anywhere, and it is removed from the phone when you uninstall
+        the app or clear its data. If Android backup is switched on, the file can be copied to your Google
+        backup and restored from it (see "Device backup" below).</p>
 
         <h2>Sharing a result (only if you ask)</h2>
         <p>When you choose to share a measurement, the app draws the numbers onto a copy of your photo,
         saves that image to its own private cache, and hands it to Android's system share sheet. You pick
-        where it goes — a messaging app, email, files, and so on. This only happens when you tap share,
-        and the destination is chosen entirely by you. We never receive the shared image.</p>
+        where it goes — a messaging app, email, files, and so on. This only happens when you tap Export,
+        and the destination is chosen entirely by you. The privacy policy of the app you choose applies once
+        it has the image. We never receive the shared image.</p>
 
         <h2>No internet, no tracking</h2>
         <ul>
-          <li>The app requests <strong>no internet permission</strong>, so it is technically unable to send your data anywhere.</li>
+          <li>The app requests <strong>no internet permission</strong>, so it makes no network connections of its own. Data can leave it only by Export, by the web links on the "About Metrologist" screen (see "External links" below) and, if Android backup is switched on, by Android copying your settings to your Google backup (see "Device backup" below).</li>
           <li>We use <strong>no analytics, no crash reporting, and no advertising</strong>.</li>
           <li>There are <strong>no third-party tracking SDKs, no cookies, and no advertising identifiers</strong>.</li>
           <li>The only runtime permission the app requests is the <strong>camera</strong> — no location, contacts, microphone, or account access.</li>
@@ -191,9 +199,12 @@
         <a href="https://policies.google.com/privacy" rel="noopener" target="_blank">Google's Privacy Policy</a> for details.</p>
 
         <h2>External links</h2>
-        <p>The app and this website link to the developer's site (<a href="https://cocode.dk" rel="noopener" target="_blank">cocode.dk</a>),
-        a LinkedIn profile, and the project's GitHub page. Selecting them opens your browser; those sites
-        are governed by their own privacy policies.</p>
+        <p>The "About Metrologist" screen in the app has buttons that open web pages in your browser: the Metrologist website,
+        this privacy policy, and the project's GitHub pages (the latest release, the source code and the issue
+        tracker). A page opens only when you tap its button. The app sends no data with it: it asks Android to
+        open the address, and your browser then connects to the page.</p>
+        <p>This website also links to the developer's site (<a href="https://cocode.dk" rel="noopener" target="_blank">cocode.dk</a>)
+        and a LinkedIn profile. All of these sites are governed by their own privacy policies.</p>
 
         <h2>Children</h2>
         <p>The app does not knowingly collect data from anyone, including children.</p>
@@ -213,40 +224,43 @@
       <section lang="fa" dir="rtl">
         <h2 class="title">سیاست حفظ حریم خصوصی</h2>
         <p class="meta">متروژیست &middot; <span class="mono">com.cocode.measureapp</span></p>
-        <p class="meta">آخرین به‌روزرسانی: ۱۴ ژوئیه ۲۰۲۶</p>
+        <p class="meta">آخرین به‌روزرسانی: ۷ اکتبر ۲۰۲۶</p>
 
-        <p class="lede"><strong>متروژیست هیچ داده شخصی‌ای را جمع‌آوری، ارسال یا با دیگران به اشتراک نمی‌گذارد.</strong>
+        <p class="lede"><strong>متروژیست داده‌های شخصی شما را جمع‌آوری نمی‌کند و عکس‌ها و اندازه‌ها را خودش جایی بارگذاری نمی‌کند.</strong>
         این یک برنامه اندرویدی است که سطوح صاف را از روی یک عکس اندازه‌گیری می‌کند و تمام محاسبات
-        به‌طور کامل روی دستگاه شما انجام می‌شود.</p>
+        به‌طور کامل روی دستگاه شما انجام می‌شود. تصویر فقط وقتی از برنامه بیرون می‌رود که <bdi>Export</bdi> را بزنید و مقصد را خودتان انتخاب کنید.</p>
 
         <h2>دوربین</h2>
         <p>متروژیست از دوربین دستگاه شما تنها برای یک هدف استفاده می‌کند: گرفتن عکس از سطحی که می‌خواهید
         اندازه بگیرید، به همراه چوب مرجعِ چاپ‌شده. آن تصویر <strong>روی دستگاه شما</strong> تحلیل می‌شود تا
-        عرض، ارتفاع، مساحت، قطر و زاویه‌ها محاسبه شود. دوربین هرگز برای ضبط یا ارسال چیزی در پس‌زمینه به کار
-        نمی‌رود — تنها زمانی فعال است که در صفحهٔ عکس‌برداری هستید و تنها پس از آنکه مجوز دوربین را بدهید.</p>
+        عرض، ارتفاع، مساحت، قطر و زاویه‌ها محاسبه شود. دوربین ویدیو ضبط نمی‌کند و در پس‌زمینه چیزی
+        نمی‌فرستد. تا وقتی متروژیست روی صفحه باز است، دوربین روشن می‌ماند، حتی اگر به صفحه‌های دیگر برنامه بروید.
+        با رفتن به برنامهٔ دیگر یا بستن متروژیست خاموش می‌شود. دوربین فقط پس از دادن مجوز دوربین روشن می‌شود و
+        عکس فقط وقتی گرفته می‌شود که <bdi>Capture</bdi> را بزنید.</p>
 
         <h2>عکس‌های شما روی دستگاهتان می‌مانند</h2>
         <ul>
           <li>عکس‌های گرفته‌شده <strong>در حافظهٔ دستگاه شما</strong> پردازش می‌شوند و به هیچ‌جا <strong>بارگذاری نمی‌شوند</strong>.</li>
           <li>برنامه به‌خودیِ‌خود عکس‌های اندازه‌گیری شما را در گالری یا حافظهٔ مشترک ذخیره <strong>نمی‌کند</strong>.</li>
-          <li>تحلیل تصویر (با کتابخانهٔ همراهِ OpenCV) به‌صورت محلی انجام می‌شود؛ هیچ تصویر، پیکسل یا اندازه‌ای هرگز از برنامه خارج نمی‌شود.</li>
+          <li>تحلیل تصویر (با کتابخانهٔ همراهِ OpenCV) به‌صورت محلی انجام می‌شود. تصویر فقط وقتی از برنامه بیرون می‌رود که <bdi>Export</bdi> را بزنید و مقصد را خودتان انتخاب کنید (بخش «اشتراک‌گذاری نتیجه» را ببینید).</li>
         </ul>
 
         <h2>تنظیماتی که انتخاب می‌کنید</h2>
-        <p>ترجیحات شما — طول و عرض چوب مرجع و واحد نمایش دلخواهتان (سانتی‌متر، اینچ یا متر) — در یک فایل
-        تنظیماتِ کوچکِ خصوصی روی دستگاه خودتان ذخیره می‌شود. این اطلاعات هرگز از گوشی شما خارج نمی‌شود و با
-        حذف برنامه یا پاک‌کردن داده‌های آن، از بین می‌رود.</p>
+        <p>ترجیحات شما، یعنی طول و عرض چوب مرجع و واحد نمایش دلخواهتان (سانتی‌متر، فوت و اینچ یا متر)، در یک فایل
+        تنظیماتِ کوچکِ خصوصی روی دستگاه خودتان ذخیره می‌شود. برنامه این فایل را جایی نمی‌فرستد و با
+        حذف برنامه یا پاک‌کردن داده‌های آن از گوشی پاک می‌شود. اگر پشتیبان‌گیری اندروید روشن باشد،
+        این فایل ممکن است در پشتیبان گوگل شما کپی شود و از آن بازیابی شود (بخش «پشتیبان‌گیری دستگاه» را ببینید).</p>
 
         <h2>اشتراک‌گذاری نتیجه (تنها به‌درخواست شما)</h2>
         <p>هنگامی که تصمیم می‌گیرید یک اندازه‌گیری را به اشتراک بگذارید، برنامه اعداد را روی یک کپی از عکس
         شما ترسیم می‌کند، آن تصویر را در حافظهٔ نهانِ خصوصیِ خود ذخیره می‌کند و آن را به صفحهٔ اشتراک‌گذاریِ
         سیستم اندروید می‌سپارد. شما انتخاب می‌کنید که به کجا برود — یک پیام‌رسان، ایمیل، فایل‌ها و مانند آن.
-        این تنها زمانی رخ می‌دهد که روی اشتراک‌گذاری بزنید و مقصد کاملاً توسط شما انتخاب می‌شود. ما هرگز
-        تصویر به‌اشتراک‌گذاشته‌شده را دریافت نمی‌کنیم.</p>
+        این تنها زمانی رخ می‌دهد که <bdi>Export</bdi> را بزنید و مقصد کاملاً توسط شما انتخاب می‌شود. از آن لحظه
+        سیاست حریم خصوصی همان برنامه برای تصویر معتبر است. ما هرگز تصویر به‌اشتراک‌گذاشته‌شده را دریافت نمی‌کنیم.</p>
 
         <h2>بدون اینترنت، بدون ردیابی</h2>
         <ul>
-          <li>برنامه <strong>هیچ دسترسی اینترنتی</strong> درخواست نمی‌کند، بنابراین از نظر فنی قادر به ارسال داده‌های شما به هیچ‌جا نیست.</li>
+          <li>برنامه <strong>هیچ دسترسی اینترنتی</strong> درخواست نمی‌کند، بنابراین خودش هیچ اتصال شبکه‌ای ندارد. داده فقط از این راه‌ها می‌تواند از برنامه بیرون برود: <bdi>Export</bdi>، پیوندهای وب صفحهٔ <bdi>About Metrologist</bdi> (بخش «پیوندهای بیرونی» را ببینید) و، اگر پشتیبان‌گیری اندروید روشن باشد، کپی‌شدن تنظیمات شما در پشتیبان گوگل (بخش «پشتیبان‌گیری دستگاه» را ببینید).</li>
           <li>ما از <strong>هیچ ابزار تحلیلی، گزارش خطا یا تبلیغاتی</strong> استفاده نمی‌کنیم.</li>
           <li>هیچ <strong>کیت توسعهٔ ردیابیِ شخص ثالث، کوکی یا شناسهٔ تبلیغاتی</strong> وجود ندارد.</li>
           <li>تنها مجوز زمان‌اجرایی که برنامه درخواست می‌کند <strong>دوربین</strong> است — بدون موقعیت مکانی، مخاطبین، میکروفون یا دسترسی به حساب.</li>
@@ -259,9 +273,12 @@
         <a href="https://policies.google.com/privacy" rel="noopener" target="_blank">سیاست حریم خصوصی گوگل</a> مراجعه کنید.</p>
 
         <h2>پیوندهای بیرونی</h2>
-        <p>برنامه و این وب‌سایت به سایت توسعه‌دهنده (<a href="https://cocode.dk" rel="noopener" target="_blank">cocode.dk</a>)،
-        پروفایل لینکدین و صفحهٔ گیت‌هابِ پروژه پیوند دارند. انتخاب آن‌ها مرورگر شما را باز می‌کند و این سایت‌ها
-        تابع سیاست‌های حریم خصوصی خودشان هستند.</p>
+        <p>در صفحهٔ <bdi>About Metrologist</bdi> برنامه چند دکمه هست که صفحه‌های وب را در مرورگر شما باز می‌کنند:
+        وب‌سایت متروژیست، همین سیاست حریم خصوصی و صفحه‌های گیت‌هابِ پروژه (آخرین نسخه، کد منبع و بخش گزارش مشکل).
+        هر صفحه فقط وقتی باز می‌شود که دکمه‌اش را بزنید. برنامه همراه آن داده‌ای نمی‌فرستد؛ فقط از اندروید می‌خواهد
+        آدرس را باز کند و مرورگر شما به صفحه وصل می‌شود.</p>
+        <p>این وب‌سایت به سایت توسعه‌دهنده (<a href="https://cocode.dk" rel="noopener" target="_blank">cocode.dk</a>) و
+        پروفایل لینکدین هم پیوند دارد. همهٔ این سایت‌ها سیاست حریم خصوصی خودشان را دارند.</p>
 
         <h2>کودکان</h2>
         <p>این برنامه آگاهانه هیچ داده‌ای را از هیچ‌کس، از جمله کودکان، جمع‌آوری نمی‌کند.</p>

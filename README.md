@@ -3,53 +3,57 @@
 [![CI](https://github.com/cocodedk/Metrologist/actions/workflows/ci.yml/badge.svg)](https://github.com/cocodedk/Metrologist/actions)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
-Metrologist measures real-world flat surfaces — walls, doors, windows, floor areas — from a single photo taken with your Android camera. Place a red-white-red-white reference stick of known length against the surface, shoot in-app, tap the four corners, and the app recovers the plane geometry from the perspective distortion to report width, height, area, diagonal, and corner angles in metres, centimetres, or feet and inches. Accuracy is typically 1–5 % with careful marking. The result screen shows which solver was used, a confidence score, and an approximate error band; you can export an annotated PNG to share or archive.
+Metrologist estimates the width, height, area, diagonal and corner angles of a flat surface, such as a wall, door, window, floor or table, from one photo taken in the app. Lay a reference stick of known length and width on the same surface, enter its length and width in Settings, take the photo, then drag one box onto the four corners of the object and another onto the four outside corners of the stick. Results appear in metres, centimetres, or feet and inches, with a confidence score and, when relevant, notes. They are estimates, so check important sizes with a ruler or tape. You can share an annotated picture of a result with Export.
 
 ## Download
 
 <!-- cocode-apps:install:start -->
 - Coming to F-Droid
-- [Download the APK from GitHub](https://github.com/cocodedk/Metrologist/releases/latest/download/Metrologist.apk)
-- [Auto-update the GitHub APK with Obtainium](https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/cocodedk/Metrologist)
+- [Download the Android installation file (APK) from GitHub](https://github.com/cocodedk/Metrologist/releases/latest/download/Metrologist.apk)
+- [Add the app to Obtainium, an app that keeps it up to date](https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/cocodedk/Metrologist)
 <!-- cocode-apps:install:end -->
 
 ## Website
 
 - English: <https://measure.cocode.dk/>
+- Dansk: <https://measure.cocode.dk/da/>
 - Persian / فارسی: <https://measure.cocode.dk/fa/>
 
 ## Features
 
-- **Single-photo metrology** — no depth sensor or AR kit required; one well-framed shot is enough.
-- **Red-white-red-white stick** — four equal bands; OpenCV detects the two ends and three band joints automatically. Manual fallback is always available.
-- **Two plane solvers, auto-selected** — a rectangle solver (vanishing-point geometry) for near-square surfaces, and a gravity solver (IMU vector) for anything else. The app picks the better-conditioned one and tells you.
-- **Scale from the stick** — five detected points give up to four independent scale estimates; their median sets real scale and their spread is a quality signal.
-- **Zoom and magnifier** — pinch-to-zoom canvas with a loupe magnifier for precise corner placement; handles are draggable after initial tap.
-- **Full output set** — width, height, diagonal, area, and interior angles at each corner with an out-of-square readout.
-- **Units** — metres, centimetres, or feet and inches; switch any time in settings.
-- **PNG export** — annotated photo with the measurement summary overlaid; shared via the standard Android share sheet.
-- **Honest confidence** — every result shows solver type, confidence percentage, camera tilt, viewing angle, and pixel-to-real scale.
+- **One photo.** No depth sensor or AR kit is needed; one well-framed shot is enough.
+- **Reference stick.** You enter its full length and width in Settings. The stick you can print from the website is 20 × 4 cm, with a red-white-red-white-red centre and a checker border. OpenCV looks for the stick and proposes the red box. You check it and drag its four corners onto the stick's four outside corners.
+- **Two measuring methods, chosen for you.** The rectangle method works from the corners you marked (vanishing-point geometry). The tilt-sensor method works from the phone's gravity reading and an assumption that the surface is a vertical wall or a horizontal floor or table. The app uses only a method whose checks pass. If both pass, a method that does not have to assume a wall faces the camera comes first. Between those, the higher confidence wins, and a tie goes to the rectangle method. If neither works, it says why and what to check.
+- **Scale from the stick.** The length and the width you entered are matched to the long and the short sides of the red box, and the two scales are combined as a length-weighted average. A method that finds them more than 10 percent apart is rejected.
+- **Zoom and magnifier.** Zoom with two fingers; a magnifier appears while you drag a corner.
+- **Results.** Width, height, diagonal, area and the four interior corner angles.
+- **Units.** Metres, centimetres, or feet and inches; change them any time in Settings.
+- **Export.** An annotated picture of the photo and the measurements, shared through the Android share sheet.
+- **Confidence and notes.** Every result shows a confidence label (High, Medium or Low) with a percentage, the corner angles, and notes about the photo when there is something to point out. The result screen names the tilt-sensor method when it was used. The score is not a guarantee that the size is right.
 
 ## How it works
 
-1. **Capture** — shoot in-app. CameraX records the frame together with the lens intrinsics from Camera2 and the gravity vector from the device IMU.
-2. **Detect** — OpenCV segments the red HSV bands, fits a principal axis through the stick body, and locates two ends and three band joints. If detection confidence is low, the app asks you to tap the endpoints manually.
-3. **Mark** — tap the four surface corners on the photo. A loupe magnifier helps with precision; handles can be dragged to adjust.
-4. **Solve** — the rectangle solver derives the plane tilt from how opposite surface edges converge to vanishing points, combined with the lens intrinsics. If corners are too skewed or the view angle is too shallow, the gravity solver takes over, using the IMU vector and a vertical-wall / horizontal-floor assumption instead.
-5. **Scale** — the five stick points are projected into the recovered plane. Each of the four equal sub-segments gives an independent scale estimate; their median fixes real scale and their spread flags a non-coplanar stick or a misdetection.
-6. **Measure** — every marked point maps to real-world plane coordinates, giving width, height, area (shoelace formula), diagonal, and interior corner angles.
+1. **Capture.** You take the photo in the app. CameraX records the frame together with the camera's lens details (when the phone reports them) and the phone's tilt from its gravity sensor.
+2. **Detect.** OpenCV segments the red stripes (HSV), fits a principal axis through the stick and proposes the red box. The detector looks for the older four-stripe pattern, so for the printable stick with its checker border, check all four corners yourself.
+3. **Mark.** Drag the corners of the green box onto the four corners of the object, and the corners of the red box onto the four outside corners of the stick. Use two fingers to zoom.
+4. **Solve.** The rectangle method derives the plane's tilt from where opposite edges meet (vanishing points) and the lens details. The tilt-sensor method uses the gravity reading and the wall-or-floor assumption. Each method must pass its own checks.
+5. **Scale.** The red box's long and short sides are matched to the length and width you entered (see Features).
+6. **Measure.** Every marked point is mapped to real-world coordinates on the plane, which gives width, height, area (shoelace formula), diagonal and the four interior corner angles.
 
 ## Privacy
 
-Metrologist does not collect, transmit, or share any personal data. Every calculation runs on your device,
-photos are processed in memory and are not uploaded, and the app requests no internet permission. The only
-runtime permission is the camera. There is no analytics, crash reporting, or advertising.
+Metrologist does not collect personal data, and it does not upload your photos or measurements by itself.
+Calculations run on your device, photos are processed in memory, and the app has no internet permission,
+analytics, crash reporting or ads. The only permission it asks for is the camera. If you tap Export,
+Android's share sheet opens and you choose where the picture goes; the privacy policy of the app you
+choose then applies. The buttons on the "About Metrologist" screen open web pages in your browser, only when you tap
+them.
 
 Read the full [privacy policy](https://measure.cocode.dk/privacy/).
 
 ## Build
 
-**Prerequisites:** JDK 17, Android SDK with build-tools matching `AGP 9.1.1`, and an internet connection for Gradle to fetch dependencies.
+**Prerequisites:** JDK 17, Android SDK Platform 36.1, SDK Build Tools compatible with AGP 9.1.1, and an internet connection for Gradle to download dependencies.
 
 ```bash
 git clone https://github.com/cocodedk/Metrologist.git
@@ -61,7 +65,7 @@ cd Metrologist
 # Build a debug APK
 ./gradlew :app:assembleDebug
 
-# Run the ~219 JVM unit tests (no device required)
+# Run the JVM unit tests (no device required)
 ./gradlew :app:testDebugUnitTest
 
 # Lint
@@ -78,7 +82,7 @@ The output APK lands at `app/build/outputs/apk/debug/app-debug.apk`.
 
 ## Architecture
 
-Single `:app` module, `com.cocode.measureapp`, split by responsibility. Every file is kept under 200 lines.
+Single `:app` module, `com.cocode.measureapp`, split by responsibility. The guideline is to keep files under 200 lines; one test file, `StickAssemblerTest.kt`, is longer.
 
 ```
 app/src/main/java/com/cocode/measureapp/
@@ -102,7 +106,7 @@ app/src/main/java/com/cocode/measureapp/
 ├── model/             # Pure data classes shared across layers
 ├── capture/           # Android: CameraX, IntrinsicsExtractor, GravityProvider
 ├── detect/            # Android: OpenCV HSV segmentation → OpenCvStickDetector
-├── ui/                # Jetpack Compose screens (Capture, Mark, Results, Settings)
+├── ui/                # Jetpack Compose screens (Camera, Mark, Results, Settings, Help, About)
 │   └── theme/
 ├── export/            # AnnotatedExporter — bitmap annotation + share intent
 └── data/              # DataStore settings repository
@@ -118,8 +122,8 @@ app/src/main/java/com/cocode/measureapp/
 | CameraX | in-app capture, Camera2 intrinsics |
 | OpenCV Android SDK | 4.x, HSV segmentation |
 | Jetpack DataStore | settings persistence |
-| JUnit 4 | ~219 unit tests |
-| JaCoCo | 100 % line/branch/method on geometry/core/stick |
+| JUnit 4 | JVM unit tests |
+| JaCoCo | line, branch and method coverage report for the JVM tests (`:app:jacocoTestReport`) |
 | minSdk / targetSdk | 24 / 36 |
 
 ## Contributing

@@ -1,0 +1,17 @@
+Metrologist skønner bredde, højde, areal, diagonal og hjørnevinkler på en flad overflade, for eksempel en væg, en dør, et vindue, et gulv eller et bord, ud fra et foto, du tager i appen. Læg en referencestok med kendt længde og bredde på den samme overflade. Træk så én ramme hen på genstandens fire hjørner og en anden hen på stokkens fire yderste hjørner.
+
+Det får du:
+• Et kamera, der registrerer telefonens hældning ved hvert foto
+• Tilstandene Væg og Gulv, som appen ofte vælger for dig ud fra hældningen
+• Hjørner, du kan trække i, zoom med to fingre og et forstørrelsesglas
+• Bredde, højde, areal, diagonal og hjørnevinkler
+• Et sikkerhedsmål til hvert resultat og noter, når der er noget at bemærke
+• Resultater i centimeter, meter eller fod og tommer
+• Eksportér: del fotoet med målene skrevet på, via Androids delemenu
+
+Al beregning sker på din telefon. Appen beder kun om tilladelse til kameraet, og den har ingen tilladelse til internettet, ingen reklamer og ingen analyseværktøjer.
+
+Brug en flad referencestok, hvis længde og bredde du har målt, godt lys og et udsnit, hvor alle hjørner kan ses. Resultaterne er skøn og ikke certificerede målinger. Tjek vigtige mål med en lineal eller et målebånd.
+
+Brugervejledning og referencestok til udskrift (på engelsk): https://measure.cocode.dk/user-guide.html
+Kildekode og fejlmeldinger: https://github.com/cocodedk/Metrologist
