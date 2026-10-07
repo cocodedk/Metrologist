@@ -1,1 +1,1 @@
-Measure flat surfaces from a photo and a reference stick
+Estimate a flat surface's size from a photo and a reference stick

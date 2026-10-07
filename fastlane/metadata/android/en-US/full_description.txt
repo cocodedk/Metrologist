@@ -1,17 +1,17 @@
-Metrologist estimates the dimensions of a flat surface from a photo taken inside the app. Place a reference stick of known length and width on the same plane, then mark the four corners of the object and the four outside corners of the reference.
+Metrologist estimates the width, height, area, diagonal and corner angles of a flat surface, such as a wall, door, window, floor or table, from a photo you take in the app. Lay a reference stick of known length and width on the same surface. Then drag one box onto the four corners of the object and another onto the four outside corners of the stick.
 
-Features:
-• Camera capture with tilt information
-• Wall and floor/table surface modes
-• Adjustable corner markers, zoom and a magnifier
-• Width, height, area, diagonal and corner-angle results
-• Confidence indicators and measurement diagnostics
-• Metric and imperial display units
-• Export an annotated image through Android sharing
+What you get:
+• A camera that records the phone's tilt with each photo
+• Wall and Floor modes, which the app often picks for you from the tilt
+• Corner handles you can drag, zoom with two fingers, and a magnifier
+• Width, height, area, diagonal and corner angles
+• A confidence score and notes on every result
+• Results in centimetres, metres, or feet and inches
+• Export: share the photo with the measurements written on it, through the Android share sheet
 
-Processing happens on your device. The app requests camera access and has no ads or analytics.
+All calculation happens on your phone. The app asks only for camera permission, and it has no internet permission, no ads and no analytics.
 
-Use a flat reference with accurately measured dimensions, clear lighting and visible corners. Results are estimates, not certified measurements. Verify important dimensions with a ruler or tape measure.
+Use a flat reference stick whose length and width you have measured, good light and a view where all corners can be seen. Results are estimates, not certified measurements. Check important sizes with a ruler or tape measure.
 
-User guide and printable reference: https://cocodedk.github.io/Metrologist/user-guide.html
-Source and issue tracker: https://github.com/cocodedk/Metrologist
+User guide and printable reference stick: https://measure.cocode.dk/user-guide.html
+Source code and issue tracker: https://github.com/cocodedk/Metrologist

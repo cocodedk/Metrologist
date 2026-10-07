@@ -57,7 +57,7 @@ solution, measurements, confidence/diagnostics)*. A selector chooses between the
 ## Scale from the stick
 
 Project the stick's 5 points (2 ends + 3 band joints) into the rectified plane. The known
-total length and the three equal sub-segments yield several independent scale estimates.
+total length and the four equal sub-segments yield several independent scale estimates.
 Their **median** sets real scale; their **disagreement** is a quality signal (flags a
 non-coplanar stick or a misdetection).
 

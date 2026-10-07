@@ -12,7 +12,7 @@
 
   <!-- Primary SEO -->
   <title>Measure with Your Phone — Metrologist Android App</title>
-  <meta name="description" content="Metrologist turns a single phone photo into precise measurements. Mark 4 corners + a reference stick, get width, height, area, diagonal and angles — offline. Free Android app by Cocode.">
+  <meta name="description" content="Metrologist estimates the width, height, area, diagonal and corner angles of a flat surface from one photo and a reference stick of known size. Free Android app by Cocode. Works offline.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://measure.cocode.dk/">
 
@@ -26,7 +26,7 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://measure.cocode.dk/">
   <meta property="og:title" content="Measure with Your Phone — Metrologist Android App">
-  <meta property="og:description" content="Single-view planar metrology from a photo. Mark corners + reference stick → get width, height, area, diagonal, angles. Free, offline, open-source.">
+  <meta property="og:description" content="Measure flat surfaces from one photo. Mark the corners of the surface and of a reference stick, then read the width, height, area, diagonal and corner angles. Free, offline, open source.">
   <meta property="og:image" content="https://measure.cocode.dk/og.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -38,7 +38,7 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Measure with Your Phone — Metrologist Android App">
-  <meta name="twitter:description" content="Single-view planar metrology from a photo. Free, offline Android app.">
+  <meta name="twitter:description" content="Measure flat surfaces from one photo. Free, offline Android app.">
   <meta name="twitter:image" content="https://measure.cocode.dk/og.png">
 
   <!-- Favicon -->
@@ -57,10 +57,10 @@
     "@context": "https://schema.org",
     "@type": "MobileApplication",
     "name": "Metrologist",
-    "description": "Measure real-world flat surfaces from a single phone photo using a reference stick. Get width, height, area, diagonal, and angles with a confidence score. Works offline.",
+    "description": "Estimate the width, height, area, diagonal and corner angles of a flat surface from one phone photo and a reference stick, with a confidence score. Works offline.",
     "operatingSystem": "Android",
     "applicationCategory": "UtilitiesApplication",
-    "inLanguage": "en",
+    "inLanguage": ["en", "da"],
     "offers": {
       "@type": "Offer",
       "price": "0",
@@ -120,7 +120,7 @@
 
     <!-- Hero -->
     <section class="hero page-wrap" aria-labelledby="hero-heading">
-      <div class="hero-readout mono" aria-hidden="true">±2%</div>
+      <div class="hero-readout mono" aria-hidden="true">≈</div>
 
       <!-- Crosshair SVG decoration -->
       <svg class="hero-crosshair" viewBox="0 0 160 160" aria-hidden="true" focusable="false">
@@ -140,13 +140,13 @@
       </svg>
 
       <div class="hero-content">
-        <p class="hero-eyebrow">Single-view planar metrology · Android · Free</p>
+        <p class="hero-eyebrow">Measure flat surfaces from one photo · Android · Free</p>
         <h1 id="hero-heading">
           Measure with your phone.<br>
-          <em>One photo. Real numbers.</em>
+          <em>One photo. Real-world sizes.</em>
         </h1>
         <p class="hero-desc">
-          Photograph a flat surface with a red-white reference stick. Mark all four corners of the object and all four corners of the stick. Metrologist returns width, height, area, diagonal, and angles. No internet needed. Ever.
+          Lay a reference stick of known size on a flat surface and photograph it in the app. Drag one box onto the four corners of the object and another onto the four corners of the stick. Metrologist estimates the width, height, area, diagonal and corner angles. It works without internet.
         </p>
         <div class="hero-actions">
           <a href="#install"
@@ -192,19 +192,19 @@
           <article class="step-card reveal">
             <span class="step-num mono">STEP 01</span>
             <h3>Photograph the surface</h3>
-            <p>Place your reference stick with red ends and a checker border flat against the wall, door, or window. Take a clear photo with even lighting and a moderate viewing angle.</p>
+            <p>Lay the reference stick, with its red ends and checker border, flat on the same surface as the wall, door, window, floor or table you want to measure. Take the photo in the app, in even light. Straight on is fine, but avoid nearly edge-on views.</p>
           </article>
 
           <article class="step-card reveal" style="transition-delay:0.08s">
             <span class="step-num mono">STEP 02</span>
             <h3>Mark corners + stick</h3>
-            <p>Drag the green box around your object's four corners and the red box around the reference stick. Pinch-zoom and the built-in magnifier let you land precisely on each point. Enter the stick's <strong>length and width</strong> in the app settings.</p>
+            <p>Before your first measurement, enter the stick's <strong>length and width</strong> in Settings. Then drag the green box's corners onto the four corners of the object, and the red box's corners onto the four outside corners of the stick. Zoom with two fingers, and use the magnifier that appears while you drag.</p>
           </article>
 
           <article class="step-card reveal" style="transition-delay:0.16s">
             <span class="step-num mono">STEP 03</span>
             <h3>Read the results</h3>
-            <p>Width, height, area, diagonal, and corner angles, with a confidence score. No server call. No account. Works entirely offline.</p>
+            <p>The result shows the width, height, area, diagonal and corner angles, with a confidence score and notes. You need no account, and the app has no internet permission.</p>
           </article>
         </div>
       </div>
@@ -216,7 +216,7 @@
     <section aria-labelledby="features-heading">
       <div class="page-wrap">
         <p class="section-label">Features</p>
-        <h2 id="features-heading">Built for people who care about accuracy</h2>
+        <h2 id="features-heading">What Metrologist does</h2>
 
         <div class="features-grid">
           <div class="feature-item reveal">
@@ -230,7 +230,7 @@
             </div>
             <div class="feature-text">
               <h3>Real-world units</h3>
-              <p>Results in centimetres, inches, or metres. Set once, never touched again.</p>
+              <p>Results in centimetres, metres, or feet and inches. Choose your units in Settings.</p>
             </div>
           </div>
 
@@ -244,7 +244,7 @@
             </div>
             <div class="feature-text">
               <h3>Works offline</h3>
-              <p>All computation happens on-device. No internet, no cloud, no account required.</p>
+              <p>All calculation happens on your phone. The app has no internet permission, and you need no account.</p>
             </div>
           </div>
 
@@ -256,7 +256,7 @@
             </div>
             <div class="feature-text">
               <h3>Confidence score</h3>
-              <p>Every result has a confidence score. You know immediately whether to trust the number or retake the photo.</p>
+              <p>Each result shows a confidence label (High, Medium or Low) and notes about the photo. It does not guarantee the size is right, so read the notes and check important sizes.</p>
             </div>
           </div>
 
@@ -267,8 +267,8 @@
               </svg>
             </div>
             <div class="feature-text">
-              <h3>Walls, doors, windows</h3>
-              <p>Any flat planar surface. The geometry engine handles the perspective math; you just tap.</p>
+              <h3>Walls, floors, doors, windows</h3>
+              <p>Works on a flat, four-cornered surface such as a wall, door, window, floor or table top. The app handles the perspective; you drag the boxes onto the corners.</p>
             </div>
           </div>
 
@@ -283,8 +283,8 @@
               </svg>
             </div>
             <div class="feature-text">
-              <h3>Pinch-zoom magnifier</h3>
-              <p>A built-in magnifier for precise corner placement, even on small details in the photo.</p>
+              <h3>Zoom and magnifier</h3>
+              <p>Zoom with two fingers. A magnifier appears while you drag a corner, so you can place it precisely.</p>
             </div>
           </div>
 
@@ -296,8 +296,8 @@
               </svg>
             </div>
             <div class="feature-text">
-              <h3>100% unit-tested engine</h3>
-              <p>The Kotlin measurement engine is unit-tested end to end. Results you can rely on, not just hope for.</p>
+              <h3>Tested measurement engine</h3>
+              <p>The measurement engine has automated tests that use synthetic scenes. They do not show how accurate it is with a real phone camera, so check important sizes with a ruler or tape.</p>
             </div>
           </div>
         </div>
@@ -314,18 +314,18 @@
 
         <div class="accuracy-block reveal">
           <div class="accuracy-left">
-            <div class="accuracy-readout">±1–5%</div>
-            <div class="accuracy-label mono">Typical error range</div>
+            <div class="accuracy-readout">Estimates</div>
+            <div class="accuracy-label mono">Not certified measurements</div>
             <div class="confidence-row">
               <div class="confidence-bar-wrap" role="meter" aria-valuenow="92" aria-valuemin="0" aria-valuemax="100" aria-label="Example confidence score">
                 <div class="confidence-bar"></div>
               </div>
-              <span class="confidence-value mono">92% conf.</span>
+              <span class="confidence-value mono">Example: 92%</span>
             </div>
           </div>
           <div class="accuracy-right">
             <p>
-              Single-view planar metrology works from one photograph. No laser, no tape. Error typically falls between 1 and 5%, depending on photo quality, perspective angle, and how carefully you place the reference stick. For most DIY and trade tasks (cutting materials, ordering tiles, quoting jobs) that's more than enough. The on-screen confidence score tells you when a reading is solid and when it's worth retaking the photo.
+              Metrologist works out sizes from one photograph, with no laser and no tape. How close the result is depends on your phone, the photo, the viewing angle and how carefully you place the reference stick and the corners. Treat every result as an estimate. Before you cut materials, order supplies or quote a job, check the sizes that matter with a ruler or tape. The confidence score and the notes under the result show when it is worth taking the photo again.
             </p>
           </div>
         </div>
@@ -344,8 +344,8 @@
           <!-- cocode-apps:install:start -->
 <ul class="install" role="list">
   <li><p class="fdroid-soon">Coming to F-Droid</p></li>
-  <li><a href="https://github.com/cocodedk/Metrologist/releases/latest/download/Metrologist.apk">Download the APK from GitHub</a></li>
-  <li><a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/cocodedk/Metrologist">Auto-update the GitHub APK with Obtainium</a></li>
+  <li><a href="https://github.com/cocodedk/Metrologist/releases/latest/download/Metrologist.apk">Download the Android installation file (APK) from GitHub</a></li>
+  <li><a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/cocodedk/Metrologist">Add the app to Obtainium, an app that keeps it up to date</a></li>
 </ul>
 <!-- cocode-apps:install:end -->
         </div>

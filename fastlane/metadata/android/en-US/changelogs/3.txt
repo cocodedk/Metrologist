@@ -1,4 +1,1 @@
-The marking screen is almost all photo now: the picture fills the screen, the controls float
-over it, the hint hides behind the (i) button, and the app reads the camera's angle to tell a
-wall from a floor instead of asking. Pinch out to see the edges of the frame. New icon: the
-checker reference stick.
+The marking screen is almost all photo now. The picture fills the screen, the controls float over it, and the hint hides behind the (i) button. The app reads the camera's tilt and picks Wall or Floor for you when the angle is clear. It asks you only when it is not. To see the edges of the photo, pinch two fingers together to zoom out. New icon: the checker reference stick.

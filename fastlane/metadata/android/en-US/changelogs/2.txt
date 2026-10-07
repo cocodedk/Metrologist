@@ -1,5 +1,5 @@
-Improve measurement validation, surface selection and capture recovery.
-Preserve reference dimensions more accurately in settings.
-Enable release optimization with OpenCV JNI keep rules.
-Make release versions and native-library packaging reproducible from source.
-Add a user guide and a printable reference with red ends and a checker border.
+Better checks on the corners you mark, a better Wall or Floor choice, and more reliable recovery when taking a photo fails.
+The reference stick's length and width are kept more accurately in Settings.
+Release builds now remove unused code while keeping reference detection working.
+The release is built from the source code in a repeatable way.
+New: a user guide and a printable reference stick with red ends and a checker border.

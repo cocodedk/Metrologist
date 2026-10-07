@@ -23,10 +23,10 @@
   }
   function make({ width, height, length, stickWidth, scenario }) {
     if (![width, height, length, stickWidth].every(v => Number.isFinite(v) && v > 0)) {
-      throw new Error('Enter finite, positive dimensions for the target and reference.');
+      throw new Error('Enter target and reference dimensions greater than 0.');
     }
     if (width < 40 || height < 30 || width > 2000 || height > 2000 || stickWidth >= length) {
-      throw new Error('Use a target of at least 4 × 3 cm and a reference longer than it is wide.');
+      throw new Error('Use a target 4–200 cm wide and 3–200 cm high, and a reference longer than it is wide.');
     }
     const points = scenario === 'quad'
       ? [[0, 0], [width * 5 / 6, 0], [width, height * 10 / 11], [0, height]]
@@ -39,7 +39,7 @@
   function compare(target, measured, tolerance) {
     if (!(Number.isFinite(tolerance) && tolerance > 0 && tolerance <= 20)) throw new Error('Tolerance must be above 0 and at most 20%.');
     return Object.entries(measured).map(([key, value]) => {
-      if (!(key in target.truth) || !Number.isFinite(value) || value <= 0) throw new Error('Enter finite, positive app measurements.');
+      if (!(key in target.truth) || !Number.isFinite(value) || value <= 0) throw new Error('Enter the app\'s measurements as numbers greater than 0.');
       const expected = target.truth[key], error = (value - expected) / expected * 100;
       return { key, expected, measured: value, errorPercent: error, passed: Math.abs(error) <= tolerance };
     });
