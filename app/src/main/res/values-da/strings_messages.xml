@@ -1,0 +1,81 @@
+<resources>
+    <!-- Sentences the measuring code asks for (see TextKey). %1$ and %2$ take numbers or other sentences. -->
+
+    <!-- How sure the result is -->
+    <string name="msg_confidence_high">Høj</string>
+    <string name="msg_confidence_medium">Middel</string>
+    <string name="msg_confidence_low">Lav</string>
+    <string name="msg_confidence_not_measured">Ikke målt</string>
+
+    <!-- Notes under a result -->
+    <string name="msg_caveat_low_confidence">Resultatet er usikkert. De hjørner, du markerede, ligger måske ikke i rette vinkler, eller du har taget fotoet i en for skrå vinkel. Prøv igen fra en moderat vinkel.</string>
+    <string name="msg_caveat_stick_spacing">Striberne på stokken ser ikke ud til at have lige stor afstand på fotoet. Tjek, at stokken ligger fladt på overfladen.</string>
+    <string name="msg_caveat_tilt_sensor_method">Appen brugte telefonens hældningssensor og overfladetypen (Væg eller Gulv) til at finde overfladen, ikke formen på de hjørner, du markerede. Tjek sikkerheden og de andre noter.</string>
+    <string name="msg_caveat_steep_camera">Kameraet var hældet kraftigt. Sørg for, at hele overfladen er med, og undgå at se den næsten fra siden. Ved et gulv eller et bord skal du pege kameraet nedad mod det.</string>
+    <string name="msg_caveat_lens_approximate">Appen kunne kun skønne oplysningerne om kameraets linse, så regn med, at målene er skøn.</string>
+    <string name="msg_caveat_lens_unavailable">Appen havde ingen oplysninger om linsen til dette foto, så målene er grove skøn.</string>
+    <string name="msg_caveat_no_tilt_reading">Telefonens hældningssensor gav ingen aflæsning til dette foto, så appen kunne ikke tjekke, om Væg eller Gulv er det rigtige valg.</string>
+    <string name="msg_caveat_wall_assumed">Appen gik ud fra, at væggen vender lige mod kameraet, fordi hældningssensoren ikke kan se, hvilken vej en væg vender.</string>
+    <string name="msg_caveat_stick_width_unknown">Stokkens bredde var ikke kendt, så appen kunne ikke bruge den til at kontrollere resultatet.</string>
+
+    <!-- What to do after a failed measurement -->
+    <string name="msg_fix_object_corners">Flyt hjørnerne på rammen mærket Genstand hen på genstandens fire hjørner, og tryk så på Mål op igen.</string>
+    <string name="msg_fix_stick_box">Justér rammen mærket Stok, så den følger referencestokken, og tryk så på Mål op igen.</string>
+    <string name="msg_fix_reference_size">Ret referencestokkens størrelse i Indstillinger. Dit foto og dine markeringer bliver gemt.</string>
+    <string name="msg_fix_retake_photo">Fotoet mangler kameradata, som appen skal bruge. Tryk på Tag nyt foto for at tage et nyt.</string>
+    <string name="msg_fix_unsupported_view">Appen kan ikke måle ud fra dette foto, som det er markeret. Tjek dine markeringer og et eventuelt valg af overflade (Væg eller Gulv), eller tryk på Tag nyt foto og tag det fra en moderat vinkel.</string>
+    <string name="msg_fix_unstable">Beregningen var ikke stabil. Justér dine markeringer, eller tryk på Tag nyt foto og tag det fra en moderat vinkel.</string>
+    <string name="msg_measure_failed">Appen kunne ikke måle dette med sikkerhed. Tjek dine markeringer, og prøv en moderat vinkel.</string>
+    <string name="msg_sentences">%1$s %2$s</string>
+
+    <!-- Marks that cannot be used -->
+    <string name="msg_object_point_count">Rammen mærket Genstand skal have præcis 4 hjørner.</string>
+    <string name="msg_object_non_finite">Nogle hjørner på rammen mærket Genstand står på ugyldige steder. Sæt ét hjørne på hvert hjørne af genstanden.</string>
+    <string name="msg_object_coincident">To hjørner på rammen mærket Genstand ligger oven i hinanden. Træk dem fra hinanden, så hvert hjørne står på sit eget hjørne af genstanden.</string>
+    <string name="msg_object_collinear">Tre eller flere hjørner på rammen mærket Genstand ligger på en ret linje. Sæt ét hjørne på hvert hjørne af genstanden.</string>
+    <string name="msg_object_self_crossing">Linjerne mellem hjørnerne på rammen mærket Genstand krydser hinanden. Sæt ét hjørne på hvert hjørne af genstanden.</string>
+    <string name="msg_object_concave">Ét hjørne på rammen mærket Genstand ligger inde mellem de andre. Sæt ét hjørne på hvert hjørne af genstanden.</string>
+    <string name="msg_object_zero_area">Hjørnerne på rammen mærket Genstand omslutter intet areal. Sæt ét hjørne på hvert hjørne af genstanden.</string>
+    <string name="msg_stick_point_count">Rammen mærket Stok skal have præcis 4 hjørner.</string>
+    <string name="msg_stick_non_finite">Nogle hjørner på rammen mærket Stok står på ugyldige steder. Træk dem rundt om stokken, så modstående sider forbliver over for hinanden.</string>
+    <string name="msg_stick_coincident">To hjørner på rammen mærket Stok ligger oven i hinanden. Træk dem fra hinanden.</string>
+    <string name="msg_stick_collinear">Tre eller flere hjørner på rammen mærket Stok ligger på en ret linje. Træk dem rundt om stokken, så modstående sider forbliver over for hinanden.</string>
+    <string name="msg_stick_self_crossing">Linjerne mellem hjørnerne på rammen mærket Stok krydser hinanden. Træk hjørnerne rundt om stokken, så modstående sider forbliver over for hinanden.</string>
+    <string name="msg_stick_concave">Ét hjørne på rammen mærket Stok ligger inde mellem de andre. Træk hjørnerne rundt om stokken, så modstående sider forbliver over for hinanden.</string>
+    <string name="msg_stick_zero_area">Hjørnerne på rammen mærket Stok omslutter intet areal. Træk dem rundt om stokken, så modstående sider forbliver over for hinanden.</string>
+
+    <!-- The stick size in Settings is not usable -->
+    <string name="msg_reference_length_invalid">Skriv referencestokkens målte længde som et tal større end nul.</string>
+    <string name="msg_reference_width_invalid">Skriv referencestokkens målte bredde som et tal større end nul.</string>
+
+    <!-- Why a measuring method could not be used -->
+    <string name="msg_cause_calculation_unstable">Nogle værdier i beregningen kunne ikke bruges.</string>
+    <string name="msg_cause_no_lens_details">Oplysningerne om kameraets linse mangler eller er ikke gyldige for dette foto.</string>
+    <string name="msg_cause_view_too_shallow">Du ser langs overfladen i en for skrå vinkel. Tag fotoet fra en mere moderat vinkel.</string>
+    <string name="msg_cause_corners_unusable">De markerede hjørner danner ikke et rektangel, som appen kan arbejde med.</string>
+    <string name="msg_cause_shape_too_sensitive">En lille flytning af ét hjørne ville ændre resultatet for meget. Tag fotoet fra en mere moderat vinkel, og placér hjørnerne så præcist, du kan.</string>
+    <string name="msg_cause_not_a_rectangle">De markerede hjørner danner ikke et rektangel på overfladen.</string>
+    <string name="msg_cause_marks_off_surface">Nogle af dine markeringer kan ikke ligge på den samme overflade. Tjek rammerne mærket Genstand og Stok.</string>
+    <string name="msg_cause_no_tilt_reading">Telefonens hældningssensor gav ingen aflæsning, der passer til dette foto. Hold telefonen i ro, og tag fotoet igen.</string>
+    <string name="msg_cause_wall_direction_unknown">Kameraet peger lige op eller ned, så appen ikke kan se, hvilken vej en væg vender. Tag fotoet af væggen forfra. Hvis du måler et gulv eller et bord og ser et valg af overflade, så vælg Gulv.</string>
+    <string name="msg_cause_not_a_wall">Overfladen, du har markeret, hælder %1$.0f° væk fra lodret, så den ligner ikke en væg.</string>
+    <string name="msg_cause_not_a_floor">Overfladen, du har markeret, hælder %1$.0f° væk fra vandret, så den ligner ikke et gulv eller et bord.</string>
+    <string name="msg_cause_stick_disagrees">Stokkens længde og bredde passer ikke sammen på denne overflade. De afviger med %1$.1f&#160;%%, og det højeste, appen accepterer, er %2$.1f&#160;%%. Tjek, at stokken ligger fladt, og at rammen mærket Stok følger den.</string>
+
+    <!-- What to try next, after a cause -->
+    <string name="msg_advice_check_corners">Tjek, hvor du har placeret hjørnerne.</string>
+    <string name="msg_advice_surface_choice">Hvis du ser et valg af overflade, så tjek, at Væg eller Gulv er rigtigt.</string>
+    <string name="msg_advice_surface_and_corners">Tjek, hvor du har placeret hjørnerne. Hvis du ser et valg af overflade, så tjek, at Væg eller Gulv er rigtigt.</string>
+    <string name="msg_rectangle_method_problem">Rektangelmetoden: %1$s</string>
+    <string name="msg_tilt_method_problem">Hældningsmetoden: %1$s</string>
+    <string name="msg_no_method_usable">Appen har to måder at måle på, og ingen af dem virker på dette foto. %1$s %2$s</string>
+    <string name="msg_note_lens_approximate">Appen kunne kun skønne oplysningerne om kameraets linse.</string>
+    <string name="msg_note_lens_unavailable">Appen havde ingen oplysninger om linsen på dette kamera.</string>
+
+    <!-- The camera could not give a photo -->
+    <string name="msg_capture_start_failed">Fotoet kunne ikke startes. Tryk på Tag foto for at prøve igen.</string>
+    <string name="msg_capture_mismatched">Fotoet blev ikke, som det skulle. Tryk på Tag foto for at prøve igen.</string>
+    <string name="msg_capture_conversion_failed">Appen kunne ikke læse fotoet. Tryk på Tag foto for at prøve igen.</string>
+    <string name="msg_capture_camera_error">Fotoet kunne ikke tages. Tjek kameraet, og tryk så på Tag foto for at prøve igen.</string>
+    <string name="msg_camera_unavailable">Kameraet er ikke tilgængeligt. Luk appen, og åbn den igen for at prøve en gang til.</string>
+</resources>

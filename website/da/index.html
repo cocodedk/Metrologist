@@ -12,7 +12,7 @@
 
   <!-- Primary SEO -->
   <title>Mål med din telefon: Metrologist til Android</title>
-  <meta name="description" content="Metrologist gør ét foto fra din telefon til præcise mål. Markér fire hjørner og en målestok, og få bredde, højde, areal, diagonal og vinkler, helt uden internet. Gratis Android-app fra Cocode.">
+  <meta name="description" content="Metrologist skønner bredde, højde, areal, diagonal og hjørnevinkler på en flad overflade ud fra ét foto og en referencestok med kendt størrelse. Gratis Android-app fra Cocode. Virker uden internet.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://measure.cocode.dk/da/">
 
@@ -26,7 +26,7 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://measure.cocode.dk/da/">
   <meta property="og:title" content="Mål med din telefon: Metrologist til Android">
-  <meta property="og:description" content="Opmåling af plane flader ud fra ét foto. Markér hjørner og målestok, og få bredde, højde, areal, diagonal og vinkler. Gratis, uden internet og open source.">
+  <meta property="og:description" content="Mål flade overflader ud fra ét foto. Markér hjørnerne på overfladen og på en referencestok, og aflæs bredde, højde, areal, diagonal og hjørnevinkler. Gratis, uden internet og open source.">
   <meta property="og:image" content="https://measure.cocode.dk/og.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -38,7 +38,7 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Mål med din telefon: Metrologist til Android">
-  <meta name="twitter:description" content="Opmåling af plane flader ud fra ét foto. Gratis Android-app, der virker uden internet.">
+  <meta name="twitter:description" content="Mål flade overflader ud fra ét foto. Gratis Android-app, der virker uden internet.">
   <meta name="twitter:image" content="https://measure.cocode.dk/og.png">
 
   <!-- Favicon -->
@@ -57,10 +57,10 @@
     "@context": "https://schema.org",
     "@type": "MobileApplication",
     "name": "Metrologist",
-    "description": "Mål flade overflader i virkeligheden ud fra ét foto fra telefonen ved hjælp af en målestok. Få bredde, højde, areal, diagonal og vinkler med en sikkerhedsscore. Virker uden internet.",
+    "description": "Skøn bredde, højde, areal, diagonal og hjørnevinkler på en flad overflade ud fra ét telefonfoto og en referencestok, med en angivelse af, hvor sikkert resultatet er. Virker uden internet.",
     "operatingSystem": "Android",
     "applicationCategory": "UtilitiesApplication",
-    "inLanguage": "da",
+    "inLanguage": ["en", "da"],
     "offers": {
       "@type": "Offer",
       "price": "0",
@@ -120,7 +120,7 @@
 
     <!-- Hero -->
     <section class="hero page-wrap" aria-labelledby="hero-heading">
-      <div class="hero-readout mono" aria-hidden="true">±2%</div>
+      <div class="hero-readout mono" aria-hidden="true">≈</div>
 
       <!-- Crosshair SVG decoration -->
       <svg class="hero-crosshair" viewBox="0 0 160 160" aria-hidden="true" focusable="false">
@@ -140,13 +140,13 @@
       </svg>
 
       <div class="hero-content">
-        <p class="hero-eyebrow">Opmåling af plane flader fra ét foto · Android · Gratis</p>
+        <p class="hero-eyebrow">Mål flade overflader ud fra ét foto · Android · Gratis</p>
         <h1 id="hero-heading">
           Mål med din telefon.<br>
-          <em>Ét foto. Rigtige tal.</em>
+          <em>Ét foto. Rigtige mål.</em>
         </h1>
         <p class="hero-desc">
-          Tag et foto af en flad overflade sammen med en rød-hvid målestok. Markér alle fire hjørner på genstanden og alle fire hjørner på målestokken. Metrologist giver dig bredde, højde, areal, diagonal og vinkler. Du behøver aldrig internet.
+          Læg en referencestok med kendt størrelse på en flad overflade, og tag et foto af den i appen. Træk én ramme hen på genstandens fire hjørner og en anden hen på stokkens fire hjørner. Metrologist skønner bredde, højde, areal, diagonal og hjørnevinkler. Den virker uden internet.
         </p>
         <div class="hero-actions">
           <a href="#install"
@@ -170,11 +170,11 @@
           </a>
           <a href="../print-stick.html"
              class="btn-secondary"
-             aria-label="Udskriv en målestok i faktisk størrelse (siden er på engelsk)">
+             aria-label="Udskriv en referencestok i faktisk størrelse (siden er på engelsk)">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
               <path d="M4 1h8v3H4V1zm-2 4h12a1 1 0 011 1v5a1 1 0 01-1 1h-1v2H3v-2H2a1 1 0 01-1-1V6a1 1 0 011-1zm9 1a1 1 0 100 2 1 1 0 000-2zM4 10v3h8v-3H4z"/>
             </svg>
-            Udskriv målestok
+            Udskriv referencestok
           </a>
         </div>
       </div>
@@ -191,20 +191,20 @@
         <div class="steps-grid">
           <article class="step-card reveal">
             <span class="step-num mono">TRIN 01</span>
-            <h3>Tag et foto af fladen</h3>
-            <p>Læg målestokken med røde ender og skakternet kant fladt mod væggen, døren eller vinduet. Tag et tydeligt foto i jævnt lys og fra en moderat vinkel.</p>
+            <h3>Tag et foto af overfladen</h3>
+            <p>Læg referencestokken, med røde ender og skakternet kant, fladt på den samme overflade som den væg, dør, det vindue, gulv eller bord, du vil måle. Tag fotoet i appen i jævnt lys. Lige forfra er fint, men undgå vinkler, hvor du næsten ser overfladen fra siden.</p>
           </article>
 
           <article class="step-card reveal" style="transition-delay:0.08s">
             <span class="step-num mono">TRIN 02</span>
-            <h3>Markér hjørner og målestok</h3>
-            <p>Træk den grønne ramme om objektets fire hjørner og den røde ramme om målestokken. Med knibezoom og det indbyggede forstørrelsesglas rammer du hvert punkt præcist. Angiv målestokkens <strong>længde og bredde</strong> i appens indstillinger.</p>
+            <h3>Markér hjørner og stok</h3>
+            <p>Før din første måling skal du skrive stokkens <strong>længde og bredde</strong> i Indstillinger. Træk så hjørnerne på den grønne ramme hen på genstandens fire hjørner og hjørnerne på den røde ramme hen på stokkens fire yderste hjørner. Zoom med to fingre, og brug forstørrelsesglasset, der kommer frem, mens du trækker.</p>
           </article>
 
           <article class="step-card reveal" style="transition-delay:0.16s">
             <span class="step-num mono">TRIN 03</span>
             <h3>Aflæs resultatet</h3>
-            <p>Bredde, højde, areal, diagonal og hjørnevinkler med en sikkerhedsscore. Ingen forbindelse til en server. Ingen konto. Virker helt uden internet.</p>
+            <p>Resultatet viser bredde, højde, areal, diagonal og hjørnevinkler med en angivelse af sikkerhed og nogle noter. Du behøver ingen konto, og appen har ingen tilladelse til internettet.</p>
           </article>
         </div>
       </div>
@@ -216,7 +216,7 @@
     <section aria-labelledby="features-heading">
       <div class="page-wrap">
         <p class="section-label">Funktioner</p>
-        <h2 id="features-heading">Lavet til dem, der går op i nøjagtighed</h2>
+        <h2 id="features-heading">Det kan Metrologist</h2>
 
         <div class="features-grid">
           <div class="feature-item reveal">
@@ -230,7 +230,7 @@
             </div>
             <div class="feature-text">
               <h3>Rigtige måleenheder</h3>
-              <p>Resultater i centimeter, tommer eller meter. Vælg én gang, og rør aldrig ved det igen.</p>
+              <p>Resultater i centimeter, meter eller fod og tommer. Vælg enhed i Indstillinger.</p>
             </div>
           </div>
 
@@ -244,7 +244,7 @@
             </div>
             <div class="feature-text">
               <h3>Virker uden internet</h3>
-              <p>Alle beregninger foregår på enheden. Intet internet, ingen sky og ingen konto.</p>
+              <p>Al beregning sker på din telefon. Appen har ingen tilladelse til internettet, og du behøver ingen konto.</p>
             </div>
           </div>
 
@@ -255,8 +255,8 @@
               </svg>
             </div>
             <div class="feature-text">
-              <h3>Sikkerhedsscore</h3>
-              <p>Hvert resultat har en sikkerhedsscore. Du kan straks se, om du kan stole på tallet, eller om du skal tage fotoet om.</p>
+              <h3>Sikkerhed og noter</h3>
+              <p>Hvert resultat viser sikkerheden (Høj, Middel eller Lav) og noter om fotoet. Det er ingen garanti for, at målet er rigtigt, så læs noterne og tjek vigtige mål.</p>
             </div>
           </div>
 
@@ -267,8 +267,8 @@
               </svg>
             </div>
             <div class="feature-text">
-              <h3>Vægge, døre, vinduer</h3>
-              <p>Enhver flad, plan overflade. Geometrimotoren klarer perspektivberegningerne, og du skal bare trykke.</p>
+              <h3>Vægge, gulve, døre, vinduer</h3>
+              <p>Virker på en flad overflade med fire hjørner, for eksempel en væg, en dør, et vindue, et gulv eller en bordplade. Appen klarer perspektivet, og du trækker rammerne hen på hjørnerne.</p>
             </div>
           </div>
 
@@ -283,8 +283,8 @@
               </svg>
             </div>
             <div class="feature-text">
-              <h3>Knibezoom og forstørrelsesglas</h3>
-              <p>Et indbygget forstørrelsesglas til præcis placering af hjørner, også på små detaljer i fotoet.</p>
+              <h3>Zoom og forstørrelsesglas</h3>
+              <p>Zoom med to fingre. Et forstørrelsesglas kommer frem, mens du trækker i et hjørne, så du kan placere det præcist.</p>
             </div>
           </div>
 
@@ -296,8 +296,8 @@
               </svg>
             </div>
             <div class="feature-text">
-              <h3>Motor med 100 % enhedstest</h3>
-              <p>Kotlin-målemotoren er enhedstestet fra ende til anden. Resultater, du kan stole på, og ikke bare håbe på.</p>
+              <h3>Testet målemotor</h3>
+              <p>Målemotoren har automatiske tests, der bruger kunstige scener. De viser ikke, hvor nøjagtig den er med et rigtigt telefonkamera, så tjek vigtige mål med en lineal eller et målebånd.</p>
             </div>
           </div>
         </div>
@@ -314,18 +314,18 @@
 
         <div class="accuracy-block reveal">
           <div class="accuracy-left">
-            <div class="accuracy-readout">±1–5 %</div>
-            <div class="accuracy-label mono">Typisk fejlmargin</div>
+            <div class="accuracy-readout">Skøn</div>
+            <div class="accuracy-label mono">Ikke certificerede målinger</div>
             <div class="confidence-row">
-              <div class="confidence-bar-wrap" role="meter" aria-valuenow="92" aria-valuemin="0" aria-valuemax="100" aria-label="Eksempel på sikkerhedsscore">
+              <div class="confidence-bar-wrap" role="meter" aria-valuenow="92" aria-valuemin="0" aria-valuemax="100" aria-label="Eksempel på sikkerhed">
                 <div class="confidence-bar"></div>
               </div>
-              <span class="confidence-value mono">92 % sikkerhed</span>
+              <span class="confidence-value mono">Eksempel: 92&nbsp;%</span>
             </div>
           </div>
           <div class="accuracy-right">
             <p>
-              Opmåling af plane flader fra ét billede kræver kun ét foto. Ingen laser og intet målebånd. Fejlen ligger typisk mellem 1 og 5 %, afhængigt af fotoets kvalitet, synsvinklen og hvor omhyggeligt du placerer målestokken. Til de fleste gør-det-selv-opgaver og håndværksopgaver (at skære materialer til, bestille fliser, give tilbud) er det mere end nok. Sikkerhedsscoren på skærmen viser, hvornår en måling er solid, og hvornår det er værd at tage fotoet om.
+              Metrologist finder størrelserne ud fra ét foto, uden laser og uden målebånd. Hvor tæt resultatet kommer på de rigtige mål, afhænger af din telefon, fotoet, vinklen og af, hvor omhyggeligt du placerer referencestokken og hjørnerne. Regn med, at hvert resultat er et skøn. Før du skærer materialer til, bestiller varer eller giver et tilbud, skal du tjekke de vigtige mål med en lineal eller et målebånd. Sikkerheden og noterne under resultatet viser, hvornår det er værd at tage fotoet om.
             </p>
           </div>
         </div>
@@ -344,8 +344,8 @@
           <!-- cocode-apps:install:start -->
 <ul class="install" role="list">
   <li><p class="fdroid-soon">Kommer på F-Droid</p></li>
-  <li><a href="https://github.com/cocodedk/Metrologist/releases/latest/download/Metrologist.apk">Hent APK-filen fra GitHub</a></li>
-  <li><a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/cocodedk/Metrologist">Opdatér GitHub-APK&#x27;en automatisk med Obtainium</a></li>
+  <li><a href="https://github.com/cocodedk/Metrologist/releases/latest/download/Metrologist.apk">Hent installationsfilen til Android (APK) fra GitHub</a></li>
+  <li><a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/cocodedk/Metrologist">Tilføj appen i Obtainium, som holder den opdateret</a></li>
 </ul>
 <!-- cocode-apps:install:end -->
         </div>

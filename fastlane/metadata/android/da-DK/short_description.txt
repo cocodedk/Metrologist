@@ -1,1 +1,1 @@
-Mål flade overflader ud fra et foto og en målestok
+Skøn størrelsen på en flad overflade ud fra et foto og en referencestok

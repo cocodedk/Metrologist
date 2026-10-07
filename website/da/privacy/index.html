@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Privatlivspolitik: Metrologist</title>
-  <meta name="description" content="Privatlivspolitik for Metrologist (com.cocode.measureapp): kameraet bruges kun til at måle på din enhed, intet bliver uploadet, og der indsamles ingen personoplysninger." />
+  <meta name="description" content="Privatlivspolitik for Metrologist (com.cocode.measureapp): kameraet bruges kun til at måle på din enhed, appen uploader ikke noget selv, og der indsamles ingen personoplysninger." />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://measure.cocode.dk/da/privacy/" />
   <link rel="alternate" hreflang="en" href="https://measure.cocode.dk/privacy/" />
@@ -143,40 +143,45 @@
       <section lang="da">
         <h1>Privatlivspolitik</h1>
         <p class="meta">Metrologist &middot; <span class="mono">com.cocode.measureapp</span></p>
-        <p class="meta">Senest opdateret: 14. juli 2026</p>
+        <p class="meta">Senest opdateret: 7. oktober 2026</p>
 
-        <p class="lede"><strong>Metrologist indsamler, sender eller deler ingen personoplysninger.</strong>
+        <p class="lede"><strong>Metrologist indsamler ikke personoplysninger og uploader ikke selv dine fotos eller mål.</strong>
         Det er en Android-app, der måler flade overflader ud fra et foto, og alle beregninger foregår
-        helt og holdent på din enhed.</p>
+        helt og holdent på din enhed. Et billede forlader kun appen, når du trykker på Eksportér og
+        vælger, hvor det skal hen.</p>
 
         <h2>Kamera</h2>
         <p>Metrologist bruger din enheds kamera til ét formål: at tage et foto af den overflade, du vil måle,
-        sammen med den udskrevne målestok. Billedet analyseres <strong>på din enhed</strong> for at finde
-        bredde, højde, areal, diagonal og vinkler. Kameraet bruges aldrig til at optage eller sende noget i
-        baggrunden. Det er kun aktivt, mens du er på optagelsesskærmen, og kun efter at du har givet
-        tilladelse til kameraet.</p>
+        sammen med den udskrevne referencestok. Billedet analyseres <strong>på din enhed</strong> for at finde
+        bredde, højde, areal, diagonal og vinkler. Kameraet optager ikke video og sender ikke noget i
+        baggrunden. Det er tændt, mens Metrologist er åben på din skærm, også når du går mellem appens
+        skærme, og det slukker, når du skifter til en anden app eller lukker Metrologist. Det starter først,
+        når du har givet tilladelse til kameraet, og et foto tages kun, når du trykker på Tag foto.</p>
 
         <h2>Dine fotos bliver på din enhed</h2>
         <ul>
           <li>Fotos behandles <strong>i hukommelsen på din enhed</strong> og bliver <strong>ikke uploadet</strong> nogen steder.</li>
           <li>Appen gemmer <strong>ikke</strong> selv dine målefotos i dit galleri eller på delt lagerplads.</li>
-          <li>Billedanalysen (med det medfølgende OpenCV-bibliotek) foregår lokalt. Intet billede, ingen pixel og ingen måling forlader nogensinde appen.</li>
+          <li>Billedanalysen (med det medfølgende OpenCV-bibliotek) foregår lokalt. Et billede forlader kun appen, når du trykker på Eksportér og vælger, hvor det skal hen (se "Deling af et resultat" nedenfor).</li>
         </ul>
 
         <h2>Indstillinger, du vælger</h2>
-        <p>Dine valg, nemlig målestokkens længde og bredde og den visningsenhed, du foretrækker
-        (centimeter, tommer eller meter), gemmes i en lille privat indstillingsfil på din egen enhed.
-        Den forlader aldrig din telefon og bliver slettet, når du afinstallerer appen eller rydder dens data.</p>
+        <p>Dine valg, nemlig referencestokkens længde og bredde og den visningsenhed, du foretrækker
+        (centimeter, fod og tommer eller meter), gemmes i en lille privat indstillingsfil på din egen enhed.
+        Appen sender aldrig filen nogen steder hen, og den bliver slettet fra telefonen, når du afinstallerer
+        appen eller rydder dens data. Hvis Androids sikkerhedskopiering er slået til, kan filen blive kopieret
+        til din Google-sikkerhedskopi og gendannet derfra (se "Sikkerhedskopi af enheden" nedenfor).</p>
 
         <h2>Deling af et resultat (kun hvis du beder om det)</h2>
         <p>Når du vælger at dele en måling, tegner appen tallene ind på en kopi af dit foto, gemmer billedet
         i sin egen private cache og giver det videre til Androids delemenu. Du vælger selv, hvor det skal
-        hen: en beskedapp, e-mail, filer og så videre. Det sker kun, når du trykker på del, og du vælger helt
-        selv modtageren. Vi modtager aldrig det billede, der deles.</p>
+        hen: en beskedapp, e-mail, filer og så videre. Det sker kun, når du trykker på Eksportér, og du vælger
+        helt selv modtageren. Privatlivspolitikken for den app, du vælger, gælder, når den har fået billedet.
+        Vi modtager aldrig det billede, der deles.</p>
 
         <h2>Intet internet, ingen sporing</h2>
         <ul>
-          <li>Appen beder <strong>ikke om tilladelse til internet</strong> og kan derfor teknisk set ikke sende dine data nogen steder hen.</li>
+          <li>Appen beder <strong>ikke om tilladelse til internettet</strong> og opretter derfor ingen netværksforbindelser selv. Data kan kun forlade den på de måder, du selv starter: Eksportér og weblinks på skærmen "Om Metrologist" (se "Eksterne links" nedenfor).</li>
           <li>Vi bruger <strong>ingen analyseværktøjer, ingen nedbrudsrapportering og ingen reklamer</strong>.</li>
           <li>Der er <strong>ingen sporings-SDK'er fra tredjepart, ingen cookies og ingen reklame-id'er</strong>.</li>
           <li>Den eneste tilladelse, appen beder om under kørsel, er <strong>kameraet</strong>. Den beder ikke om adgang til placering, kontakter, mikrofon eller konti.</li>
@@ -189,9 +194,12 @@
         <a href="https://policies.google.com/privacy" rel="noopener" target="_blank">Googles privatlivspolitik</a> for flere oplysninger.</p>
 
         <h2>Eksterne links</h2>
-        <p>Appen og dette websted linker til udviklerens websted (<a href="https://cocode.dk" rel="noopener" target="_blank">cocode.dk</a>),
-        en LinkedIn-profil og projektets GitHub-side. Når du vælger dem, åbner din browser, og de websteder
-        er omfattet af deres egne privatlivspolitikker.</p>
+        <p>Skærmen "Om Metrologist" i appen har knapper, der åbner websider i din browser: Metrologists hjemmeside,
+        denne privatlivspolitik og projektets GitHub-sider (den nyeste version, kildekoden og siden til
+        fejlmeldinger). En side åbner kun, når du trykker på dens knap. Appen sender ingen data med: den beder
+        Android om at åbne adressen, og din browser opretter derefter forbindelse til siden.</p>
+        <p>Dette websted linker også til udviklerens websted (<a href="https://cocode.dk" rel="noopener" target="_blank">cocode.dk</a>)
+        og en LinkedIn-profil. Alle disse websteder er omfattet af deres egne privatlivspolitikker.</p>
 
         <h2>Børn</h2>
         <p>Appen indsamler ikke bevidst data fra nogen, heller ikke fra børn.</p>

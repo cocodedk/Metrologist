@@ -1,0 +1,30 @@
+<resources>
+    <string name="about_title">Om Metrologist</string>
+
+    <string name="about_name_title">Navn og version</string>
+    <string name="about_version">Version %1$s</string>
+    <string name="about_check_updates">Se den nyeste version</string>
+
+    <string name="about_what_title">Hvad Metrologist gør</string>
+    <string name="about_what">Metrologist måler en flad overflade, for eksempel en væg, en dør, et vindue eller et stykke gulv, ud fra ét foto. Du lægger en referencestok mod overfladen. Det er en lineal med røde og hvide striber og en længde, som du kender. Du tager fotoet i appen og markerer overfladens fire hjørner. Metrologist viser så bredde, højde, areal, diagonal og hjørnevinkler i meter, centimeter eller fod og tommer. Resultatet er et skøn, så tjek vigtige mål med en lineal eller et målebånd. Overfladen skal være flad.</string>
+
+    <string name="about_privacy_title">Privatliv</string>
+    <string name="about_privacy_data">Metrologist indsamler ingen personoplysninger og uploader ikke selv dine fotos eller mål. Alt bliver regnet ud på din telefon.</string>
+    <string name="about_privacy_photos">Dine fotos bliver på din telefon, og appen gemmer dem ikke selv i dit galleri.</string>
+    <string name="about_privacy_permissions">Appen har ingen tilladelse til internettet og bruger ingen analyseværktøjer, fejlrapporter eller reklamer. Den eneste tilladelse, den beder om, er kameraet.</string>
+    <string name="about_privacy_export">Hvis du trykker på Eksportér, åbner Androids delemenu, og du vælger selv, hvor billedet skal hen. Så gælder privatlivspolitikken for den app, du vælger.</string>
+    <string name="about_privacy_link">Læs privatlivspolitikken</string>
+
+    <string name="about_links_title">Links</string>
+    <string name="about_website">Åbn hjemmesiden</string>
+    <string name="about_source">Se kildekoden på GitHub</string>
+    <string name="about_report">Meld en fejl på GitHub</string>
+    <string name="about_no_browser">Ingen app på telefonen kan åbne dette link. Installér en browser, og prøv igen.</string>
+
+    <string name="about_credits">Tak og licenser</string>
+    <string name="about_credits_licence">Metrologist er gratis open source-software under Apache License 2.0.</string>
+    <string name="about_credits_libraries">Appen er bygget med OpenCV, CameraX, Jetpack Compose og Jetpack DataStore.</string>
+
+    <string name="about_made_by">Lavet af Cocode (cocode.dk)</string>
+    <string name="about_made_by_body">Skabt af Babak Bandpey.</string>
+</resources>
