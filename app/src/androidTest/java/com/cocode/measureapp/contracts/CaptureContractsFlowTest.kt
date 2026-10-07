@@ -20,6 +20,7 @@ import com.cocode.measureapp.geometry.Vec3
 import com.cocode.measureapp.geometry.frames.AlignedGravity
 import com.cocode.measureapp.geometry.frames.GravityAlignmentReason
 import com.cocode.measureapp.geometry.frames.QuarterTurn
+import com.cocode.measureapp.model.TextKey
 import com.cocode.measureapp.ui.CapturedImage
 import com.cocode.measureapp.ui.capture.CAMERA_ERROR
 import org.junit.Assert.assertEquals
@@ -160,7 +161,7 @@ class CaptureContractsFlowTest {
         val (mObj, mStick) = missingShot.marks(missingImg)
         d.load(missingImg, mObj, mStick)
         val fail = Expect.failure(d.measure(), Reason.METADATA_UNAVAILABLE)
-        assertTrue(fail.detail!!.contains("Tilt-sensor method"))
+        assertTrue(fail.detail!! mentions TextKey.TILT_METHOD_PROBLEM)
         d.assertMarking()
     }
 }

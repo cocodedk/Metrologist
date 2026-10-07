@@ -15,9 +15,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.cocode.measureapp.R
 import com.cocode.measureapp.capture.gravity.LevelReading
 import com.cocode.measureapp.ui.theme.GreenRead
 import com.cocode.measureapp.ui.theme.StaffRed
@@ -28,7 +30,7 @@ private val UnavailableGrey = Color(0xFF9E9E9E)
 /**
  * Centered tilt level for the camera: a crosshair ring with the pitch/roll readout
  * beneath it. Green when the device is square to the surface (level), red otherwise,
- * grey with "no tilt sensor data" when gravity is unavailable (never green).
+ * grey with "No tilt sensor data" when gravity is unavailable (never green).
  * Pitch here is positive when looking down (see [com.cocode.measureapp.geometry.TiltAngles]).
  */
 @Composable
@@ -40,8 +42,8 @@ fun LevelOverlay(reading: LevelReading, modifier: Modifier = Modifier) {
     }
     val label = when (reading) {
         is LevelReading.Tilt ->
-            "↕ ${reading.angles.pitchDeg.roundToInt()}°   ↔ ${reading.angles.rollDeg.roundToInt()}°"
-        is LevelReading.Unavailable -> "No tilt sensor data"
+            stringResource(R.string.level_reading, reading.angles.pitchDeg.roundToInt(), reading.angles.rollDeg.roundToInt())
+        is LevelReading.Unavailable -> stringResource(R.string.level_unavailable)
     }
     Column(
         modifier = modifier,

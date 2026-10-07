@@ -21,7 +21,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.cocode.measureapp.R
+import com.cocode.measureapp.model.UiText
+import com.cocode.measureapp.ui.text.asString
 import com.cocode.measureapp.ui.theme.StaffRed
 
 /**
@@ -29,7 +33,7 @@ import com.cocode.measureapp.ui.theme.StaffRed
  * an input, which invalidates it) takes precedence over the marking hint.
  */
 @Composable
-fun MarkStatus(note: String, failureMessage: String?, modifier: Modifier = Modifier) {
+fun MarkStatus(note: String, failureMessage: UiText?, modifier: Modifier = Modifier) {
     // Drawn over the photo, so it carries its own scrim and stays small: the marking area is
     // what the user works in, and a correction is read once and then acted on.
     val box = modifier
@@ -37,7 +41,7 @@ fun MarkStatus(note: String, failureMessage: String?, modifier: Modifier = Modif
         .background(Color.Black.copy(alpha = 0.55f), RoundedCornerShape(6.dp))
         .padding(horizontal = 8.dp, vertical = 4.dp)
     if (failureMessage != null) {
-        Text(failureMessage, box, style = MaterialTheme.typography.bodySmall, color = StaffRed)
+        Text(failureMessage.asString(), box, style = MaterialTheme.typography.bodySmall, color = StaffRed)
     } else {
         Text(note, box, style = MaterialTheme.typography.bodySmall)
     }
@@ -68,20 +72,20 @@ fun MarkControls(
     ) {
         val label = MaterialTheme.typography.labelLarge
         val short = Modifier.height(40.dp)
-        OutlinedButton(onClick = onReset, short, contentPadding = pad) { Text("Reset", maxLines = 1, style = label) }
-        OutlinedButton(onClick = onRetake, short, contentPadding = pad) { Text("Retake", maxLines = 1, style = label) }
+        OutlinedButton(onClick = onReset, short, contentPadding = pad) { Text(stringResource(R.string.mark_reset), maxLines = 1, style = label) }
+        OutlinedButton(onClick = onRetake, short, contentPadding = pad) { Text(stringResource(R.string.mark_retake), maxLines = 1, style = label) }
         OutlinedIconButton(onClick = onSettings, Modifier.size(40.dp)) {
-            Icon(Icons.Default.Settings, contentDescription = "Settings", Modifier.size(20.dp))
+            Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.action_settings), Modifier.size(20.dp))
         }
         // The marking hint is worth reading once, not forever: it hides behind this button so the
         // photo keeps the space. A correction after a failed measurement shows itself regardless.
         OutlinedIconButton(onClick = onToggleHint, Modifier.size(40.dp)) {
             Icon(
                 Icons.Default.Info,
-                contentDescription = if (hintShown) "Hide marking help" else "Marking help",
+                contentDescription = stringResource(if (hintShown) R.string.mark_help_hide else R.string.mark_help_show),
                 Modifier.size(20.dp),
             )
         }
-        Button(onClick = onMeasure, short, contentPadding = pad) { Text("Measure", maxLines = 1, style = label) }
+        Button(onClick = onMeasure, short, contentPadding = pad) { Text(stringResource(R.string.mark_measure), maxLines = 1, style = label) }
     }
 }

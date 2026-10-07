@@ -5,6 +5,8 @@ import com.cocode.measureapp.geometry.SolverKind
 import com.cocode.measureapp.geometry.eligibility.EligibilityTolerances as T
 import com.cocode.measureapp.geometry.rectangle.RectangleCandidate
 import com.cocode.measureapp.geometry.rectangle.RectangleTolerances
+import com.cocode.measureapp.model.TextKey
+import com.cocode.measureapp.model.UiText
 
 /**
  * Decides whether a node 01 rectangle plane candidate may be used. Checks, in order:
@@ -17,8 +19,7 @@ object RectangleEligibility {
     fun assess(candidate: RectangleCandidate, input: EligibilityInput): Assessment {
         val accepted = when (candidate) {
             is RectangleCandidate.Rejected -> return ineligible(
-                IneligibleReason.RECTANGLE_REJECTED, candidate.reason.failure,
-                "no rectangle plane (${candidate.reason}): ${candidate.detail}",
+                IneligibleReason.RECTANGLE_REJECTED, candidate.reason.failure, Causes.of(candidate.reason),
             )
             is RectangleCandidate.Accepted -> candidate
         }
@@ -27,14 +28,13 @@ object RectangleEligibility {
         if (!(residual.isFinite() && residual <= T.MAX_ORTHOGONALITY_RESIDUAL)) {
             return ineligible(
                 IneligibleReason.NOT_ORTHOGONAL, MeasurementFailureReason.UNSUPPORTED_GEOMETRY,
-                "the marked corners are not a rectangle in 3D (edge residual $residual > " +
-                    "${T.MAX_ORTHOGONALITY_RESIDUAL}); check the corners or the camera calibration",
+                Causes.then(UiText(TextKey.CAUSE_NOT_A_RECTANGLE), TextKey.ADVICE_CHECK_CORNERS),
             )
         }
         val consistency = when (val s = PlaneChecks.surface(accepted.frame.normal, input.gravity, input.orientation)) {
             is SurfaceVerdict.Contradiction -> return ineligible(
                 IneligibleReason.SURFACE_CONTRADICTION, MeasurementFailureReason.UNSUPPORTED_GEOMETRY,
-                "${s.detail}; check the wall/floor selection or the corners",
+                Causes.then(s.detail, TextKey.ADVICE_SURFACE_AND_CORNERS),
             )
             is SurfaceVerdict.Checked -> s.consistency
         }
@@ -62,6 +62,8 @@ object RectangleEligibility {
         else -> MeasurementFailureReason.UNSUPPORTED_GEOMETRY
     }
 
-    private fun ineligible(reason: IneligibleReason, failure: MeasurementFailureReason, detail: String) =
-        Assessment.Ineligible(SolverKind.RECTANGLE, reason, failure, "Rectangle method: $detail")
+    private fun ineligible(reason: IneligibleReason, failure: MeasurementFailureReason, detail: UiText) =
+        Assessment.Ineligible(
+            SolverKind.RECTANGLE, reason, failure, UiText.withMessages(TextKey.RECTANGLE_METHOD_PROBLEM, detail),
+        )
 }

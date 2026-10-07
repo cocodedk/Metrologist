@@ -5,6 +5,8 @@ import com.cocode.measureapp.geometry.MeasurementFailureReason
 import com.cocode.measureapp.geometry.SolverKind
 import com.cocode.measureapp.geometry.SurfaceOrientation
 import com.cocode.measureapp.geometry.Vec3
+import com.cocode.measureapp.model.TextKey
+import com.cocode.measureapp.model.UiText
 import com.cocode.measureapp.geometry.eligibility.EligibilityTolerances as T
 
 /**
@@ -20,7 +22,7 @@ object GravityEligibility {
     fun assess(input: EligibilityInput): Assessment {
         val down = PlaneChecks.unitDown(input.gravity) ?: return ineligible(
             IneligibleReason.GRAVITY_UNAVAILABLE, MeasurementFailureReason.METADATA_UNAVAILABLE,
-            "${PlaneChecks.gravityProblem(input.gravity)}; hold the phone still and retake the photo",
+            UiText(TextKey.CAUSE_NO_TILT_READING),
         )
         val assumption = when (input.orientation) {
             SurfaceOrientation.HORIZONTAL -> PlaneAssumption.FLOOR_NORMAL_FROM_GRAVITY
@@ -30,8 +32,7 @@ object GravityEligibility {
                 if (!(horizontal.norm() >= T.MIN_RAY_PLANE_COS)) {
                     return ineligible(
                         IneligibleReason.AZIMUTH_UNRESOLVED, MeasurementFailureReason.UNSUPPORTED_GEOMETRY,
-                        "the camera points straight up or down, so a wall's direction is unknown; " +
-                            "choose floor/table or photograph the wall from the front",
+                        UiText(TextKey.CAUSE_WALL_DIRECTION_UNKNOWN),
                     )
                 }
                 PlaneAssumption.WALL_FACES_CAMERA
@@ -40,7 +41,7 @@ object GravityEligibility {
         val frame = GravitySolver.solve(down, input.orientation).frame
         val measured = when (val m = PlaneMeasurer.measure(frame, input)) {
             is PlaneMeasurer.Result.Unusable -> return ineligible(
-                m.reason, RectangleEligibility.failureOf(m.reason), "${m.detail}; check the wall/floor selection",
+                m.reason, RectangleEligibility.failureOf(m.reason), Causes.then(m.detail, TextKey.ADVICE_SURFACE_CHOICE),
             )
             is PlaneMeasurer.Result.Measured -> m
         }
@@ -55,6 +56,8 @@ object GravityEligibility {
         )
     }
 
-    private fun ineligible(reason: IneligibleReason, failure: MeasurementFailureReason, detail: String) =
-        Assessment.Ineligible(SolverKind.GRAVITY, reason, failure, "Tilt-sensor method: $detail")
+    private fun ineligible(reason: IneligibleReason, failure: MeasurementFailureReason, detail: UiText) =
+        Assessment.Ineligible(
+            SolverKind.GRAVITY, reason, failure, UiText.withMessages(TextKey.TILT_METHOD_PROBLEM, detail),
+        )
 }

@@ -1,5 +1,6 @@
 package com.cocode.measureapp.core
 
+import com.cocode.measureapp.SOME_TEXT
 import com.cocode.measureapp.geometry.MeasurementFailureReason
 import com.cocode.measureapp.geometry.MeasurementOutcome
 import com.cocode.measureapp.geometry.MeasurementResult
@@ -24,7 +25,7 @@ class MeasurementSessionContractTest {
     )
 
     private val stickFailure = MeasurementOutcome.Failure(
-        MeasurementFailureReason.INVALID_STICK_CORNERS, "stick box collapsed",
+        MeasurementFailureReason.INVALID_STICK_CORNERS, SOME_TEXT,
     )
 
     @Test

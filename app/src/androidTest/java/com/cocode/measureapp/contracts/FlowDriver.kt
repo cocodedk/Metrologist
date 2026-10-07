@@ -1,5 +1,6 @@
 package com.cocode.measureapp.contracts
 
+import android.content.Context
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertIsSelected
@@ -12,13 +13,17 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextReplacement
+import androidx.test.platform.app.InstrumentationRegistry
+import com.cocode.measureapp.R
 import com.cocode.measureapp.core.Units
 import com.cocode.measureapp.geometry.MeasurementOutcome
 import com.cocode.measureapp.geometry.MeasurementResult
 import com.cocode.measureapp.geometry.SurfaceOrientation
 import com.cocode.measureapp.geometry.Vec2
+import com.cocode.measureapp.model.UiText
 import com.cocode.measureapp.ui.CapturedImage
 import com.cocode.measureapp.ui.surface.surfaceLabel
+import com.cocode.measureapp.ui.text.resolve
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -64,11 +69,24 @@ class FlowDriver(private val rule: ComposeContentTestRule, val s: FlowState = Fl
         return s.outcomes.last()
     }
 
-    fun select(o: SurfaceOrientation) = click(surfaceLabel(o))
+    fun select(o: SurfaceOrientation) = click(context.getString(surfaceLabel(o)))
 
     fun assertSelected(o: SurfaceOrientation) {
-        rule.onNodeWithText(surfaceLabel(o)).assertIsSelected()
+        rule.onNodeWithText(context.getString(surfaceLabel(o))).assertIsSelected()
     }
+
+    private val context: Context get() = InstrumentationRegistry.getInstrumentation().targetContext
+
+    /** The words the screens show for [t]. */
+    fun words(t: UiText): String = t.resolve(context)
+
+    fun assertShown(t: UiText) = assertShown(words(t))
+
+    fun assertAbsent(t: UiText) = assertAbsent(words(t))
+
+    /** The Results line "Confidence: <label> (<percent>%)" up to the percentage. */
+    fun confidenceLine(label: UiText): String =
+        context.getString(R.string.results_confidence, words(label), 0).substringBefore('0')
 
     fun has(text: String, substring: Boolean = true): Boolean =
         rule.onAllNodesWithText(text, substring = substring).fetchSemanticsNodes().isNotEmpty()

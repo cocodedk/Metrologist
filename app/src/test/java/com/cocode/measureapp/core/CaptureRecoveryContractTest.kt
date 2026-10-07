@@ -1,5 +1,6 @@
 package com.cocode.measureapp.core
 
+import com.cocode.measureapp.SOME_TEXT
 import com.cocode.measureapp.capture.gravity.GravitySample
 import com.cocode.measureapp.capture.gravity.GravityUnavailableReason
 import com.cocode.measureapp.capture.recovery.CalibrationQuality
@@ -14,6 +15,8 @@ import com.cocode.measureapp.capture.recovery.consumeFrame
 import com.cocode.measureapp.capture.recovery.exposureTimestampOf
 import com.cocode.measureapp.geometry.MeasurementFailureReason
 import com.cocode.measureapp.geometry.MeasurementOutcome
+import com.cocode.measureapp.model.TextKey
+import com.cocode.measureapp.model.UiText
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -47,6 +50,7 @@ class CaptureRecoveryContractTest {
         c.complete(id, consumeFrame(frame) { Shot(metadata(shotId, frame).also { it.requireComplete(4000, 3000) }) })
 
     private val delivered = mutableListOf<Shot>()
+    private val CAMERA_FAILED = UiText(TextKey.CAPTURE_CAMERA_ERROR)
     private fun screen() = CaptureController<Shot>(discard = { it.discarded = true }, requestIdOf = { it.metadata.requestId })
     private fun CaptureController<Shot>.retryEnabled() = state.canCapture(permissionGranted = true, cameraReady = true)
 
@@ -81,8 +85,8 @@ class CaptureRecoveryContractTest {
     fun C01_cameraErrorShowsMessageThenRetrySucceedsOnSameScreen() {
         val c = screen()
         val first = c.begin()!!
-        assertNull(c.complete(first, CaptureOutcome.Failure("Capture failed. Try again.")))
-        assertEquals("Capture failed. Try again.", c.state.error)
+        assertNull(c.complete(first, CaptureOutcome.Failure(CAMERA_FAILED)))
+        assertEquals(CAMERA_FAILED, c.state.error)
         assertTrue(c.retryEnabled())
         assertFalse("retry still requires a ready camera", c.state.canCapture(true, cameraReady = false))
         assertFalse("retry still requires permission", c.state.canCapture(false, cameraReady = true))
@@ -174,7 +178,7 @@ class CaptureRecoveryContractTest {
     fun C11_retakeAfterFailedMeasurementInvalidatesAndCapturesFreshly() {
         var session = MeasurementSession()
         session = session.complete(session.revision, MeasurementOutcome.Failure(
-            MeasurementFailureReason.INVALID_STICK_CORNERS, "stick box collapsed",
+            MeasurementFailureReason.INVALID_STICK_CORNERS, SOME_TEXT,
         ))
         val stale = screen().apply { begin() }   // old screen left busy
         stale.dispose()

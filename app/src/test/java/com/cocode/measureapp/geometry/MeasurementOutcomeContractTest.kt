@@ -1,5 +1,6 @@
 package com.cocode.measureapp.geometry
 
+import com.cocode.measureapp.SOME_TEXT
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -39,11 +40,11 @@ class MeasurementOutcomeContractTest {
     @Test
     fun everyFailureReasonIsUnusableAndKeepsItsReason() {
         for (reason in MeasurementFailureReason.values()) {
-            val outcome: MeasurementOutcome = MeasurementOutcome.Failure(reason, "detail for $reason")
+            val outcome: MeasurementOutcome = MeasurementOutcome.Failure(reason, SOME_TEXT)
             assertFalse(outcome.usable)
             assertNull(outcome.successOrNull())
             assertEquals(reason, (outcome as MeasurementOutcome.Failure).reason)
-            assertEquals("detail for $reason", outcome.detail)
+            assertEquals(SOME_TEXT, outcome.detail)
         }
     }
 

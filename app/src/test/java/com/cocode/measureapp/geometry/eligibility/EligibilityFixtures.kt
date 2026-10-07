@@ -123,7 +123,7 @@ object EligibilityFixtures {
 
     fun failure(o: MeasurementOutcome, label: String): MeasurementOutcome.Failure {
         val f = o as? MeasurementOutcome.Failure ?: throw AssertionError("$label: expected failure, got $o")
-        assertTrue("$label actionable detail", !f.detail.isNullOrBlank())
+        assertNotNull("$label actionable detail", f.detail)
         return f
     }
 

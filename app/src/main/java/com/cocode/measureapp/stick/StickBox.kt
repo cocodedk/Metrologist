@@ -46,12 +46,12 @@ object StickBox {
     /**
      * Returns the marked [box] unchanged when it is a valid four-corner box in either winding
      * (see [MarkerValidator.validateStick]); throws [IllegalArgumentException] with the
-     * correction message for crossed, collapsed, collinear or non-finite marks.
+     * description of the broken rule for crossed, collapsed, collinear or non-finite marks.
      */
     fun requireValid(box: List<Vec2>): List<Vec2> =
         when (val v = MarkerValidator.validateStick(box)) {
             is MarkerValidation.Accepted -> v.corners
-            is MarkerValidation.Rejected -> throw IllegalArgumentException(v.message)
+            is MarkerValidation.Rejected -> throw IllegalArgumentException(v.describe())
         }
 
     /**

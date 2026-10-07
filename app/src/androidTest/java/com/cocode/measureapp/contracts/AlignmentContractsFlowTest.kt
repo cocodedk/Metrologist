@@ -23,6 +23,8 @@ import com.cocode.measureapp.geometry.frames.FrameUnavailableReason
 import com.cocode.measureapp.geometry.frames.LensFacing
 import com.cocode.measureapp.geometry.frames.ProvenancedIntrinsics
 import com.cocode.measureapp.geometry.frames.QuarterTurn
+import com.cocode.measureapp.model.TextKey
+import com.cocode.measureapp.model.UiText
 import com.cocode.measureapp.ui.CapturedImage
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -116,7 +118,7 @@ class AlignmentContractsFlowTest {
         val legacy = Expect.success(d.measure())
         assertEquals(CalibrationStatus.UNAVAILABLE, legacy.diagnostics!!.calibration!!.status)
         assertTrue("not a guessed high-confidence result", legacy.confidence <= 0.3)
-        d.assertShown("Camera calibration is unavailable")
-        d.assertShown("Low confidence")
+        d.assertShown(UiText(TextKey.CAVEAT_LENS_UNAVAILABLE))
+        d.assertShown(d.confidenceLine(UiText(TextKey.CONFIDENCE_LOW)))
     }
 }

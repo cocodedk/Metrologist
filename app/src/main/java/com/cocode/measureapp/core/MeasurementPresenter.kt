@@ -13,11 +13,13 @@ import com.cocode.measureapp.geometry.StickProfile
 import com.cocode.measureapp.geometry.SurfaceOrientation
 import com.cocode.measureapp.geometry.Vec2
 import com.cocode.measureapp.geometry.Vec3
+import com.cocode.measureapp.model.TextKey
+import com.cocode.measureapp.model.UiText
 import kotlin.math.roundToInt
 
 /**
- * Formatted view model produced by [MeasurementPresenter]. All string fields are already
- * locale-formatted for display; no further formatting is required in the UI layer.
+ * Formatted view model produced by [MeasurementPresenter]. The dimension strings are already
+ * formatted for display; every sentence is a [UiText] that the UI layer words from resources.
  */
 data class MeasurementView(
     val usable: Boolean,
@@ -26,14 +28,15 @@ data class MeasurementView(
     val area: String,
     val diagonal: String,
     val cornerAngles: List<Double>,   // degrees, each rounded to 1 decimal
-    val confidenceLabel: String,
+    val confidenceLabel: UiText,
     val confidencePercent: Int,
-    val solverName: String,
-    val caveats: List<String>,
+    /** The solver behind a success; null when nothing was measured. */
+    val solver: SolverKind?,
+    val caveats: List<UiText>,
     /** Why the attempt failed; null for a success (and for the legacy zero-confidence path). */
     val failure: MeasurementFailureReason? = null,
     /** Specific correction text for an unusable view; null for a success. */
-    val message: String? = null,
+    val message: UiText? = null,
 )
 
 /**
@@ -107,7 +110,7 @@ object MeasurementPresenter {
         if (r.confidence > 0.0) {
             formatted(r.measurement, r.diagnostics?.solver ?: r.solution.solver, r.confidence, r.diagnostics, unit)
         } else {
-            unmeasured(null, LEGACY_FAILURE)
+            unmeasured(null, UiText(TextKey.MEASURE_FAILED))
         }
 
     private fun formatted(
@@ -125,26 +128,21 @@ object MeasurementPresenter {
         cornerAngles = m.cornerAngles.map { kotlin.math.round(it * 10) / 10.0 },
         confidenceLabel = DiagnosticsText.confidenceLabel(confidence),
         confidencePercent = (confidence * 100).roundToInt(),
-        solverName = when (solver) {
-            SolverKind.RECTANGLE -> "Rectangle method"
-            SolverKind.GRAVITY -> "Tilt-sensor fallback"
-        },
+        solver = solver,
         caveats = diagnostics?.let { DiagnosticsText.caveats(it) } ?: emptyList(),
     )
 
-    private fun unmeasured(reason: MeasurementFailureReason?, message: String) = MeasurementView(
+    private fun unmeasured(reason: MeasurementFailureReason?, message: UiText) = MeasurementView(
         usable = false,
         width = NOT_MEASURED, height = NOT_MEASURED, area = NOT_MEASURED, diagonal = NOT_MEASURED,
         cornerAngles = emptyList(),
-        confidenceLabel = "Not measured",
+        confidenceLabel = UiText(TextKey.CONFIDENCE_NOT_MEASURED),
         confidencePercent = 0,
-        solverName = "None",
+        solver = null,
         caveats = emptyList(),
         failure = reason,
         message = message,
     )
 
     private const val NOT_MEASURED = "—"
-    private const val LEGACY_FAILURE =
-        "Could not measure confidently — check the markers and try a moderate angle."
 }

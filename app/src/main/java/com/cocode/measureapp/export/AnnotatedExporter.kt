@@ -7,7 +7,9 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import androidx.core.content.FileProvider
+import com.cocode.measureapp.R
 import com.cocode.measureapp.core.MeasurementView
+import com.cocode.measureapp.ui.text.resolve
 import java.io.File
 import java.io.FileOutputStream
 import kotlinx.coroutines.Dispatchers
@@ -24,10 +26,10 @@ object AnnotatedExporter {
             isAntiAlias = true
         }
         val lines = listOf(
-            "W ${view.width}",
-            "H ${view.height}",
-            "Area ${view.area}",
-            "${view.confidenceLabel} (${view.confidencePercent}%)",
+            context.getString(R.string.export_width, view.width),
+            context.getString(R.string.export_height, view.height),
+            context.getString(R.string.export_area, view.area),
+            context.getString(R.string.results_confidence, view.confidenceLabel.resolve(context), view.confidencePercent),
         )
         lines.forEachIndexed { i, line ->
             canvas.drawText(line, 24f, (i + 1) * paint.textSize * 1.2f, paint)
@@ -43,7 +45,7 @@ object AnnotatedExporter {
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
         withContext(Dispatchers.Main) {
-            context.startActivity(Intent.createChooser(intent, "Share measurement"))
+            context.startActivity(Intent.createChooser(intent, context.getString(R.string.export_share_title)))
         }
     }
 }

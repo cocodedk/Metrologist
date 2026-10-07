@@ -1,5 +1,8 @@
 package com.cocode.measureapp.geometry.eligibility
 
+import com.cocode.measureapp.model.TextKey
+import com.cocode.measureapp.mentions
+import com.cocode.measureapp.allKeys
 import com.cocode.measureapp.core.DiagnosticsText
 import com.cocode.measureapp.geometry.ContractScenes
 import com.cocode.measureapp.geometry.MeasurementFailureReason
@@ -17,7 +20,7 @@ object ShapeCases {
         val r = F.ineligible(F.rectangle(i), label)
         val expected = setOf(IneligibleReason.NOT_ORTHOGONAL, IneligibleReason.RECTANGLE_REJECTED)
         assertTrue("$label reason ${r.reason}", r.reason in expected)
-        assertTrue("$label detail names the method", r.detail.startsWith("Rectangle method"))
+        assertEquals("$label detail names the method", TextKey.RECTANGLE_METHOD_PROBLEM, r.detail.key)
     }
 
     /** Frontal 111.8-degree quad on a wall 4 m away, level phone: truth recovered, assumption explicit. */
@@ -34,7 +37,7 @@ object ShapeCases {
         val d = s.diagnostics!!
         assertEquals(PlaneAssumption.WALL_FACES_CAMERA, d.assumption)
         assertTrue("confidence ${s.confidence} must stay below Medium", s.confidence < 0.4)
-        assertTrue(DiagnosticsText.caveats(d).any { it.contains("faces the camera") })
+        assertTrue(DiagnosticsText.caveats(d).any { it mentions TextKey.CAVEAT_WALL_ASSUMED })
     }
 
     /** The same quad without usable gravity: an explicit failure naming the missing reading. */
@@ -43,7 +46,7 @@ object ShapeCases {
         assertRectangleRejected(i, "no gravity")
         val f = F.failure(F.evaluate(i), "no gravity")
         assertEquals(MeasurementFailureReason.METADATA_UNAVAILABLE, f.reason)
-        assertTrue(f.detail!!, f.detail!!.contains("STALE_SAMPLE") && f.detail!!.contains("Rectangle method"))
+        assertTrue(f.detail!!.allKeys().toString(), f.detail!! mentions TextKey.CAUSE_NO_TILT_READING && f.detail!! mentions TextKey.RECTANGLE_METHOD_PROBLEM)
     }
 
     /** The quad on a table seen straight down: the floor normal from gravity keeps its true shape. */

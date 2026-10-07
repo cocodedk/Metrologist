@@ -7,6 +7,9 @@ import com.cocode.measureapp.geometry.MeasurementFailureReason
 import com.cocode.measureapp.geometry.ProfileValidation
 import com.cocode.measureapp.geometry.StickProfile
 import com.cocode.measureapp.geometry.Vec2
+import com.cocode.measureapp.allKeys
+import com.cocode.measureapp.mentions
+import com.cocode.measureapp.model.TextKey
 import com.cocode.measureapp.stick.StickScale
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -70,8 +73,8 @@ class ReferenceDimensionsContractTest {
             assertEquals(setOf(ReferenceField.LENGTH), check.fields)
             assertEquals("raw value retained, not defaulted", bad, check.rawLengthMeters, 0.0)
             assertEquals("valid width preserved", 0.05, check.rawWidthMeters, 0.0)
-            assertTrue(check.message.contains("length"))
-            assertFalse(check.message.contains("width"))
+            assertTrue(check.message mentions TextKey.REFERENCE_LENGTH_INVALID)
+            assertFalse(check.message mentions TextKey.REFERENCE_WIDTH_INVALID)
         }
     }
 
@@ -82,14 +85,18 @@ class ReferenceDimensionsContractTest {
             assertEquals(setOf(ReferenceField.WIDTH), check.fields)
             assertEquals("valid length preserved", 2.0, check.rawLengthMeters, 0.0)
             assertEquals(bad, check.rawWidthMeters, 0.0)
+            assertTrue(check.message mentions TextKey.REFERENCE_WIDTH_INVALID)
+            assertFalse(check.message mentions TextKey.REFERENCE_LENGTH_INVALID)
         }
     }
 
     @Test fun bothInvalidPersistedValuesAreBothNamed() {
         val check = ReferenceDimensions.fromStored(Double.NaN, -1.0, 1.0, 0.04)
+        check as ReferenceCheck.NeedsCorrection
+        assertEquals(setOf(ReferenceField.LENGTH, ReferenceField.WIDTH), check.fields)
         assertEquals(
-            setOf(ReferenceField.LENGTH, ReferenceField.WIDTH),
-            (check as ReferenceCheck.NeedsCorrection).fields,
+            listOf(TextKey.SENTENCES, TextKey.REFERENCE_LENGTH_INVALID, TextKey.REFERENCE_WIDTH_INVALID),
+            check.message.allKeys(),
         )
     }
 

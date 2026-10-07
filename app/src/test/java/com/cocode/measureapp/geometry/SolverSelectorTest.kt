@@ -1,5 +1,6 @@
 package com.cocode.measureapp.geometry
 
+import com.cocode.measureapp.SOME_TEXT
 import com.cocode.measureapp.geometry.eligibility.Assessment
 import com.cocode.measureapp.geometry.eligibility.IneligibleReason
 import com.cocode.measureapp.geometry.eligibility.PlaneAssumption
@@ -23,7 +24,7 @@ class SolverSelectorTest {
     private fun floor(confidence: Double) = eligible(SolverKind.GRAVITY, confidence, PlaneAssumption.FLOOR_NORMAL_FROM_GRAVITY)
 
     private fun rejected(solver: SolverKind, reason: IneligibleReason) =
-        Assessment.Ineligible(solver, reason, MeasurementFailureReason.UNSUPPORTED_GEOMETRY, "$solver: $reason")
+        Assessment.Ineligible(solver, reason, MeasurementFailureReason.UNSUPPORTED_GEOMETRY, SOME_TEXT)
 
     private fun chosen(s: Selection) = (s as? Selection.Chosen ?: throw AssertionError("expected a choice, got $s")).chosen
 

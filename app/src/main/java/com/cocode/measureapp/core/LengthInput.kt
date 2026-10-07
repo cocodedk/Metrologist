@@ -43,9 +43,6 @@ object LengthInput {
         return meters.takeIf(ReferenceDimensions::isValidMeters)
     }
 
-    /** Correction shown in the editor while [text] is not a valid length. */
-    const val CORRECTION_MESSAGE = "Enter a finite positive number"
-
     private fun trim(value: Double): String {
         val s = String.format(Locale.US, "%.4f", value)
         return s.trimEnd('0').trimEnd('.')

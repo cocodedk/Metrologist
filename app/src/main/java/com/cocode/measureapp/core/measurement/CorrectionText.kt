@@ -2,36 +2,34 @@ package com.cocode.measureapp.core.measurement
 
 import com.cocode.measureapp.geometry.MeasurementFailureReason
 import com.cocode.measureapp.geometry.MeasurementOutcome
+import com.cocode.measureapp.model.TextKey
+import com.cocode.measureapp.model.UiText
 
 /** The recovery the marking flow offers first for a failure; Back and Retake always remain. */
 enum class RecoveryAction { REMARK, SETTINGS, RETAKE }
 
 /**
  * User-facing correction text for the shared failure vocabulary. The producer's [detail]
- * (marker rule, both methods' eligibility explanations, calibration note) is kept verbatim
- * after the headline, so the specific cause is never replaced by a generic message.
+ * (marker rule, both methods' eligibility explanations, calibration note) is kept after the
+ * headline, so the specific cause is never replaced by a generic message.
  */
 object CorrectionText {
-    fun headline(reason: MeasurementFailureReason): String = when (reason) {
-        MeasurementFailureReason.INVALID_OBJECT_CORNERS ->
-            "Adjust the object corners and measure again."
-        MeasurementFailureReason.INVALID_STICK_CORNERS ->
-            "Adjust the stick box so it outlines the reference stick, then measure again."
-        MeasurementFailureReason.INVALID_REFERENCE_DIMENSIONS ->
-            "Correct the reference stick size in Settings; your photo and marks are kept."
-        MeasurementFailureReason.METADATA_UNAVAILABLE ->
-            "This photo lacks the camera data needed to measure it; retake the photo."
-        MeasurementFailureReason.UNSUPPORTED_GEOMETRY ->
-            "This view cannot be measured as marked; check the wall/floor choice and the marks, " +
-                "or retake from a moderate angle."
-        MeasurementFailureReason.NUMERICAL_FAILURE ->
-            "The calculation was unstable; adjust the marks or retake from a moderate angle."
-    }
+    fun headline(reason: MeasurementFailureReason): UiText = UiText(
+        when (reason) {
+            MeasurementFailureReason.INVALID_OBJECT_CORNERS -> TextKey.FIX_OBJECT_CORNERS
+            MeasurementFailureReason.INVALID_STICK_CORNERS -> TextKey.FIX_STICK_BOX
+            MeasurementFailureReason.INVALID_REFERENCE_DIMENSIONS -> TextKey.FIX_REFERENCE_SIZE
+            MeasurementFailureReason.METADATA_UNAVAILABLE -> TextKey.FIX_RETAKE_PHOTO
+            MeasurementFailureReason.UNSUPPORTED_GEOMETRY -> TextKey.FIX_UNSUPPORTED_VIEW
+            MeasurementFailureReason.NUMERICAL_FAILURE -> TextKey.FIX_UNSTABLE
+        },
+    )
 
     /** Headline followed by the producer's specific explanation, when it has one. */
-    fun message(failure: MeasurementOutcome.Failure): String {
-        val detail = failure.detail?.trim().orEmpty()
-        return if (detail.isEmpty()) headline(failure.reason) else "${headline(failure.reason)} $detail"
+    fun message(failure: MeasurementOutcome.Failure): UiText {
+        val headline = headline(failure.reason)
+        val detail = failure.detail ?: return headline
+        return UiText.withMessages(TextKey.SENTENCES, headline, detail)
     }
 
     fun action(reason: MeasurementFailureReason): RecoveryAction = when (reason) {

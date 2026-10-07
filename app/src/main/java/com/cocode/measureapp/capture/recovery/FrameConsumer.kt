@@ -1,7 +1,10 @@
 package com.cocode.measureapp.capture.recovery
 
+import com.cocode.measureapp.model.TextKey
+import com.cocode.measureapp.model.UiText
+
 /** User-facing message for a frame that arrived but could not be converted or described. */
-const val CONVERSION_FAILED = "Could not read the captured photo. Try again."
+val CONVERSION_FAILED = UiText(TextKey.CAPTURE_CONVERSION_FAILED)
 
 /**
  * Converts an acquired [frame] (an `ImageProxy` on Android) and always closes it, whether

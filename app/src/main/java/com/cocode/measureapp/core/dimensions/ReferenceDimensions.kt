@@ -1,5 +1,8 @@
 package com.cocode.measureapp.core.dimensions
 
+import com.cocode.measureapp.model.TextKey
+import com.cocode.measureapp.model.UiText
+
 /** Which app-level reference dimension a [ReferenceCheck.NeedsCorrection] refers to. */
 enum class ReferenceField { LENGTH, WIDTH }
 
@@ -22,10 +25,9 @@ sealed class ReferenceCheck {
         }
 
         /** User-facing explanation naming each dimension that needs correction. */
-        val message: String
-            get() = fields.sortedBy { it.ordinal }.joinToString(" ") {
-                ReferenceDimensions.correctionMessage(it)
-            }
+        val message: UiText
+            get() = fields.sortedBy { it.ordinal }.map(ReferenceDimensions::correctionMessage)
+                .reduce { all, next -> UiText.withMessages(TextKey.SENTENCES, all, next) }
     }
 }
 
@@ -64,13 +66,17 @@ object ReferenceDimensions {
 
     /** Guards a storage write: returns [meters] or throws for a non-finite / non-positive value. */
     fun requireValid(field: ReferenceField, meters: Double): Double {
-        require(isValidMeters(meters)) { "${correctionMessage(field)} Got $meters." }
+        require(isValidMeters(meters)) {
+            "Reference stick ${field.name.lowercase()} must be a finite positive number. Got $meters."
+        }
         return meters
     }
 
     /** Correction text for one [field]. */
-    fun correctionMessage(field: ReferenceField): String = when (field) {
-        ReferenceField.LENGTH -> "Reference stick length must be a finite positive number."
-        ReferenceField.WIDTH -> "Reference stick width must be a finite positive number."
-    }
+    fun correctionMessage(field: ReferenceField): UiText = UiText(
+        when (field) {
+            ReferenceField.LENGTH -> TextKey.REFERENCE_LENGTH_INVALID
+            ReferenceField.WIDTH -> TextKey.REFERENCE_WIDTH_INVALID
+        },
+    )
 }

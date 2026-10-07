@@ -30,7 +30,7 @@ data class StickProfile(
                 ProfileValidation.Valid(StickProfile(totalLength, bandCount, width))
             } catch (e: IllegalArgumentException) {
                 ProfileValidation.Rejected(
-                    MeasurementOutcome.Failure(MeasurementFailureReason.INVALID_REFERENCE_DIMENSIONS, e.message),
+                    MeasurementOutcome.Failure(MeasurementFailureReason.INVALID_REFERENCE_DIMENSIONS),
                 )
             }
     }

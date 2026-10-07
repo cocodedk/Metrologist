@@ -16,6 +16,8 @@ import com.cocode.measureapp.geometry.frames.CalibrationProvenance
 import com.cocode.measureapp.geometry.frames.CalibrationStatus
 import com.cocode.measureapp.geometry.frames.GravityAlignmentReason
 import com.cocode.measureapp.geometry.frames.QuarterTurn
+import com.cocode.measureapp.model.TextKey
+import com.cocode.measureapp.model.UiText
 import com.cocode.measureapp.ui.CapturedImage
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -51,9 +53,9 @@ class RecoveryContractsFlowTest {
     }
 
     /** A failure keeps its reason, explains it on the marking screen and formats nothing. */
-    private fun FlowDriver.fails(reason: Reason, vararg detail: String): MeasurementOutcome.Failure {
+    private fun FlowDriver.fails(reason: Reason, vararg detail: TextKey): MeasurementOutcome.Failure {
         val fail = Expect.failure(measure(), reason)
-        detail.forEach { assertTrue("detail should mention '$it': ${fail.detail}", fail.detail!!.contains(it)) }
+        detail.forEach { assertTrue("detail should mention '$it': ${fail.detail}", fail.detail!! mentions it) }
         val view = MeasurementPresenter.present(fail, s.unit)
         assertFalse(view.usable)
         assertEquals("—", view.width)
@@ -74,10 +76,10 @@ class RecoveryContractsFlowTest {
         d.succeeds(d.s.captured!!, SolverKind.GRAVITY)
 
         d.select(HORIZONTAL) // both candidates ineligible
-        d.fails(Reason.UNSUPPORTED_GEOMETRY, "Rectangle method", "Tilt-sensor method")
+        d.fails(Reason.UNSUPPORTED_GEOMETRY, TextKey.RECTANGLE_METHOD_PROBLEM, TextKey.TILT_METHOD_PROBLEM)
 
         d.load(quad.image(gravity = noGravity), quad.objectPixels, quad.stickPixels) // missing gravity
-        d.fails(Reason.METADATA_UNAVAILABLE, "NO_SAMPLE_AT_OR_BEFORE_EXPOSURE")
+        d.fails(Reason.METADATA_UNAVAILABLE, TextKey.CAUSE_NO_TILT_READING)
 
         // Without gravity a real rectangle still succeeds, its surface explicitly unverified;
         // approximate intrinsics stay approximate through the successful solve.
@@ -90,8 +92,8 @@ class RecoveryContractsFlowTest {
             assertEquals(unverified.scene.calibration, ok.diagnostics!!.calibration)
             assertTrue(ok.confidence <= 0.6)
         }
-        d.assertShown("No tilt reading at capture")
-        d.assertShown("Camera calibration is approximate")
+        d.assertShown(UiText(TextKey.CAVEAT_NO_TILT_READING))
+        d.assertShown(UiText(TextKey.CAVEAT_LENS_APPROXIMATE))
         d.clickResults("Re-mark")
 
         // Projection singularity: the stick is marked above the floor's horizon.
@@ -103,7 +105,7 @@ class RecoveryContractsFlowTest {
         d.load(Scenes.image(Scenes.blank(Targets.W, Targets.H), k, AlignedGravity.Available(floor.down, 0L),
             CalibrationProvenance.CALIBRATED), obj, skyStick)
         d.select(HORIZONTAL)
-        d.fails(Reason.UNSUPPORTED_GEOMETRY, "both sides")
+        d.fails(Reason.UNSUPPORTED_GEOMETRY, TextKey.CAUSE_MARKS_OFF_SURFACE)
     }
 
     @Test fun C11_retakeAfterFailedMeasurementCapturesAgainWithoutOldResult() {

@@ -1,0 +1,81 @@
+<resources>
+    <!-- Sentences the measuring code asks for (see TextKey). %1$ and %2$ take numbers or other sentences. -->
+
+    <!-- How sure the result is -->
+    <string name="msg_confidence_high">High</string>
+    <string name="msg_confidence_medium">Medium</string>
+    <string name="msg_confidence_low">Low</string>
+    <string name="msg_confidence_not_measured">Not measured</string>
+
+    <!-- Notes under a result -->
+    <string name="msg_caveat_low_confidence">The result is uncertain. The corners you marked may not be at right angles, or you may have taken the photo at too shallow an angle. Try again from a moderate angle.</string>
+    <string name="msg_caveat_stick_spacing">The stripes on the stick do not look evenly spaced in the photo. Check that the stick lies flat on the surface.</string>
+    <string name="msg_caveat_tilt_sensor_method">The app used your phone\'s tilt sensor and the surface type (Wall or Floor) to find the surface, not the shape of the corners you marked. Check the confidence and the other notes.</string>
+    <string name="msg_caveat_steep_camera">The camera was tilted steeply. Keep the whole surface in view and avoid looking at it edge-on. For a floor or a table, point the camera down at it.</string>
+    <string name="msg_caveat_lens_approximate">The app could only estimate your camera\'s lens details, so treat the measurements as estimates.</string>
+    <string name="msg_caveat_lens_unavailable">The app had no lens details for this photo, so the measurements are rough estimates.</string>
+    <string name="msg_caveat_no_tilt_reading">Your phone\'s tilt sensor gave no reading for this photo, so the app could not check that Wall or Floor is right.</string>
+    <string name="msg_caveat_wall_assumed">The app assumed that the wall faces the camera straight on, because the tilt sensor cannot tell which way a wall faces.</string>
+    <string name="msg_caveat_stick_width_unknown">The width of the stick was not known, so the app could not use it to check the result.</string>
+
+    <!-- What to do after a failed measurement -->
+    <string name="msg_fix_object_corners">Move the corners of the box labelled Object onto the four corners of the object, then tap Measure again.</string>
+    <string name="msg_fix_stick_box">Adjust the box labelled Stick so that it outlines the reference stick, then tap Measure again.</string>
+    <string name="msg_fix_reference_size">Correct the reference stick size in Settings. Your photo and marks are kept.</string>
+    <string name="msg_fix_retake_photo">This photo is missing camera data that the app needs. Tap Retake to take a new photo.</string>
+    <string name="msg_fix_unsupported_view">The app cannot measure this view as marked. Check your marks and any Surface choice (Wall or Floor), or tap Retake and shoot from a moderate angle.</string>
+    <string name="msg_fix_unstable">The calculation was not stable. Adjust your marks, or tap Retake and shoot from a moderate angle.</string>
+    <string name="msg_measure_failed">The app could not measure this with confidence. Check your marks and try a moderate angle.</string>
+    <string name="msg_sentences">%1$s %2$s</string>
+
+    <!-- Marks that cannot be used -->
+    <string name="msg_object_point_count">The box labelled Object needs exactly 4 corners.</string>
+    <string name="msg_object_non_finite">Some corners of the box labelled Object are not at valid positions. Place one corner on each corner of the object.</string>
+    <string name="msg_object_coincident">Two corners of the box labelled Object are on top of each other. Spread them apart, so that each one sits on its own corner of the object.</string>
+    <string name="msg_object_collinear">Three or more corners of the box labelled Object lie on one line. Place one corner on each corner of the object.</string>
+    <string name="msg_object_self_crossing">The lines between the corners of the box labelled Object cross each other. Place one corner on each corner of the object.</string>
+    <string name="msg_object_concave">One corner of the box labelled Object sits inside the others. Place one corner on each corner of the object.</string>
+    <string name="msg_object_zero_area">The corners of the box labelled Object enclose no area. Place one corner on each corner of the object.</string>
+    <string name="msg_stick_point_count">The box labelled Stick needs exactly 4 corners.</string>
+    <string name="msg_stick_non_finite">Some corners of the box labelled Stick are not at valid positions. Drag them around the stick, so that opposite sides stay opposite.</string>
+    <string name="msg_stick_coincident">Two corners of the box labelled Stick are on top of each other. Spread them apart.</string>
+    <string name="msg_stick_collinear">Three or more corners of the box labelled Stick lie on one line. Drag them around the stick, so that opposite sides stay opposite.</string>
+    <string name="msg_stick_self_crossing">The lines between the corners of the box labelled Stick cross each other. Drag the corners around the stick, so that opposite sides stay opposite.</string>
+    <string name="msg_stick_concave">One corner of the box labelled Stick sits inside the others. Drag the corners around the stick, so that opposite sides stay opposite.</string>
+    <string name="msg_stick_zero_area">The corners of the box labelled Stick enclose no area. Drag them around the stick, so that opposite sides stay opposite.</string>
+
+    <!-- The stick size in Settings is not usable -->
+    <string name="msg_reference_length_invalid">Enter the reference stick\'s measured length as a number greater than zero.</string>
+    <string name="msg_reference_width_invalid">Enter the reference stick\'s measured width as a number greater than zero.</string>
+
+    <!-- Why a measuring method could not be used -->
+    <string name="msg_cause_calculation_unstable">Some values in the calculation could not be used.</string>
+    <string name="msg_cause_no_lens_details">The camera\'s lens details are missing or not valid for this photo.</string>
+    <string name="msg_cause_view_too_shallow">You are looking along the surface at too shallow an angle. Shoot from a more moderate angle.</string>
+    <string name="msg_cause_corners_unusable">The marked corners do not outline a rectangle that the app can work with.</string>
+    <string name="msg_cause_shape_too_sensitive">A tiny move of one corner would change the result too much. Shoot from a more moderate angle, and place the corners as precisely as you can.</string>
+    <string name="msg_cause_not_a_rectangle">The marked corners do not make a rectangle on the surface.</string>
+    <string name="msg_cause_marks_off_surface">Some of your marks cannot be placed on the same surface. Check the boxes labelled Object and Stick.</string>
+    <string name="msg_cause_no_tilt_reading">Your phone\'s tilt sensor gave no reading that matches this photo. Hold the phone still and retake the photo.</string>
+    <string name="msg_cause_wall_direction_unknown">The camera points straight up or down, so the app cannot tell which way a wall faces. Photograph the wall from the front. If you are measuring a floor or a table and you see a Surface choice, choose Floor.</string>
+    <string name="msg_cause_not_a_wall">The surface you marked is tilted %1$.0f° away from upright, so it does not look like a wall.</string>
+    <string name="msg_cause_not_a_floor">The surface you marked is tilted %1$.0f° away from level, so it does not look like a floor or a table.</string>
+    <string name="msg_cause_stick_disagrees">The length and the width of the stick do not fit together on this surface. They differ by %1$.1f%%, and the most the app accepts is %2$.1f%%. Check that the stick lies flat and that the box labelled Stick outlines it.</string>
+
+    <!-- What to try next, after a cause -->
+    <string name="msg_advice_check_corners">Check where you placed the corners.</string>
+    <string name="msg_advice_surface_choice">If you see a Surface choice, check that Wall or Floor is right.</string>
+    <string name="msg_advice_surface_and_corners">Check where you placed the corners. If you see a Surface choice, check that Wall or Floor is right.</string>
+    <string name="msg_rectangle_method_problem">Rectangle method: %1$s</string>
+    <string name="msg_tilt_method_problem">Tilt-sensor method: %1$s</string>
+    <string name="msg_no_method_usable">The app has two ways to measure, and neither works on this photo. %1$s %2$s</string>
+    <string name="msg_note_lens_approximate">The app could only estimate your camera\'s lens details.</string>
+    <string name="msg_note_lens_unavailable">The app had no lens details for this camera.</string>
+
+    <!-- The camera could not give a photo -->
+    <string name="msg_capture_start_failed">The photo could not be started. Tap Capture to try again.</string>
+    <string name="msg_capture_mismatched">The photo did not come out as expected. Tap Capture to try again.</string>
+    <string name="msg_capture_conversion_failed">The app could not read the photo. Tap Capture to try again.</string>
+    <string name="msg_capture_camera_error">The photo could not be taken. Check the camera, then tap Capture to try again.</string>
+    <string name="msg_camera_unavailable">The camera is not available. Close the app and open it again to try once more.</string>
+</resources>

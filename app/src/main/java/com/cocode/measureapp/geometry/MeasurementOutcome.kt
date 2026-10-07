@@ -1,5 +1,7 @@
 package com.cocode.measureapp.geometry
 
+import com.cocode.measureapp.model.UiText
+
 /**
  * Stable failure vocabulary shared by the engine (producer) and the presenter (consumer).
  * Producers map their expected domain errors onto these reasons, e.g. a collapsed stick box
@@ -63,7 +65,7 @@ sealed class MeasurementOutcome {
     /** A failed attempt: a [reason] from the shared vocabulary and an optional [detail]. */
     data class Failure(
         val reason: MeasurementFailureReason,
-        val detail: String? = null,
+        val detail: UiText? = null,
     ) : MeasurementOutcome() {
         override val usable: Boolean get() = false
     }

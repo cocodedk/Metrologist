@@ -6,13 +6,15 @@ import com.cocode.measureapp.geometry.frames.AlignedGravity
 import com.cocode.measureapp.geometry.frames.CalibrationProvenance
 import com.cocode.measureapp.geometry.frames.CalibrationStatus
 import com.cocode.measureapp.geometry.eligibility.EligibilityTolerances as T
+import com.cocode.measureapp.model.TextKey
+import com.cocode.measureapp.model.UiText
 import kotlin.math.abs
 import kotlin.math.min
 
 /** Result of checking a plane normal against the selected surface. */
 sealed interface SurfaceVerdict {
     data class Checked(val consistency: SurfaceConsistency) : SurfaceVerdict
-    data class Contradiction(val absNormalDotDown: Double, val detail: String) : SurfaceVerdict
+    data class Contradiction(val absNormalDotDown: Double, val detail: UiText) : SurfaceVerdict
 }
 
 /** Shared gravity, surface and confidence rules used by both eligibility assessors. */
@@ -23,12 +25,6 @@ object PlaneChecks {
         if (!(g.x.isFinite() && g.y.isFinite() && g.z.isFinite())) return null
         val n = g.norm()
         return if (n >= T.MIN_GRAVITY_NORM && n <= T.MAX_GRAVITY_NORM) g * (1.0 / n) else null
-    }
-
-    /** Human-readable reason gravity cannot be used. */
-    fun gravityProblem(gravity: AlignedGravity): String = when (gravity) {
-        is AlignedGravity.Unavailable -> "no tilt reading aligned with this photo (${gravity.reason})"
-        is AlignedGravity.Available -> "tilt reading ${gravity.down} is not a valid unit direction"
     }
 
     /**
@@ -42,12 +38,12 @@ object PlaneChecks {
             SurfaceOrientation.VERTICAL -> if (d <= T.WALL_MAX_ABS_NORMAL_DOT_DOWN) {
                 SurfaceVerdict.Checked(SurfaceConsistency.CONSISTENT)
             } else {
-                SurfaceVerdict.Contradiction(d, "the marked plane is ${degrees(d, wall = true)} deg from vertical, not a wall")
+                SurfaceVerdict.Contradiction(d, UiText.withNumbers(TextKey.CAUSE_NOT_A_WALL, degrees(d, wall = true)))
             }
             SurfaceOrientation.HORIZONTAL -> if (d >= T.FLOOR_MIN_ABS_NORMAL_DOT_DOWN) {
                 SurfaceVerdict.Checked(SurfaceConsistency.CONSISTENT)
             } else {
-                SurfaceVerdict.Contradiction(d, "the marked plane is ${degrees(d, wall = false)} deg from level, not a floor/table")
+                SurfaceVerdict.Contradiction(d, UiText.withNumbers(TextKey.CAUSE_NOT_A_FLOOR, degrees(d, wall = false)))
             }
         }
     }
@@ -91,8 +87,8 @@ object PlaneChecks {
         return Pair(c, caps)
     }
 
-    private fun degrees(absDot: Double, wall: Boolean): String {
+    private fun degrees(absDot: Double, wall: Boolean): Double {
         val rad = if (wall) kotlin.math.asin(absDot.coerceIn(0.0, 1.0)) else kotlin.math.acos(absDot.coerceIn(0.0, 1.0))
-        return "%.1f".format(java.util.Locale.ROOT, Math.toDegrees(rad))
+        return Math.toDegrees(rad)
     }
 }

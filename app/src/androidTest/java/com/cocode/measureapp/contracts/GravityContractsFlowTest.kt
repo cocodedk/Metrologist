@@ -24,6 +24,8 @@ import com.cocode.measureapp.geometry.frames.GravityAlignmentReason
 import com.cocode.measureapp.geometry.frames.LensFacing
 import com.cocode.measureapp.geometry.frames.ProvenancedIntrinsics
 import com.cocode.measureapp.geometry.frames.QuarterTurn
+import com.cocode.measureapp.model.TextKey
+import com.cocode.measureapp.model.UiText
 import com.cocode.measureapp.ui.CapturedImage
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -80,7 +82,7 @@ class GravityContractsFlowTest {
         assertEquals(img.scene.calibration, ok.diagnostics!!.calibration)
         Expect.sameShape(target.oracle, ok.measurement, 1e-6, "$solver")
         d.assertResults()
-        if (img.scene.calibration.status == CalibrationStatus.APPROXIMATE) d.assertShown("Camera calibration is approximate")
+        if (img.scene.calibration.status == CalibrationStatus.APPROXIMATE) d.assertShown(UiText(TextKey.CAVEAT_LENS_APPROXIMATE))
         d.clickResults("Re-mark")
         return ok
     }
@@ -102,7 +104,7 @@ class GravityContractsFlowTest {
         val staleImg = capture(Targets.FLOOR_QUAD, QuarterTurn.R90, stale)
         assertEquals(AlignedGravity.Unavailable(GravityAlignmentReason.STALE_SAMPLE), staleImg.scene.alignedGravity)
         val fail = Expect.failure(d.measure(), Reason.METADATA_UNAVAILABLE)
-        assertTrue(fail.detail!!.contains("STALE_SAMPLE"))
+        assertTrue(fail.detail!! mentions TextKey.CAUSE_NO_TILT_READING)
         d.assertMarking()
 
         // The independently eligible rectangle still measures, keeping the fallback provenance.

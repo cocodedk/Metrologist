@@ -29,6 +29,7 @@ import com.cocode.measureapp.capture.GravityProvider
 import com.cocode.measureapp.capture.gravity.levelReadingOf
 import com.cocode.measureapp.capture.recovery.CaptureController
 import com.cocode.measureapp.capture.recovery.CaptureState
+import com.cocode.measureapp.model.UiText
 import com.cocode.measureapp.ui.capture.CAMERA_UNAVAILABLE
 import com.cocode.measureapp.ui.capture.CameraControls
 import com.cocode.measureapp.ui.capture.CameraPreview
@@ -94,7 +95,7 @@ fun CameraScreen(
             .build()
     }
     var boundCameraId by remember { mutableStateOf<String?>(null) }
-    var bindError by remember { mutableStateOf<String?>(null) }
+    var bindError by remember { mutableStateOf<UiText?>(null) }
     var tilt by remember { mutableStateOf(levelReadingOf(gravity.latestSample(), 0)) }
     LaunchedEffect(Unit) {
         while (true) {
