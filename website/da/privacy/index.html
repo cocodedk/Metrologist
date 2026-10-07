@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privatlivspolitik: Metrologist</title>
+  <meta name="description" content="Privatlivspolitik for Metrologist (com.cocode.measureapp): kameraet bruges kun til at måle på din enhed, intet bliver uploadet, og der indsamles ingen personoplysninger." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://measure.cocode.dk/da/privacy/" />
+  <link rel="alternate" hreflang="en" href="https://measure.cocode.dk/privacy/" />
+  <link rel="alternate" hreflang="da" href="https://measure.cocode.dk/da/privacy/" />
+  <link rel="alternate" hreflang="x-default" href="https://measure.cocode.dk/privacy/" />
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://brand.cocode.dk/v1.css" />
+  <script type="module" src="https://brand.cocode.dk/v1.js"></script>
+  <link rel="stylesheet" href="../../cocode-apps.css" />
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg-deep: #0D0F0E; --bg-card: #1C1F1C;
+      --staff-red: #D42B2B; --staff-white: #F2F2EE;
+      --amber: #E8A020; --amber-glow: rgba(232, 160, 32, 0.35);
+      --green-read: #55C98A;
+      --text-primary: #F2F2EE; --text-secondary: #8A9189; --text-dim: #4A524A;
+      --grid-line: rgba(242, 242, 238, 0.055);
+      --radius: 6px; --radius-sm: 4px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+    body {
+      background-color: var(--bg-deep);
+      color: var(--text-primary);
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 1.0625rem; line-height: 1.68;
+      background-image:
+        linear-gradient(var(--grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+      background-size: 24px 24px;
+      min-height: 100vh; overflow-x: hidden;
+    }
+    .staff-rail {
+      position: fixed; top: 0; left: 0; width: 6px; height: 100vh; z-index: 100;
+      background: repeating-linear-gradient(to bottom,
+        var(--staff-red) 0, var(--staff-red) 28px,
+        var(--staff-white) 28px, var(--staff-white) 56px);
+      box-shadow: 2px 0 12px rgba(212, 43, 43, 0.25);
+    }
+    [dir="rtl"] .staff-rail { left: auto; right: 0; box-shadow: -2px 0 12px rgba(212, 43, 43, 0.25); }
+    .container { width: min(760px, 92vw); margin: 0 auto; padding: 40px 0 56px; padding-left: max(0px, calc(6px)); }
+    /* The cocode.dk frame lines up with .container's column: min(760px, 92vw), 6px of that
+       reserved on the left for the rail, 0 on the right. That's not a plain symmetric gutter,
+       so the two ends are set independently on the host itself (in front of .container's own
+       6px/0px split) with a matching --cocode-max and no gutter of the frame's own. */
+    cocode-head, cocode-foot {
+      --cocode-max: 754px;
+      --cocode-gutter: 0px;
+      padding-inline-start: 22px;
+      padding-inline-end: 16px;
+    }
+    .mono { font-family: 'DM Mono', 'Courier New', monospace; }
+    .back {
+      display: inline-block; margin-bottom: 22px; text-decoration: none;
+      font-family: 'DM Mono', monospace; font-size: 0.76rem; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--text-secondary);
+      transition: color 0.22s ease;
+    }
+    .back:hover { color: var(--amber); }
+    .card {
+      background: var(--bg-card); border-radius: var(--radius);
+      padding: clamp(24px, 5vw, 44px); position: relative; overflow: hidden;
+    }
+    .card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: repeating-linear-gradient(to right,
+        var(--staff-red) 0, var(--staff-red) 16px,
+        var(--staff-white) 16px, var(--staff-white) 32px);
+      opacity: 0.5;
+    }
+    [dir="rtl"] .card::before {
+      background: repeating-linear-gradient(to left,
+        var(--staff-red) 0, var(--staff-red) 16px,
+        var(--staff-white) 16px, var(--staff-white) 32px);
+    }
+    h1, h2.title {
+      font-family: 'Crimson Pro', Georgia, serif; font-weight: 300;
+      font-size: clamp(1.9rem, 5vw, 2.6rem); line-height: 1.14;
+      letter-spacing: -0.01em; color: var(--text-primary); margin: 0 0 10px;
+    }
+    h2 {
+      font-family: 'DM Mono', monospace; font-weight: 500; font-size: 0.9rem;
+      letter-spacing: 0.05em; color: var(--amber); margin: 30px 0 8px;
+    }
+    .meta {
+      font-family: 'DM Mono', monospace; color: var(--text-secondary);
+      font-size: 0.78rem; letter-spacing: 0.04em; margin: 0 0 4px;
+    }
+    p, li { color: var(--text-secondary); }
+    ul { padding-inline-start: 1.2em; }
+    li { margin: 5px 0; }
+    strong { color: var(--text-primary); font-weight: 600; }
+    a { color: var(--amber); text-decoration: none; }
+    a:hover { color: var(--staff-white); text-decoration: underline; text-underline-offset: 3px; }
+    .lede { color: var(--text-primary); font-size: 1.12rem; margin-top: 14px; }
+    .divider {
+      height: 8px; margin: 44px 0;
+      background: repeating-linear-gradient(to right,
+        var(--staff-red) 0, var(--staff-red) 32px,
+        var(--staff-white) 32px, var(--staff-white) 64px);
+      opacity: 0.18;
+    }
+  </style>
+</head>
+<body>
+  <div class="staff-rail" aria-hidden="true"></div>
+  <!-- The cocode.dk family frame. Without JavaScript its child shows instead: a way home.
+       The page's own "&larr; Metrologist" link already goes back to this site's Danish homepage. -->
+  <cocode-head project="Metrologist" accent="#E8A020" on-accent="#0D0F0E" dark>
+    <a href="https://cocode.dk">cocode.dk</a>
+  </cocode-head>
+
+  <!-- The shared cocode-apps navigation (written by tools.render; do not edit between the markers). -->
+  <header class="site-menu site-menu-narrow">
+    <!-- cocode-apps:nav:start -->
+<link rel="stylesheet" href="/css/cocode-nav.css">
+<a class="skip" href="#main">Spring til indhold</a>
+<nav class="cocode-nav" aria-label="Metrologist">
+  <a class="brand" href="/da/" data-nav="home"><img src="/img/icon.png" alt="" width="32" height="32">Metrologist</a>
+  <a href="/da/#how" data-nav="how">Sådan virker det</a>
+  <a href="/da/#install" data-nav="install">Installér</a>
+  <a href="/da/privacy/" data-nav="privacy" aria-current="page">Privatliv</a>
+  <a href="https://cocode.dk/" data-nav="more">Flere apps</a>
+</nav>
+<!-- cocode-apps:nav:end -->
+  </header>
+
+  <main id="main" class="container" tabindex="-1">
+    <a class="back" href="../">&larr; Metrologist</a>
+    <div class="card">
+
+      <section lang="da">
+        <h1>Privatlivspolitik</h1>
+        <p class="meta">Metrologist &middot; <span class="mono">com.cocode.measureapp</span></p>
+        <p class="meta">Senest opdateret: 14. juli 2026</p>
+
+        <p class="lede"><strong>Metrologist indsamler, sender eller deler ingen personoplysninger.</strong>
+        Det er en Android-app, der måler flade overflader ud fra et foto, og alle beregninger foregår
+        helt og holdent på din enhed.</p>
+
+        <h2>Kamera</h2>
+        <p>Metrologist bruger din enheds kamera til ét formål: at tage et foto af den overflade, du vil måle,
+        sammen med den udskrevne målestok. Billedet analyseres <strong>på din enhed</strong> for at finde
+        bredde, højde, areal, diagonal og vinkler. Kameraet bruges aldrig til at optage eller sende noget i
+        baggrunden. Det er kun aktivt, mens du er på optagelsesskærmen, og kun efter at du har givet
+        tilladelse til kameraet.</p>
+
+        <h2>Dine fotos bliver på din enhed</h2>
+        <ul>
+          <li>Fotos behandles <strong>i hukommelsen på din enhed</strong> og bliver <strong>ikke uploadet</strong> nogen steder.</li>
+          <li>Appen gemmer <strong>ikke</strong> selv dine målefotos i dit galleri eller på delt lagerplads.</li>
+          <li>Billedanalysen (med det medfølgende OpenCV-bibliotek) foregår lokalt. Intet billede, ingen pixel og ingen måling forlader nogensinde appen.</li>
+        </ul>
+
+        <h2>Indstillinger, du vælger</h2>
+        <p>Dine valg, nemlig målestokkens længde og bredde og den visningsenhed, du foretrækker
+        (centimeter, tommer eller meter), gemmes i en lille privat indstillingsfil på din egen enhed.
+        Den forlader aldrig din telefon og bliver slettet, når du afinstallerer appen eller rydder dens data.</p>
+
+        <h2>Deling af et resultat (kun hvis du beder om det)</h2>
+        <p>Når du vælger at dele en måling, tegner appen tallene ind på en kopi af dit foto, gemmer billedet
+        i sin egen private cache og giver det videre til Androids delemenu. Du vælger selv, hvor det skal
+        hen: en beskedapp, e-mail, filer og så videre. Det sker kun, når du trykker på del, og du vælger helt
+        selv modtageren. Vi modtager aldrig det billede, der deles.</p>
+
+        <h2>Intet internet, ingen sporing</h2>
+        <ul>
+          <li>Appen beder <strong>ikke om tilladelse til internet</strong> og kan derfor teknisk set ikke sende dine data nogen steder hen.</li>
+          <li>Vi bruger <strong>ingen analyseværktøjer, ingen nedbrudsrapportering og ingen reklamer</strong>.</li>
+          <li>Der er <strong>ingen sporings-SDK'er fra tredjepart, ingen cookies og ingen reklame-id'er</strong>.</li>
+          <li>Den eneste tilladelse, appen beder om under kørsel, er <strong>kameraet</strong>. Den beder ikke om adgang til placering, kontakter, mikrofon eller konti.</li>
+        </ul>
+
+        <h2>Sikkerhedskopi af enheden</h2>
+        <p>Hvis du har aktiveret Androids automatiske sikkerhedskopiering eller sikkerhedskopiering via
+        din Google-konto på din enhed, kan operativsystemet tage appens lokale indstillinger med i din egen
+        personlige Google-sikkerhedskopi. Det styrer du og Google alene, og vi har ikke adgang til den. Se
+        <a href="https://policies.google.com/privacy" rel="noopener" target="_blank">Googles privatlivspolitik</a> for flere oplysninger.</p>
+
+        <h2>Eksterne links</h2>
+        <p>Appen og dette websted linker til udviklerens websted (<a href="https://cocode.dk" rel="noopener" target="_blank">cocode.dk</a>),
+        en LinkedIn-profil og projektets GitHub-side. Når du vælger dem, åbner din browser, og de websteder
+        er omfattet af deres egne privatlivspolitikker.</p>
+
+        <h2>Børn</h2>
+        <p>Appen indsamler ikke bevidst data fra nogen, heller ikke fra børn.</p>
+
+        <h2>Ændringer</h2>
+        <p>Hvis denne politik ændres, lægger vi den opdaterede version på denne side med en ny dato for
+        seneste opdatering.</p>
+
+        <h2>Kontakt</h2>
+        <p>Spørgsmål om denne politik kan sendes til
+        <a href="mailto:bb@cocode.dk">bb@cocode.dk</a> (CoCode.dk, udvikler: Babak Bandpey).</p>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- The shared cocode-apps footer (written by tools.render). -->
+  <div class="site-footer-narrow">
+    <!-- cocode-apps:footer:start -->
+<footer class="cocode-footer">
+  <a href="https://github.com/cocodedk/Metrologist">Kildekode</a> ·
+  <a href="/da/privacy/">Privatliv</a> ·
+  Licens: Apache-2.0 ·
+  <a href="https://cocode.dk/">Lavet af Cocode (cocode.dk)</a>
+</footer>
+<!-- cocode-apps:footer:end -->
+  </div>
+
+  <cocode-foot repo="cocodedk/Metrologist" dark>
+    <a href="https://cocode.dk">cocode.dk</a>
+    <a href="https://github.com/cocodedk/Metrologist">GitHub</a>
+  </cocode-foot>
+</body>
+</html>

@@ -1,0 +1,17 @@
+Metrologist anslår målene på en flad overflade ud fra et foto, som du tager i appen. Læg en målestok med kendt længde og bredde i samme plan som fladen, og markér derefter objektets fire hjørner og målestokkens fire yderste hjørner.
+
+Funktioner:
+• Kameraoptagelse med oplysninger om hældning
+• Tilstande for vægge og for gulve eller borde
+• Justerbare hjørnemarkører, zoom og forstørrelsesglas
+• Resultater for bredde, højde, areal, diagonal og hjørnevinkler
+• Sikkerhedsangivelser og diagnostik for målingen
+• Visning i metriske og imperiale enheder
+• Del et annoteret billede via Androids delemenu
+
+Behandlingen sker på din enhed. Appen beder om adgang til kameraet og har hverken reklamer eller analyseværktøjer.
+
+Brug en flad målestok, hvis mål er målt nøjagtigt. Sørg for klart lys og synlige hjørner. Resultaterne er skøn og ikke certificerede målinger. Kontrollér vigtige mål med en lineal eller et målebånd.
+
+Brugerguide og udskrivelig reference (på engelsk): https://cocodedk.github.io/Metrologist/user-guide.html
+Kildekode og fejlmeldinger: https://github.com/cocodedk/Metrologist

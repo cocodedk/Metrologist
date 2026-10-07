@@ -8,6 +8,7 @@
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://measure.cocode.dk/"/>
+    <xhtml:link rel="alternate" hreflang="da" href="https://measure.cocode.dk/da/"/>
     <xhtml:link rel="alternate" hreflang="fa" href="https://measure.cocode.dk/fa/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://measure.cocode.dk/"/>
   </url>
@@ -18,6 +19,18 @@
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://measure.cocode.dk/"/>
+    <xhtml:link rel="alternate" hreflang="da" href="https://measure.cocode.dk/da/"/>
+    <xhtml:link rel="alternate" hreflang="fa" href="https://measure.cocode.dk/fa/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://measure.cocode.dk/"/>
+  </url>
+
+  <url>
+    <loc>https://measure.cocode.dk/da/</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://measure.cocode.dk/"/>
+    <xhtml:link rel="alternate" hreflang="da" href="https://measure.cocode.dk/da/"/>
     <xhtml:link rel="alternate" hreflang="fa" href="https://measure.cocode.dk/fa/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://measure.cocode.dk/"/>
   </url>
@@ -67,6 +80,19 @@
     <lastmod>2026-10-07</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://measure.cocode.dk/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="da" href="https://measure.cocode.dk/da/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://measure.cocode.dk/privacy/"/>
+  </url>
+
+  <url>
+    <loc>https://measure.cocode.dk/da/privacy/</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://measure.cocode.dk/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="da" href="https://measure.cocode.dk/da/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://measure.cocode.dk/privacy/"/>
   </url>
 
 </urlset>

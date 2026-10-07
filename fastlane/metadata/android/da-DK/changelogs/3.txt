@@ -1,0 +1,1 @@
+Markeringsskærmen er nu næsten kun foto: billedet fylder hele skærmen, knapperne ligger oven på det, hjælpeteksten gemmer sig bag (i)-knappen, og appen aflæser kameraets vinkel og kan selv se forskel på en væg og et gulv, så den ikke skal spørge. Knib ud for at se billedets kanter. Nyt ikon: den skakternede målestok.
