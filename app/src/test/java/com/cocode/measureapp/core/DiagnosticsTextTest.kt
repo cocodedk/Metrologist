@@ -2,21 +2,18 @@ package com.cocode.measureapp.core
 
 import com.cocode.measureapp.geometry.MeasurementDiagnostics
 import com.cocode.measureapp.geometry.SolverKind
+import com.cocode.measureapp.model.TextKey
+import com.cocode.measureapp.model.UiText
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class DiagnosticsTextTest {
-    // Caveat strings (kept here so a drift in production strings fails a test).
-    private val lowConfidence =
-        "Low confidence — corners may not be square or the angle is too shallow; " +
-            "try a moderate angle."
-    private val scaleDisagree =
-        "Stick band spacing disagrees — make sure the stick lies flat on the surface."
-    private val gravityFallback =
-        "Used the tilt-sensor fallback; accuracy is lower than the rectangle method."
-    private val steepTilt =
-        "Camera is tilted steeply; re-shoot closer to level for best accuracy."
+    // Caveat messages, one value per rule, so a rename of a message fails a test.
+    private val lowConfidence = UiText(TextKey.CAVEAT_LOW_CONFIDENCE)
+    private val scaleDisagree = UiText(TextKey.CAVEAT_STICK_SPACING)
+    private val gravityFallback = UiText(TextKey.CAVEAT_TILT_SENSOR_METHOD)
+    private val steepTilt = UiText(TextKey.CAVEAT_STEEP_CAMERA)
 
     /** A diagnostics object that triggers no caveats; override fields per test. */
     private fun clean(
@@ -29,23 +26,23 @@ class DiagnosticsTextTest {
 
     // --- confidenceLabel boundaries ---
     @Test fun confidenceLabelHighAtBoundary() {
-        assertEquals("High confidence", DiagnosticsText.confidenceLabel(0.7))
+        assertEquals(UiText(TextKey.CONFIDENCE_HIGH), DiagnosticsText.confidenceLabel(0.7))
     }
 
     @Test fun confidenceLabelMediumAtBoundary() {
-        assertEquals("Medium confidence", DiagnosticsText.confidenceLabel(0.4))
+        assertEquals(UiText(TextKey.CONFIDENCE_MEDIUM), DiagnosticsText.confidenceLabel(0.4))
     }
 
     @Test fun confidenceLabelLowJustBelowMedium() {
-        assertEquals("Low confidence", DiagnosticsText.confidenceLabel(0.39))
+        assertEquals(UiText(TextKey.CONFIDENCE_LOW), DiagnosticsText.confidenceLabel(0.39))
     }
 
     @Test fun confidenceLabelMediumJustBelowHigh() {
-        assertEquals("Medium confidence", DiagnosticsText.confidenceLabel(0.69))
+        assertEquals(UiText(TextKey.CONFIDENCE_MEDIUM), DiagnosticsText.confidenceLabel(0.69))
     }
 
     @Test fun confidenceLabelHighWellAbove() {
-        assertEquals("High confidence", DiagnosticsText.confidenceLabel(1.0))
+        assertEquals(UiText(TextKey.CONFIDENCE_HIGH), DiagnosticsText.confidenceLabel(1.0))
     }
 
     // --- caveats: low-confidence toggled ON/OFF independently ---
@@ -98,7 +95,7 @@ class DiagnosticsTextTest {
 
     // --- clean object -> empty list ---
     @Test fun cleanDiagnosticsYieldsEmptyList() {
-        assertEquals(emptyList<String>(), DiagnosticsText.caveats(clean()))
+        assertEquals(emptyList<UiText>(), DiagnosticsText.caveats(clean()))
     }
 
     // --- worst case -> all four caveats ---

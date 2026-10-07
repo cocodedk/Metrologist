@@ -1,0 +1,30 @@
+<resources>
+    <string name="about_title">About Metrologist</string>
+
+    <string name="about_name_title">Name and version</string>
+    <string name="about_version">Version %1$s</string>
+    <string name="about_check_updates">See the latest version</string>
+
+    <string name="about_what_title">What Metrologist does</string>
+    <string name="about_what">Metrologist measures a flat surface, such as a wall, a door, a window or a patch of floor, from one photo. You lay a reference stick against the surface. This is a ruler with red and white stripes and a length that you know. You take the photo in the app and mark the four corners of the surface. Metrologist then shows the width, the height, the area, the diagonal and the corner angles, in metres, centimetres, or feet and inches. The result is an estimate, so check important sizes with a ruler or tape. The surface must be flat.</string>
+
+    <string name="about_privacy_title">Privacy</string>
+    <string name="about_privacy_data">Metrologist does not collect personal data, and it does not upload your photos or measurements by itself. Everything is worked out on your phone.</string>
+    <string name="about_privacy_photos">Your photos stay on your phone, and the app does not save them to your gallery by itself.</string>
+    <string name="about_privacy_permissions">The app has no internet permission, no analytics, no crash reports and no ads. The only permission it asks for is the camera.</string>
+    <string name="about_privacy_export">If you tap Export, Android\'s share sheet opens and you choose where the picture goes. The privacy policy of the app you choose then applies.</string>
+    <string name="about_privacy_link">Read the privacy policy</string>
+
+    <string name="about_links_title">Links</string>
+    <string name="about_website">Open the website</string>
+    <string name="about_source">See the source code on GitHub</string>
+    <string name="about_report">Report a problem on GitHub</string>
+    <string name="about_no_browser">No app on the phone can open this link. Install a web browser, then try again.</string>
+
+    <string name="about_credits">Credits and licenses</string>
+    <string name="about_credits_licence">Metrologist is free and open source software, released under the Apache License 2.0.</string>
+    <string name="about_credits_libraries">It is built with OpenCV, CameraX, Jetpack Compose and Jetpack DataStore.</string>
+
+    <string name="about_made_by">Made by Cocode (cocode.dk)</string>
+    <string name="about_made_by_body">Created by Babak Bandpey.</string>
+</resources>

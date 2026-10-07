@@ -1,3 +1,65 @@
 <resources>
     <string name="app_name">Metrologist</string>
+
+    <!-- Shared -->
+    <string name="action_back">Back</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_help">Help</string>
+    <string name="action_about">About Metrologist</string>
+    <string name="list_item">•  %1$s</string>
+
+    <!-- Camera screen -->
+    <string name="camera_capture">Capture</string>
+    <string name="camera_capturing">Capturing…</string>
+    <string name="camera_permission_needed">Metrologist needs permission to use the camera, so that you can take the photo to measure.</string>
+    <string name="camera_permission_grant">Allow camera access</string>
+    <string name="camera_permission_open_settings">Open Android settings</string>
+    <string name="level_reading">↕ %1$d°   ↔ %2$d°</string>
+    <string name="level_unavailable">No tilt sensor data</string>
+
+    <!-- Marking screen -->
+    <string name="mark_hint">Drag a corner to adjust it. Use two fingers to zoom and to move the photo.</string>
+    <string name="mark_detecting">Looking for the stick…</string>
+    <string name="mark_detected">Stick found (%1$d%% sure). Drag its corners to fine-tune.</string>
+    <string name="mark_label_object">Object</string>
+    <string name="mark_label_stick">Stick</string>
+    <string name="mark_reset">Reset</string>
+    <string name="mark_retake">Retake</string>
+    <string name="mark_measure">Measure</string>
+    <string name="mark_help_show">Marking help</string>
+    <string name="mark_help_hide">Hide marking help</string>
+    <string name="surface_label">Surface:</string>
+    <string name="surface_wall">Wall</string>
+    <string name="surface_floor">Floor</string>
+
+    <!-- Results screen -->
+    <string name="results_title">Measurements</string>
+    <string name="results_width">Width</string>
+    <string name="results_height">Height</string>
+    <string name="results_area">Area</string>
+    <string name="results_diagonal">Diagonal</string>
+    <string name="results_confidence">Confidence: %1$s (%2$d%%)</string>
+    <string name="results_method">Method: %1$s</string>
+    <string name="method_tilt_sensor">Tilt-sensor method</string>
+    <string name="results_corner_angles">Corner angles: %1$s  (90° = square corner)</string>
+    <string name="results_remark">Re-mark</string>
+    <string name="results_export">Export</string>
+    <string name="results_new">New</string>
+
+    <!-- Settings screen -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_stick_length">Reference stick length (%1$s)</string>
+    <string name="settings_stick_width">Reference stick width (%1$s)</string>
+    <string name="settings_length_error">Enter a number greater than zero. Use a point for decimals, for example 1.5.</string>
+    <string name="settings_feet_hint">In feet, type decimals: 1.5 means 1 foot 6 inches.</string>
+    <string name="settings_units">Display units</string>
+    <string name="unit_meters">Metres</string>
+    <string name="unit_centimeters">Centimetres</string>
+    <string name="unit_feet_inches">Feet &amp; inches</string>
+
+    <!-- Exported picture -->
+    <string name="export_width">Width %1$s</string>
+    <string name="export_height">Height %1$s</string>
+    <string name="export_area">Area %1$s</string>
+    <string name="export_share_title">Share this measurement</string>
 </resources>

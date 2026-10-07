@@ -1,10 +1,13 @@
 package com.cocode.measureapp.ui
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -18,13 +21,16 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.cocode.measureapp.R
 import com.cocode.measureapp.core.LengthUnit
 
-private fun LengthUnit.displayName(): String = when (this) {
-    LengthUnit.METERS      -> "Metres"
-    LengthUnit.CENTIMETERS -> "Centimetres"
-    LengthUnit.FEET_INCHES -> "Feet & inches"
+@StringRes
+private fun LengthUnit.displayName(): Int = when (this) {
+    LengthUnit.METERS      -> R.string.unit_meters
+    LengthUnit.CENTIMETERS -> R.string.unit_centimeters
+    LengthUnit.FEET_INCHES -> R.string.unit_feet_inches
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,10 +47,10 @@ fun SettingsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Settings") },
+                title = { Text(stringResource(R.string.settings_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
             )
@@ -54,16 +60,17 @@ fun SettingsScreen(
             Modifier
                 .fillMaxSize()
                 .padding(pad)
+                .verticalScroll(rememberScrollState())
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            LengthField("Reference stick length", stickLengthMeters, unit, onLength)
-            LengthField("Reference stick width",  stickWidthMeters,  unit, onWidth)
-            Text("Display units", style = MaterialTheme.typography.titleMedium)
+            LengthField(R.string.settings_stick_length, stickLengthMeters, unit, onLength)
+            LengthField(R.string.settings_stick_width,  stickWidthMeters,  unit, onWidth)
+            Text(stringResource(R.string.settings_units), style = MaterialTheme.typography.titleMedium)
             LengthUnit.entries.forEach { u ->
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     RadioButton(selected = u == unit, onClick = { onUnit(u) })
-                    Text(u.displayName())
+                    Text(stringResource(u.displayName()))
                 }
             }
         }

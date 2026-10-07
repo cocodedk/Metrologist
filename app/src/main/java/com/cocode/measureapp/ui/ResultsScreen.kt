@@ -1,5 +1,6 @@
 package com.cocode.measureapp.ui
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,8 +19,14 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.cocode.measureapp.R
 import com.cocode.measureapp.core.MeasurementView
+import com.cocode.measureapp.geometry.SolverKind
+import com.cocode.measureapp.model.TextKey
+import com.cocode.measureapp.model.UiText
+import com.cocode.measureapp.ui.text.asString
 import com.cocode.measureapp.ui.theme.Amber
 import com.cocode.measureapp.ui.theme.GreenRead
 import com.cocode.measureapp.ui.theme.StaffRed
@@ -41,20 +48,20 @@ fun ResultsScreen(
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Text("Measurements", style = MaterialTheme.typography.titleLarge)
+        Text(stringResource(R.string.results_title), style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(4.dp))
         if (!view.usable) {
             Text(
-                view.message ?: "Could not measure confidently — check the markers and try a moderate angle.",
+                (view.message ?: UiText(TextKey.MEASURE_FAILED)).asString(),
                 style = MaterialTheme.typography.bodyMedium,
                 color = StaffRed,
             )
         }
 
-        LabeledValue("Width",    view.width)
-        LabeledValue("Height",   view.height)
-        LabeledValue("Area",     view.area)
-        LabeledValue("Diagonal", view.diagonal)
+        LabeledValue(R.string.results_width,    view.width)
+        LabeledValue(R.string.results_height,   view.height)
+        LabeledValue(R.string.results_area,     view.area)
+        LabeledValue(R.string.results_diagonal, view.diagonal)
 
         HorizontalDivider(Modifier.padding(vertical = 4.dp))
 
@@ -65,15 +72,15 @@ fun ResultsScreen(
             else                          -> StaffRed
         }
         Text(
-            "Confidence: ${view.confidenceLabel} (${view.confidencePercent}%)",
+            stringResource(R.string.results_confidence, view.confidenceLabel.asString(), view.confidencePercent),
             style = MaterialTheme.typography.bodyMedium,
             color = confColor,
         )
 
         // Method row — shown only when the fallback solver was used
-        if (!view.solverName.contains("Rectangle")) {
+        if (view.solver == SolverKind.GRAVITY) {
             Text(
-                "Method: ${view.solverName}",
+                stringResource(R.string.results_method, stringResource(R.string.method_tilt_sensor)),
                 style = MaterialTheme.typography.bodyMedium,
                 color = TextSecondary,
             )
@@ -83,34 +90,34 @@ fun ResultsScreen(
         if (view.cornerAngles.isNotEmpty()) {
             val angleText = view.cornerAngles.joinToString(", ") { "$it°" }
             Text(
-                "Corner angles: $angleText  (90° = square corner)",
+                stringResource(R.string.results_corner_angles, angleText),
                 style = MaterialTheme.typography.bodyMedium,
                 color = TextSecondary,
             )
         }
 
         view.caveats.forEach { caveat ->
-            Text("• $caveat", style = MaterialTheme.typography.bodyMedium)
+            Text(stringResource(R.string.list_item, caveat.asString()), style = MaterialTheme.typography.bodyMedium)
         }
 
         Spacer(Modifier.height(8.dp))
 
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            OutlinedButton(onClick = onRemark) { Text("Re-mark") }
-            OutlinedButton(onClick = onExport, enabled = exportEnabled && view.usable) { Text("Export") }
+            OutlinedButton(onClick = onRemark) { Text(stringResource(R.string.results_remark)) }
+            OutlinedButton(onClick = onExport, enabled = exportEnabled && view.usable) { Text(stringResource(R.string.results_export)) }
             Button(
                 onClick = onDone,
                 colors = ButtonDefaults.buttonColors(containerColor = StaffRed),
-            ) { Text("New") }
+            ) { Text(stringResource(R.string.results_new)) }
         }
     }
 }
 
 @Composable
-private fun LabeledValue(label: String, value: String) {
+private fun LabeledValue(@StringRes label: Int, value: String) {
     Column(Modifier.fillMaxWidth().padding(vertical = 2.dp)) {
         Text(
-            label,
+            stringResource(label),
             style = MaterialTheme.typography.labelLarge,
             color = TextSecondary,
         )

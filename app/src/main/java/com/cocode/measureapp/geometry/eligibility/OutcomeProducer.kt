@@ -11,6 +11,8 @@ import com.cocode.measureapp.geometry.SolverSelector
 import com.cocode.measureapp.geometry.Vec3
 import com.cocode.measureapp.geometry.frames.AlignedGravity
 import com.cocode.measureapp.geometry.frames.CalibrationStatus
+import com.cocode.measureapp.model.TextKey
+import com.cocode.measureapp.model.UiText
 import kotlin.math.asin
 
 /** A produced [outcome] plus the internals legacy adapters still need. */
@@ -31,11 +33,14 @@ data class Evaluation(
 object OutcomeProducer {
     fun evaluate(input: EligibilityInput, revision: Int): Evaluation {
         val tilt = PlaneChecks.unitDown(input.gravity)?.let { cameraTiltDeg(it) } ?: Double.NaN
-        fun fail(reason: MeasurementFailureReason, detail: String) =
-            Evaluation(MeasurementOutcome.Failure(reason, detail + calibrationNote(input)), null, tilt)
+        fun fail(reason: MeasurementFailureReason, detail: UiText): Evaluation {
+            val note = calibrationNote(input)
+            val full = if (note == null) detail else UiText.withMessages(TextKey.SENTENCES, detail, note)
+            return Evaluation(MeasurementOutcome.Failure(reason, full), null, tilt)
+        }
 
         if (!input.intrinsics.isUsable()) {
-            return fail(MeasurementFailureReason.METADATA_UNAVAILABLE, "Camera intrinsics are missing or invalid; retake the photo.")
+            return fail(MeasurementFailureReason.METADATA_UNAVAILABLE, Causes.NO_LENS_DETAILS)
         }
         val marks = when (val v = MarkerValidator.validateMarks(input.corners, input.stick)) {
             is MarkValidation.Rejected -> return Evaluation(v.rejection.toFailure(), null, tilt)
@@ -50,7 +55,7 @@ object OutcomeProducer {
         val chosen = when (selection) {
             is Selection.NoneEligible -> return fail(
                 failureFor(selection),
-                "No measurement method is justified. ${selection.rectangle.detail}. ${selection.gravity.detail}.",
+                UiText.withMessages(TextKey.NO_METHOD_USABLE, selection.rectangle.detail, selection.gravity.detail),
             )
             is Selection.Chosen -> selection
         }
@@ -75,7 +80,7 @@ object OutcomeProducer {
             )
             Evaluation(success, c, tilt)
         } catch (e: IllegalArgumentException) {
-            fail(MeasurementFailureReason.NUMERICAL_FAILURE, "The measurement is not finite: ${e.message}.")
+            fail(MeasurementFailureReason.NUMERICAL_FAILURE, Causes.CALCULATION_UNSTABLE)
         }
     }
 
@@ -95,9 +100,9 @@ object OutcomeProducer {
         else -> MeasurementFailureReason.UNSUPPORTED_GEOMETRY
     }
 
-    private fun calibrationNote(input: EligibilityInput): String = when (input.calibration.status) {
-        CalibrationStatus.CALIBRATED -> ""
-        CalibrationStatus.APPROXIMATE -> " Camera calibration is approximate (${input.calibration.origin})."
-        CalibrationStatus.UNAVAILABLE -> " Camera calibration is unavailable (${input.calibration.origin})."
+    private fun calibrationNote(input: EligibilityInput): UiText? = when (input.calibration.status) {
+        CalibrationStatus.CALIBRATED -> null
+        CalibrationStatus.APPROXIMATE -> UiText(TextKey.NOTE_LENS_APPROXIMATE)
+        CalibrationStatus.UNAVAILABLE -> UiText(TextKey.NOTE_LENS_UNAVAILABLE)
     }
 }

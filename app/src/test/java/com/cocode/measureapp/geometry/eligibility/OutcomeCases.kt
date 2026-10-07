@@ -1,5 +1,8 @@
 package com.cocode.measureapp.geometry.eligibility
 
+import com.cocode.measureapp.model.TextKey
+import com.cocode.measureapp.mentions
+import com.cocode.measureapp.allKeys
 import com.cocode.measureapp.core.DiagnosticsText
 import com.cocode.measureapp.core.LengthUnit
 import com.cocode.measureapp.core.MeasurementSession
@@ -75,13 +78,14 @@ object OutcomeCases {
     fun bothIneligibleExplainsEachMethod() {
         val f = F.failure(F.evaluate(F.scene(frontal, F.available(F.LEVEL), SurfaceOrientation.HORIZONTAL)), "singular")
         val detail = f.detail!!
-        assertTrue(detail, detail.contains("Rectangle method") && detail.contains("not a floor/table"))
-        assertTrue(detail, detail.contains("Tilt-sensor method") && detail.contains("both sides of the plane"))
+        assertTrue(detail.mentions(TextKey.NO_METHOD_USABLE))
+        assertTrue(detail.allKeys().toString(), detail mentions TextKey.RECTANGLE_METHOD_PROBLEM && detail mentions TextKey.CAUSE_NOT_A_FLOOR)
+        assertTrue(detail.allKeys().toString(), detail mentions TextKey.TILT_METHOD_PROBLEM && detail mentions TextKey.CAUSE_MARKS_OFF_SURFACE)
         val down = F.failure(
             F.evaluate(F.input(F.nonRectCorners, F.nonRectStick, F.available(F.STRAIGHT_DOWN), SurfaceOrientation.VERTICAL)),
             "straight-down wall",
         )
-        assertTrue(down.detail!!, down.detail!!.contains("straight up or down"))
+        assertTrue(down.detail!!.allKeys().toString(), down.detail!! mentions TextKey.CAUSE_WALL_DIRECTION_UNKNOWN)
     }
 
     /** Invalid inputs become structured failures, never exceptions or zero measurements. */
@@ -106,7 +110,7 @@ object OutcomeCases {
         val ok = F.success(F.evaluate(i), "uncalibrated")
         assertEquals(CalibrationProvenance.UNAVAILABLE, ok.diagnostics!!.calibration)
         assertTrue(ok.confidence <= EligibilityTolerances.UNAVAILABLE_CALIBRATION_CAP)
-        assertTrue(DiagnosticsText.caveats(ok.diagnostics!!).any { it.contains("unavailable") })
+        assertTrue(DiagnosticsText.caveats(ok.diagnostics!!).any { it mentions TextKey.CAVEAT_LENS_UNAVAILABLE })
         val exact = F.success(F.evaluate(i.copy(calibration = CalibrationProvenance.CALIBRATED)), "calibrated")
         assertTrue("calibrated ${exact.confidence} > uncalibrated ${ok.confidence}", exact.confidence > ok.confidence)
         // The legacy adapter reports the same engine decision in EngineResult form.

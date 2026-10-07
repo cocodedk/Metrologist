@@ -19,14 +19,14 @@ import kotlin.math.atan2
 object CornerOrdering {
     /**
      * Canonical order of a valid object quad. Throws [IllegalArgumentException] with the
-     * actionable message of [MarkerValidator.validateObject] for non-finite, coincident,
+     * description of the rule [MarkerValidator.validateObject] found broken for non-finite, coincident,
      * collinear or concave marks instead of returning an unusable ordering.
      */
     fun order(points: List<Vec2>): List<Vec2> {
         require(points.size == 4) { "expected exactly 4 corners, got ${points.size}" }
         return when (val v = MarkerValidator.validateObject(points)) {
             is MarkerValidation.Accepted -> v.corners
-            is MarkerValidation.Rejected -> throw IllegalArgumentException(v.message)
+            is MarkerValidation.Rejected -> throw IllegalArgumentException(v.describe())
         }
     }
 

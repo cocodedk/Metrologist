@@ -2,7 +2,8 @@ package com.cocode.measureapp.contracts
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.cocode.measureapp.core.LengthInput
+import androidx.test.platform.app.InstrumentationRegistry
+import com.cocode.measureapp.R
 import com.cocode.measureapp.core.MeasurementPresenter
 import com.cocode.measureapp.core.dimensions.ReferenceCheck
 import com.cocode.measureapp.core.dimensions.ReferenceDimensions
@@ -127,7 +128,7 @@ class LogicContractsFlowTest {
         d.click("Settings")
         for (text in listOf("abc", "0", "-1", "NaN", "Infinity", "1e309")) {
             d.typeLength(text)
-            d.assertShown(LengthInput.CORRECTION_MESSAGE)
+            d.assertShown(InstrumentationRegistry.getInstrumentation().targetContext.getString(R.string.settings_length_error))
             assertTrue("rejected text is never accepted", d.s.reference is ReferenceCheck.NeedsCorrection)
         }
         d.enterReference(unitIndex = 1, length = "10", width = "2") // centimetres

@@ -10,6 +10,8 @@ import com.cocode.measureapp.geometry.SolverKind
 import com.cocode.measureapp.geometry.SurfaceOrientation
 import com.cocode.measureapp.geometry.Vec2
 import com.cocode.measureapp.geometry.eligibility.PlaneAssumption
+import com.cocode.measureapp.model.TextKey
+import com.cocode.measureapp.model.UiText
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertSame
@@ -85,9 +87,9 @@ class CalibrationTargetFlowTest {
         assertEquals(PlaneAssumption.WALL_FACES_CAMERA, ok.diagnostics!!.assumption)
         assertTrue("confidence ${ok.confidence} must stay below Medium", ok.confidence < 0.4)
         assertTrue(ok.measurement.cornerAngles.count { abs(it - 90.0) > 3.0 } >= 3)
-        d.assertShown("Low confidence")
-        d.assertAbsent("High confidence")
-        d.assertShown("Assumed the wall faces the camera")
+        d.assertShown(d.confidenceLine(UiText(TextKey.CONFIDENCE_LOW)))
+        d.assertAbsent(d.confidenceLine(UiText(TextKey.CONFIDENCE_HIGH)))
+        d.assertShown(UiText(TextKey.CAVEAT_WALL_ASSUMED))
         d.staleResultsCannotSurvive(t)
     }
 }

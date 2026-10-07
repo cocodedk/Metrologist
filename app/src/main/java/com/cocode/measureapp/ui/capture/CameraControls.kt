@@ -22,7 +22,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.cocode.measureapp.R
+import com.cocode.measureapp.model.UiText
+import com.cocode.measureapp.ui.text.asString
 import com.cocode.measureapp.ui.theme.StaffRed
 
 /** Bottom controls: optional retry message, Settings, Help and the Capture button. */
@@ -30,7 +34,7 @@ import com.cocode.measureapp.ui.theme.StaffRed
 internal fun CameraControls(
     captureEnabled: Boolean,
     capturing: Boolean,
-    message: String?,
+    message: UiText?,
     onSettings: () -> Unit,
     onHelp: () -> Unit,
     onCapture: () -> Unit,
@@ -43,7 +47,7 @@ internal fun CameraControls(
     ) {
         if (message != null) {
             Text(
-                message,
+                message.asString(),
                 color = MaterialTheme.colorScheme.onErrorContainer,
                 modifier = Modifier
                     .background(MaterialTheme.colorScheme.errorContainer)
@@ -58,10 +62,10 @@ internal fun CameraControls(
             // font, which clipped the capture button's own label. The gear and the (i) carry the
             // meaning on their own, and the label survives as the accessibility description.
             OutlinedIconButton(onClick = onSettings) {
-                Icon(Icons.Default.Settings, contentDescription = "Settings", Modifier.size(22.dp))
+                Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.action_settings), Modifier.size(22.dp))
             }
             OutlinedIconButton(onClick = onHelp) {
-                Icon(Icons.Default.Info, contentDescription = "Help", Modifier.size(22.dp))
+                Icon(Icons.Default.Info, contentDescription = stringResource(R.string.action_help), Modifier.size(22.dp))
             }
             Button(
                 enabled = captureEnabled,
@@ -69,7 +73,7 @@ internal fun CameraControls(
                 colors = ButtonDefaults.buttonColors(containerColor = StaffRed),
                 modifier = Modifier.height(48.dp),
             ) {
-                Text(if (capturing) "Capturing…" else "Capture", maxLines = 1)
+                Text(stringResource(if (capturing) R.string.camera_capturing else R.string.camera_capture), maxLines = 1)
             }
         }
     }
@@ -86,8 +90,8 @@ internal fun PermissionDeniedPanel(
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text("Camera permission is needed to capture.")
-        Button(onClick = onGrant) { Text("Grant permission") }
-        OutlinedButton(onClick = onOpenSettings) { Text("Open settings") }
+        Text(stringResource(R.string.camera_permission_needed))
+        Button(onClick = onGrant) { Text(stringResource(R.string.camera_permission_grant)) }
+        OutlinedButton(onClick = onOpenSettings) { Text(stringResource(R.string.camera_permission_open_settings)) }
     }
 }

@@ -29,6 +29,8 @@ import com.cocode.measureapp.capture.GravityProvider
 import com.cocode.measureapp.capture.gravity.levelReadingOf
 import com.cocode.measureapp.capture.recovery.CaptureController
 import com.cocode.measureapp.capture.recovery.CaptureState
+import com.cocode.measureapp.model.UiText
+import com.cocode.measureapp.ui.capture.AboutEntry
 import com.cocode.measureapp.ui.capture.CAMERA_UNAVAILABLE
 import com.cocode.measureapp.ui.capture.CameraControls
 import com.cocode.measureapp.ui.capture.CameraPreview
@@ -47,6 +49,7 @@ fun CameraScreen(
     onCaptured: (CapturedImage) -> Unit,
     onSettings: () -> Unit,
     onHelp: () -> Unit,
+    onAbout: () -> Unit,
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -94,7 +97,7 @@ fun CameraScreen(
             .build()
     }
     var boundCameraId by remember { mutableStateOf<String?>(null) }
-    var bindError by remember { mutableStateOf<String?>(null) }
+    var bindError by remember { mutableStateOf<UiText?>(null) }
     var tilt by remember { mutableStateOf(levelReadingOf(gravity.latestSample(), 0)) }
     LaunchedEffect(Unit) {
         while (true) {
@@ -127,6 +130,8 @@ fun CameraScreen(
                 modifier = Modifier.align(Alignment.Center),
             )
         }
+
+        AboutEntry(onClick = onAbout, modifier = Modifier.align(Alignment.TopEnd))
 
         CameraControls(
             captureEnabled = captureState.canCapture(hasPermission, cameraReady = boundCameraId != null),

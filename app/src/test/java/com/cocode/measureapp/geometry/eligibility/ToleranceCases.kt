@@ -1,5 +1,7 @@
 package com.cocode.measureapp.geometry.eligibility
 
+import com.cocode.measureapp.model.TextKey
+import com.cocode.measureapp.mentions
 import com.cocode.measureapp.core.DiagnosticsText
 import com.cocode.measureapp.geometry.CameraIntrinsics
 import com.cocode.measureapp.geometry.ContractScenes
@@ -86,7 +88,7 @@ object ToleranceCases {
         val d = ok.diagnostics!!
         assertEquals(SurfaceConsistency.UNVERIFIED_NO_GRAVITY, d.surfaceConsistency)
         assertTrue(ok.confidence <= EligibilityTolerances.UNVERIFIED_SURFACE_CAP)
-        assertTrue(DiagnosticsText.caveats(d).any { it.contains("STALE_SAMPLE") && it.contains("not be verified") })
+        assertTrue(DiagnosticsText.caveats(d).any { it mentions TextKey.CAVEAT_NO_TILT_READING })
     }
 
     /** Half-pixel marking noise at yaw 30 / pitch 20 in both signs: eligible, within 2%. */
@@ -113,9 +115,9 @@ object ToleranceCases {
                     val d = o.diagnostics!!
                     assertEquals(CalibrationStatus.APPROXIMATE, d.calibration!!.status)
                     assertTrue(o.confidence <= EligibilityTolerances.APPROXIMATE_CALIBRATION_CAP)
-                    assertTrue(DiagnosticsText.caveats(d).any { it.contains("approximate") })
+                    assertTrue(DiagnosticsText.caveats(d).any { it mentions TextKey.CAVEAT_LENS_APPROXIMATE })
                 }
-                is MeasurementOutcome.Failure -> assertTrue(F.failure(o, "f x $factor").detail!!.contains("approximate"))
+                is MeasurementOutcome.Failure -> assertTrue(F.failure(o, "f x $factor").detail!! mentions TextKey.NOTE_LENS_APPROXIMATE)
             }
         }
     }

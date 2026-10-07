@@ -17,6 +17,7 @@ import com.cocode.measureapp.geometry.SurfaceOrientation
 import com.cocode.measureapp.geometry.Vec2
 import com.cocode.measureapp.geometry.Vec3
 import com.cocode.measureapp.model.CapturedScene
+import com.cocode.measureapp.model.UiText
 
 /** A formatted result together with the revision and surface selection it was computed for. */
 data class BoundView(
@@ -51,7 +52,7 @@ data class MarkingFlow(
         get() = currentView?.takeIf { it.usable }
 
     /** Correction text for a failed attempt at the current revision, shown on the marking screen. */
-    val failureMessage: String?
+    val failureMessage: UiText?
         get() = currentView?.takeIf { !it.usable }?.message
 
     /** Export only for a success recorded in the session at the current revision. */

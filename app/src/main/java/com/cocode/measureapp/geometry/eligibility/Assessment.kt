@@ -11,6 +11,7 @@ import com.cocode.measureapp.geometry.SurfaceOrientation
 import com.cocode.measureapp.geometry.Vec2
 import com.cocode.measureapp.geometry.frames.AlignedGravity
 import com.cocode.measureapp.geometry.frames.CalibrationProvenance
+import com.cocode.measureapp.model.UiText
 
 /** Whether the plane was checked against the selected wall/floor surface with valid gravity. */
 enum class SurfaceConsistency {
@@ -81,6 +82,6 @@ sealed interface Assessment {
         override val solver: SolverKind,
         val reason: IneligibleReason,
         val failure: MeasurementFailureReason,
-        val detail: String,
+        val detail: UiText,
     ) : Assessment
 }

@@ -14,9 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
+import com.cocode.measureapp.model.TextKey
+import com.cocode.measureapp.model.UiText
 
 /** Message shown when the back camera cannot be bound; capture stays disabled. */
-internal const val CAMERA_UNAVAILABLE = "Camera unavailable. Reopen the app to try again."
+internal val CAMERA_UNAVAILABLE = UiText(TextKey.CAMERA_UNAVAILABLE)
 
 /**
  * Binds preview + [imageCapture] to the back camera. [onBound] receives the camera id once

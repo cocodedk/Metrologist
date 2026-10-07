@@ -1,5 +1,6 @@
 package com.cocode.measureapp.core
 
+import com.cocode.measureapp.R
 import com.cocode.measureapp.geometry.CameraIntrinsics
 import com.cocode.measureapp.geometry.EngineResult
 import com.cocode.measureapp.geometry.SceneRotations
@@ -52,8 +53,8 @@ class SurfaceSelectionContractTest {
     fun C05_newCaptureShowsWallAsTheVisibleSelection() {
         val flow = MarkingFlow().captured()
         assertEquals(VERTICAL, flow.orientation)
-        assertEquals("Wall", surfaceLabel(flow.orientation))
-        assertEquals("Floor", surfaceLabel(HORIZONTAL))
+        assertEquals(R.string.surface_wall, surfaceLabel(flow.orientation))
+        assertEquals(R.string.surface_floor, surfaceLabel(HORIZONTAL))
         flow.pressMeasure()
         assertEquals(VERTICAL, requests.single().orientation)
     }

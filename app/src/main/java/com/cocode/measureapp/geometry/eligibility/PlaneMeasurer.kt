@@ -7,6 +7,8 @@ import com.cocode.measureapp.geometry.ScaleResult
 import com.cocode.measureapp.geometry.Vec2
 import com.cocode.measureapp.geometry.Vec3
 import com.cocode.measureapp.geometry.eligibility.EligibilityTolerances as T
+import com.cocode.measureapp.model.TextKey
+import com.cocode.measureapp.model.UiText
 import com.cocode.measureapp.stick.StickScale
 import kotlin.math.abs
 
@@ -24,7 +26,7 @@ internal object PlaneMeasurer {
             val referenceChecked: Boolean,
         ) : Result
 
-        data class Unusable(val reason: IneligibleReason, val detail: String) : Result
+        data class Unusable(val reason: IneligibleReason, val detail: UiText) : Result
     }
 
     fun measure(frame: PlaneFrame, input: EligibilityInput): Result {
@@ -32,40 +34,41 @@ internal object PlaneMeasurer {
         val points = input.corners + input.stick
         // Rays K⁻¹·(u, v, 1) without a matrix inverse: finite and nonzero for usable intrinsics.
         val rays = points.map { Vec3((it.x - k.cx) / k.fx, (it.y - k.cy) / k.fy, 1.0) }
-        if (!rays.all { finite(it) } || !finite(frame.normal)) return numeric("rays or plane normal are not finite")
+        if (!rays.all { finite(it) } || !finite(frame.normal)) return numeric()
         val cosines = rays.map { frame.normal.dot(it) / it.norm() }
         val side = if (cosines[0] >= 0.0) 1.0 else -1.0
         if (cosines.any { it * side <= 0.0 }) {
-            return unusable(IneligibleReason.PROJECTION_UNUSABLE, "marks lie on both sides of the plane or parallel to it")
+            return unusable(IneligibleReason.PROJECTION_UNUSABLE, UiText(TextKey.CAUSE_MARKS_OFF_SURFACE))
         }
         val minCos = cosines.minOf { abs(it) }
         if (minCos < T.MIN_RAY_PLANE_COS) {
-            return unusable(IneligibleReason.PROJECTION_UNUSABLE, "the view grazes the plane (min ray cosine $minCos)")
+            return unusable(IneligibleReason.PROJECTION_UNUSABLE, Causes.VIEW_TOO_SHALLOW)
         }
         val projected = rays.map { r ->
             val x = r * (1.0 / frame.normal.dot(r))
             Vec2(frame.e1.dot(x), frame.e2.dot(x))
         }
-        if (!projected.all { it.x.isFinite() && it.y.isFinite() }) return numeric("projected marks are not finite")
+        if (!projected.all { it.x.isFinite() && it.y.isFinite() }) return numeric()
         val cornerMetric = projected.subList(0, 4)
         val stickMetric = projected.subList(4, 8)
         return try {
             val scale = StickScale.solve(stickMetric, input.profile)
             if (!(scale.scale.isFinite() && scale.scale > 0.0 && scale.agreement.isFinite())) {
-                return numeric("stick scale is not finite and positive")
+                return numeric()
             }
             val referenceChecked = input.profile.width > 0.0
             if (referenceChecked && scale.agreement > T.MAX_STICK_DISAGREEMENT) {
                 return unusable(
                     IneligibleReason.REFERENCE_INCONSISTENT,
-                    "the stick's length and width disagree by ${pct(scale.agreement)} on this plane " +
-                        "(limit ${pct(T.MAX_STICK_DISAGREEMENT)})",
+                    UiText.withNumbers(
+                        TextKey.CAUSE_STICK_DISAGREES, scale.agreement * 100.0, T.MAX_STICK_DISAGREEMENT * 100.0,
+                    ),
                 )
             }
             val m = Measurements.compute(cornerMetric.map { it * scale.scale })
-            if (!valid(m)) numeric("measurement is not finite and positive") else Result.Measured(m, scale, minCos, referenceChecked)
+            if (!valid(m)) numeric() else Result.Measured(m, scale, minCos, referenceChecked)
         } catch (e: IllegalArgumentException) {
-            numeric("degenerate projection: ${e.message}")
+            numeric()
         }
     }
 
@@ -75,9 +78,7 @@ internal object PlaneMeasurer {
 
     private fun finite(v: Vec3) = v.x.isFinite() && v.y.isFinite() && v.z.isFinite()
 
-    private fun pct(x: Double) = "%.1f%%".format(java.util.Locale.ROOT, x * 100.0)
+    private fun numeric() = unusable(IneligibleReason.NUMERICAL, Causes.CALCULATION_UNSTABLE)
 
-    private fun numeric(detail: String) = unusable(IneligibleReason.NUMERICAL, detail)
-
-    private fun unusable(reason: IneligibleReason, detail: String) = Result.Unusable(reason, detail)
+    private fun unusable(reason: IneligibleReason, detail: UiText) = Result.Unusable(reason, detail)
 }

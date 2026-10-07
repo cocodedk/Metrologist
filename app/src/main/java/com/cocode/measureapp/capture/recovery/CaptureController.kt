@@ -1,16 +1,19 @@
 package com.cocode.measureapp.capture.recovery
 
+import com.cocode.measureapp.model.TextKey
+import com.cocode.measureapp.model.UiText
+
 /** Terminal outcome of one accepted capture request. */
 sealed interface CaptureOutcome<out T> {
     data class Success<T>(val payload: T) : CaptureOutcome<T>
-    data class Failure(val message: String, val cause: Throwable? = null) : CaptureOutcome<Nothing>
+    data class Failure(val message: UiText, val cause: Throwable? = null) : CaptureOutcome<Nothing>
     data object Cancelled : CaptureOutcome<Nothing>
 }
 
 /** Observable capture state; [canCapture] is what enables the Capture button. */
 data class CaptureState(
     val busy: Boolean = false,
-    val error: String? = null,
+    val error: UiText? = null,
     val disposed: Boolean = false,
 ) {
     fun canCapture(permissionGranted: Boolean, cameraReady: Boolean): Boolean =
@@ -104,7 +107,7 @@ class CaptureController<T>(
     }
 
     companion object {
-        const val START_FAILED = "Could not start the capture. Try again."
-        const val MISMATCHED = "Captured photo did not match its request. Try again."
+        val START_FAILED = UiText(TextKey.CAPTURE_START_FAILED)
+        val MISMATCHED = UiText(TextKey.CAPTURE_MISMATCHED)
     }
 }

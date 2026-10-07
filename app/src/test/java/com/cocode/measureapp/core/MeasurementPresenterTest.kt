@@ -13,6 +13,9 @@ import com.cocode.measureapp.geometry.SurfaceOrientation
 import com.cocode.measureapp.geometry.SyntheticScene
 import com.cocode.measureapp.geometry.Vec2
 import com.cocode.measureapp.geometry.Vec3
+import com.cocode.measureapp.mentions
+import com.cocode.measureapp.model.TextKey
+import com.cocode.measureapp.model.UiText
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -76,8 +79,8 @@ class MeasurementPresenterTest {
     }
 
     @Test fun usableObliqueScene_confidenceLabelSensible() {
-        val valid = setOf("High confidence", "Medium confidence", "Low confidence")
-        assertTrue(presentOblique().confidenceLabel in valid)
+        val valid = setOf(TextKey.CONFIDENCE_HIGH, TextKey.CONFIDENCE_MEDIUM, TextKey.CONFIDENCE_LOW)
+        assertTrue(presentOblique().confidenceLabel.key in valid)
     }
 
     @Test fun usableObliqueScene_confidencePercentInRange() {
@@ -85,30 +88,29 @@ class MeasurementPresenterTest {
         assertTrue("confidencePercent in 1..100, was $p", p in 1..100)
     }
 
-    @Test fun usableObliqueScene_solverNameIsRectangleMethod() =
-        assertEquals("Rectangle method", presentOblique().solverName)
+    @Test fun usableObliqueScene_solverIsRectangle() = assertEquals(SolverKind.RECTANGLE, presentOblique().solver)
 
     @Test fun usableObliqueScene_uncalibratedLegacyInputStaysVisible() {
         // The legacy request carries no calibration provenance, so it must never read as exact.
         val v = presentOblique()
         assertNotNull(v.caveats)
-        assertTrue(v.caveats.any { it.contains("calibration is unavailable") })
-        assertEquals("Low confidence", v.confidenceLabel)
+        assertTrue(v.caveats.any { it mentions TextKey.CAVEAT_LENS_UNAVAILABLE })
+        assertEquals(UiText(TextKey.CONFIDENCE_LOW), v.confidenceLabel)
     }
 
     @Test fun zeroConfidenceScene_usableIsFalse() = assertFalse(presentUnsupported().usable)
 
     @Test fun zeroConfidenceScene_confidencePercentIsZero() = assertEquals(0, presentUnsupported().confidencePercent)
 
-    @Test fun gravitySolverPath_solverNameIsTiltSensorFallback() =
-        assertEquals("Tilt-sensor fallback", presentGravityWall().solverName)
+    @Test fun gravitySolverPath_solverIsGravity() =
+        assertEquals(SolverKind.GRAVITY, presentGravityWall().solver)
 
     @Test fun gravitySolverPath_usableIsTrue() = assertTrue(presentGravityWall().usable)
 
     @Test fun gravitySolverPath_caveatsContainsTiltSensorMessage() {
         val caveats = presentGravityWall().caveats
-        assertTrue(caveats.any { it.contains("tilt-sensor fallback") })
-        assertTrue("assumed wall azimuth is visible", caveats.any { it.contains("faces the camera") })
+        assertTrue(caveats.any { it mentions TextKey.CAVEAT_TILT_SENSOR_METHOD })
+        assertTrue("assumed wall azimuth is visible", caveats.any { it mentions TextKey.CAVEAT_WALL_ASSUMED })
     }
 
     @Test fun gravitySolverPath_keepsTheGenuineNonRectangularAngles() {
@@ -116,10 +118,10 @@ class MeasurementPresenterTest {
         assertEquals(111.8, presentGravityWall().cornerAngles[1], 0.05)
     }
 
-    private fun view(usable: Boolean = true, width: String = "1.00 m", caveats: List<String> = emptyList()) = MeasurementView(
+    private fun view(usable: Boolean = true, width: String = "1.00 m", caveats: List<UiText> = emptyList()) = MeasurementView(
         usable = usable, width = width, height = "2.00 m", area = "2.00 m²", diagonal = "2.24 m",
-        cornerAngles = listOf(90.0, 90.0, 90.0, 90.0), confidenceLabel = "High confidence",
-        confidencePercent = 85, solverName = "Tilt-sensor fallback", caveats = caveats,
+        cornerAngles = listOf(90.0, 90.0, 90.0, 90.0), confidenceLabel = UiText(TextKey.CONFIDENCE_HIGH),
+        confidencePercent = 85, solver = SolverKind.GRAVITY, caveats = caveats,
     )
 
     @Test fun measurementView_dataClassCopyAndEquality() {
@@ -132,9 +134,9 @@ class MeasurementPresenterTest {
     }
 
     @Test fun measurementView_toStringContainsFieldValues() {
-        val s = view(width = "3.00 m", caveats = listOf("some caveat")).toString()
+        val s = view(width = "3.00 m", caveats = listOf(UiText(TextKey.CAVEAT_WALL_ASSUMED))).toString()
         assertTrue(s.contains("3.00 m"))
-        assertTrue(s.contains("Tilt-sensor fallback"))
+        assertTrue(s.contains("CAVEAT_WALL_ASSUMED") && s.contains("GRAVITY"))
     }
 
     @Test fun measurementView_hashCodeConsistent() {
@@ -170,28 +172,28 @@ class MeasurementPresenterTest {
         return EngineResult(measurement, PlaneSolution(frame, solver, confidence), ScaleResult(1.0, 0.0), confidence, null)
     }
 
-    @Test fun toView_diagnosticsNull_rectangle_solverNameIsRectangleMethod() {
+    @Test fun toView_diagnosticsNull_rectangle_solverIsRectangle() {
         val v = MeasurementPresenter.toView(nullDiagnostics(SolverKind.RECTANGLE), LengthUnit.METERS)
-        assertEquals("Rectangle method", v.solverName)
-        assertEquals(emptyList<String>(), v.caveats)
+        assertEquals(SolverKind.RECTANGLE, v.solver)
+        assertEquals(emptyList<UiText>(), v.caveats)
         assertTrue(v.usable)
     }
 
-    @Test fun toView_diagnosticsNull_gravity_solverNameIsTiltSensorFallback() {
+    @Test fun toView_diagnosticsNull_gravity_solverIsGravity() {
         val v = MeasurementPresenter.toView(nullDiagnostics(SolverKind.GRAVITY), LengthUnit.METERS)
-        assertEquals("Tilt-sensor fallback", v.solverName)
-        assertEquals(emptyList<String>(), v.caveats)
+        assertEquals(SolverKind.GRAVITY, v.solver)
+        assertEquals(emptyList<UiText>(), v.caveats)
     }
 
     @Test fun toView_diagnosticsNull_caveatsIsEmptyList() =
-        assertEquals(emptyList<String>(), MeasurementPresenter.toView(nullDiagnostics(SolverKind.RECTANGLE), LengthUnit.CENTIMETERS).caveats)
+        assertEquals(emptyList<UiText>(), MeasurementPresenter.toView(nullDiagnostics(SolverKind.RECTANGLE), LengthUnit.CENTIMETERS).caveats)
 
     @Test fun toView_diagnosticsNull_usableFalseWhenConfidenceZero() {
         val zeroed = nullDiagnostics(SolverKind.RECTANGLE, 0.0, MeasurementResult(0.0, 0.0, 0.0, 0.0, emptyList()))
         val v = MeasurementPresenter.toView(zeroed, LengthUnit.METERS)
         assertFalse(v.usable)
         assertEquals(0, v.confidencePercent)
-        assertEquals(emptyList<String>(), v.caveats)
+        assertEquals(emptyList<UiText>(), v.caveats)
         assertFalse("zeroed placeholder is not shown as dimensions", v.width.any(Char::isDigit))
     }
 }

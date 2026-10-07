@@ -104,7 +104,7 @@ class CornerOrderingTest {
         val ex = assertThrows(IllegalArgumentException::class.java) {
             CornerOrdering.order(listOf(Vec2(0.0, 0.0), Vec2(0.0, 0.0), Vec2(10.0, 4.0), Vec2(0.0, 4.0)))
         }
-        assertTrue(ex.message!!.contains("distinct"))
+        assertTrue(ex.message!!.contains("coincident"))
     }
 
     // Finding F6: four distinct points are not enough; collapsed or concave quads fail loudly.

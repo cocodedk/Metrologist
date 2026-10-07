@@ -53,6 +53,7 @@ Before starting any task of the matching kind, load and follow the listed skill:
 - **Immutable models** — `data class` with `val`; no mutable fields in pure packages.
 - **Pure functions** — prefer functions that return values over functions that mutate state. Side effects belong in `capture`, `detect`, `ui`, `export`, and `data` only.
 - **Strict typing** — no `Any`, no unchecked casts, no unnecessary nullability. Use `require` / `check` to guard invariants at boundaries.
+- **User-visible text** — every sentence the user reads lives in `res/values/strings*.xml`, never in Kotlin. The pure layers cannot import Android, so they return a `UiText(TextKey, args)` (`model/`); `ui/text/UiTextResources.kt` maps each `TextKey` to its `msg_*` string. Add a key, its string and (for a new language) its translation together; `UiTextResourcesTest` fails when a key and a string do not match.
 - **Tolerances** — use the named constants in `Tolerances.kt` (`NORM_EPS`, `PROJ_EPS`); never scatter raw numeric literals.
 - **Corner ordering** — corners are always `[TL, TR, BR, BL]` clockwise. Document and `require` this at every public entry point.
 - **Commit messages** — Conventional Commits: `type(scope): description`. Types in use: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `ci`.

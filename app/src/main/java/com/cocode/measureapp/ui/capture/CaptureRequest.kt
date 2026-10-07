@@ -13,6 +13,8 @@ import com.cocode.measureapp.capture.recovery.CropRect
 import com.cocode.measureapp.capture.recovery.consumeFrame
 import com.cocode.measureapp.capture.recovery.exposureTimestampOf
 import com.cocode.measureapp.geometry.frames.CalibrationStatus
+import com.cocode.measureapp.model.TextKey
+import com.cocode.measureapp.model.UiText
 import com.cocode.measureapp.ui.CapturedImage
 import com.cocode.measureapp.ui.alignCapturedShot
 import com.cocode.measureapp.ui.readLens
@@ -20,7 +22,7 @@ import com.cocode.measureapp.ui.surfaceRotationDegrees
 import java.util.concurrent.Executor
 
 /** User-facing message for a camera-reported capture error. */
-internal const val CAMERA_ERROR = "Capture failed. Check the camera and try again."
+internal val CAMERA_ERROR = UiText(TextKey.CAPTURE_CAMERA_ERROR)
 
 /**
  * Fires one CameraX capture for [requestId]. Exactly one outcome is posted to [onOutcome] on

@@ -1,5 +1,6 @@
 package com.cocode.measureapp.ui
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.text.KeyboardOptions
@@ -14,13 +15,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.cocode.measureapp.R
 import com.cocode.measureapp.core.LengthInput
 import com.cocode.measureapp.core.LengthUnit
 
 /**
- * A unit-aware, validated single length input. Shows [valueMeters] in [unit], parses edits back
+ * A unit-aware, validated single length input. [label] is the string resource of its name. Shows [valueMeters] in [unit], parses edits back
  * to meters via [LengthInput], and surfaces an inline error for unparseable, non-finite or
  * non-positive text without crashing or silently storing it. Invalid text stays in the editor
  * (as does an invalid stored value, which formats to rejected text); only valid edits are
@@ -28,7 +31,7 @@ import com.cocode.measureapp.core.LengthUnit
  */
 @Composable
 fun LengthField(
-    label: String,
+    @StringRes label: Int,
     valueMeters: Double,
     unit: LengthUnit,
     onValidMeters: (Double) -> Unit,
@@ -46,7 +49,7 @@ fun LengthField(
     }
     val parsed = LengthInput.parseToMeters(text, unit)
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text("$label (${LengthInput.unitLabel(unit)})", style = MaterialTheme.typography.titleMedium)
+        Text(stringResource(label, LengthInput.unitLabel(unit)), style = MaterialTheme.typography.titleMedium)
         OutlinedTextField(
             value = text,
             onValueChange = { new ->
@@ -55,7 +58,8 @@ fun LengthField(
             },
             isError = parsed == null,
             supportingText = {
-                if (parsed == null) Text(LengthInput.CORRECTION_MESSAGE)
+                if (parsed == null) Text(stringResource(R.string.settings_length_error))
+                else if (unit == LengthUnit.FEET_INCHES) Text(stringResource(R.string.settings_feet_hint))
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             singleLine = true,

@@ -1,0 +1,48 @@
+<resources>
+    <string name="help_title">How to measure</string>
+
+    <string name="help_stick_title">The reference stick</string>
+    <string name="help_stick_intro">The reference stick is a flat ruler with red and white stripes. You know its length, so the app can turn what it sees in the photo into real sizes.</string>
+    <string name="help_stick_flat">Lay the stick flat on the same surface as the object you want to measure.</string>
+    <string name="help_stick_settings">Before you start, enter the stick\'s real length and width in Settings (the gear button on the camera screen).</string>
+    <string name="help_stick_same_surface">Keep the stick flat against that surface. Do not prop it up.</string>
+    <string name="help_stick_border">If your stick has a border, include the border when you enter its length and width, and when you place the red box.</string>
+
+    <string name="help_photo_title">Take the photo</string>
+    <string name="help_photo_intro">Frame the object and the stick together, then tap Capture.</string>
+    <string name="help_photo_angle">Shoot at a moderate angle. Straight on is fine, but avoid nearly edge-on views, where you see the surface almost from the side.</string>
+    <string name="help_photo_inview">Keep all four corners of the object and the whole stick in view.</string>
+    <string name="help_photo_light">Good light and a steady hand give better results.</string>
+
+    <string name="help_mark_title">Mark the object and the stick</string>
+    <string name="help_mark_intro">After you take the photo, two boxes appear on it.</string>
+    <string name="help_mark_object">The green box, labelled Object, is for the object. Drag its four corners onto the four corners of the object.</string>
+    <string name="help_mark_stick">The red box, labelled Stick, is for the stick. The app tries to find the stick and place this box itself. Check that it outlines the stick, and drag its corners if it does not.</string>
+    <string name="help_mark_drag">Drag a corner to move it. A magnifier appears while you drag, so that you can place the corner precisely.</string>
+    <string name="help_mark_zoom">Use two fingers to zoom in or to move the photo, so that you can reach tight corners.</string>
+    <string name="help_mark_surface">If you see a Surface choice (Wall or Floor), pick what you are measuring. The app often works this out from how you held the phone.</string>
+    <string name="help_mark_buttons">Tap Measure when both boxes are in place. Reset moves both boxes to fixed starting places (the Object box in the middle of the photo, the Stick box low in the middle) and resets the zoom. It does not return them to where the app found the stick, or to where you had put them. Retake goes back to the camera.</string>
+
+    <string name="help_settings_title">Settings</string>
+    <string name="help_settings_intro">Before your first measurement, open Settings (the gear button) and check these:</string>
+    <string name="help_settings_length">Reference stick length: the full length of the stick, from end to end, including any border.</string>
+    <string name="help_settings_width">Reference stick width: the short side of the stick, including any border.</string>
+    <string name="help_settings_units">Display units: metres, centimetres, or feet and inches. You can change this at any time. For feet, type sizes as decimals: 1.5 means 1 foot 6 inches.</string>
+    <string name="help_settings_saved">The app remembers your choices the next time you open it.</string>
+
+    <string name="help_result_title">Read the result</string>
+    <string name="help_result_intro">After you tap Measure, the Measurements screen shows:</string>
+    <string name="help_result_sizes">Width, Height, Area and Diagonal, in the unit you chose.</string>
+    <string name="help_result_angles">Corner angles. A corner of exactly 90° is square, so these show whether the object really is a rectangle.</string>
+    <string name="help_result_confidence">Confidence: High at 70 percent or more, Medium from 40 percent to just below 70, and Low below 40 percent. The percentage does not guarantee that the size is right.</string>
+    <string name="help_result_method">Method. This line appears only when the app used your phone\'s tilt sensor instead of the shape of the corners (the rectangle method). Check the confidence and the notes.</string>
+    <string name="help_result_notes">Notes under the result explain issues such as a steep camera angle, estimated lens details or a missing tilt reading.</string>
+    <string name="help_result_buttons">Re-mark takes you back to adjust the boxes. Export shares the photo with the numbers on it. New starts again with a new photo.</string>
+
+    <string name="help_tips_title">Tips and accuracy</string>
+    <string name="help_tips_accuracy">Accuracy varies with the phone, the photo and how carefully you place the stick and the corners. Check important sizes with a ruler or tape.</string>
+    <string name="help_tips_flat">Everything you measure must lie flat on the same surface as the stick. Raised edges and curved surfaces give wrong results.</string>
+    <string name="help_tips_shadows">Avoid shadows across the stick. The app finds the stripes by their contrast.</string>
+    <string name="help_tips_low">If Confidence is Low, try another angle, or put the stick closer to the object.</string>
+    <string name="help_tips_stick_size">The stick itself is not part of the measured size.</string>
+</resources>

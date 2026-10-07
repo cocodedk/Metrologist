@@ -33,7 +33,7 @@ object SolverSelector {
         ).first()
         val other = listOf(rectangle, gravity).first { it !== best }
         val why = when (other) {
-            is Assessment.Ineligible -> "other method ineligible: ${other.detail}"
+            is Assessment.Ineligible -> "other method ineligible: ${other.reason}"
             is Assessment.Eligible -> "ranked above ${other.solver} (${other.assumption}, confidence ${other.confidence})"
         }
         return Selection.Chosen(best, "${best.solver} (${best.assumption}); $why")

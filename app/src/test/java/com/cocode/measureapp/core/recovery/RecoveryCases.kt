@@ -19,6 +19,9 @@ import com.cocode.measureapp.geometry.SurfaceOrientation.VERTICAL
 import com.cocode.measureapp.geometry.eligibility.EligibilityFixtures as F
 import com.cocode.measureapp.geometry.frames.AlignedGravity
 import com.cocode.measureapp.geometry.frames.GravityAlignmentReason
+import com.cocode.measureapp.allKeys
+import com.cocode.measureapp.mentions
+import com.cocode.measureapp.model.TextKey
 import com.cocode.measureapp.ui.surface.MarkingFlow
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -32,8 +35,9 @@ object RecoveryCases {
     fun collapsedStickIsExplainedInTheMarkingFlow() = with(RecoveryHarness()) {
         val failed = capture().orientationSelected(VERTICAL).press(stick = collapsedStick)
         val f = assertFailure(failed, INVALID_STICK_CORNERS, "collapsed stick")
-        assertTrue(failed.failureMessage!!, failed.failureMessage!!.startsWith(CorrectionText.headline(INVALID_STICK_CORNERS)))
-        assertTrue("validator detail kept", failed.failureMessage!!.contains(f.detail!!))
+        assertEquals(CorrectionText.message(f), failed.failureMessage)
+        assertTrue("headline first", failed.failureMessage!!.allKeys()[1] == CorrectionText.headline(INVALID_STICK_CORNERS).key)
+        assertTrue("validator detail kept", f.detail!!.key in failed.failureMessage!!.allKeys())
         assertEquals(wall.cornerPixels, failed.corners)
         assertEquals(collapsedStick, failed.stick)
         assertEquals(RecoveryAction.REMARK, CorrectionText.action(f.reason))
@@ -48,7 +52,8 @@ object RecoveryCases {
         val down = sceneFor(frontal, AlignedGravity.Available(F.STRAIGHT_DOWN, 0L))
         val unusable = capture().press(F.nonRectCorners, F.nonRectStick, down)
         val f = assertFailure(unusable, UNSUPPORTED_GEOMETRY, "no eligible solver")
-        assertTrue("both methods explained", unusable.failureMessage!!.contains(f.detail!!))
+        assertEquals(CorrectionText.message(f), unusable.failureMessage)
+        assertTrue("both methods explained", unusable.failureMessage!!.mentions(TextKey.NO_METHOD_USABLE))
         val missing = sceneFor(frontal, AlignedGravity.Unavailable(GravityAlignmentReason.STALE_SAMPLE))
         assertFailure(capture().press(F.nonRectCorners, F.nonRectStick, missing), METADATA_UNAVAILABLE, "stale gravity")
         val badK = scene.copy(intrinsics = wall.k.copy(fx = 0.0))
@@ -86,7 +91,7 @@ object RecoveryCases {
         val rejected = changed.press(ref = bad)
         val f = assertFailure(rejected, INVALID_REFERENCE_DIMENSIONS, "NaN length")
         assertEquals(RecoveryAction.SETTINGS, CorrectionText.action(f.reason))
-        assertTrue(rejected.failureMessage!!, rejected.failureMessage!!.contains("stick length"))
+        assertTrue(rejected.failureMessage!!.mentions(TextKey.REFERENCE_LENGTH_INVALID))
         assertEquals("engine not run with invalid settings", 1, requests.size)
         val corrected = rejected.settingsChanged().press()
         assertSuccess(corrected, "after correction")
