@@ -1,7 +1,6 @@
 package com.cocode.measureapp.ui
 
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -22,9 +21,8 @@ class AboutLinksTest {
         )
     }
 
-    @Test fun theAppIsNotOnFdroidYet() {
-        assertFalse(ON_FDROID)
-        assertEquals(aboutUrl(AboutLink.LatestVersion, id, onFdroid = false), aboutUrl(AboutLink.LatestVersion, id))
+    @Test fun theDefaultFollowsTheOnFdroidSwitch() {
+        assertEquals(aboutUrl(AboutLink.LatestVersion, id, ON_FDROID), aboutUrl(AboutLink.LatestVersion, id))
     }
 
     @Test fun thePrivacyLinkIsTheSitesPrivacyPage() {

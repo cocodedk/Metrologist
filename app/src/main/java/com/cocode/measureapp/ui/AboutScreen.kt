@@ -47,6 +47,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun AboutScreen(onBack: () -> Unit) {
     val context = LocalContext.current
+    val version = remember(context) { appVersion(context) }
     val snackbar = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val noBrowser = stringResource(R.string.about_no_browser)
@@ -81,7 +82,7 @@ fun AboutScreen(onBack: () -> Unit) {
         ) {
             Section(R.string.about_name_title)
             Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineSmall)
-            Text(stringResource(R.string.about_version, appVersion(context)), style = MaterialTheme.typography.bodyLarge)
+            Text(stringResource(R.string.about_version, version), style = MaterialTheme.typography.bodyLarge)
             LinkButton(R.string.about_check_updates) { open(AboutLink.LatestVersion) }
 
             Section(R.string.about_what_title)
@@ -131,16 +132,18 @@ private fun LinkButton(@StringRes label: Int, onClick: () -> Unit) {
     OutlinedButton(onClick = onClick, modifier = Modifier.fillMaxWidth()) { Text(stringResource(label)) }
 }
 
-/** The version name from the installed package, e.g. `0.0.3`. */
+/** The version name from the installed package, e.g. `0.0.3`; empty if the system cannot say. */
 @Suppress("DEPRECATION")
 private fun appVersion(context: Context): String =
-    context.packageManager.getPackageInfo(context.packageName, 0).versionName.orEmpty()
+    runCatching { context.packageManager.getPackageInfo(context.packageName, 0).versionName }.getOrNull().orEmpty()
 
-/** Opens [url] in the phone's browser; false when no app can open it. */
+/** Opens [url] in the phone's browser; false when no app can open it or the system refuses. */
 private fun openLink(context: Context, url: String): Boolean =
     try {
         context.startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
         true
     } catch (_: ActivityNotFoundException) {
+        false
+    } catch (_: SecurityException) {
         false
     }

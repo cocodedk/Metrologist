@@ -85,8 +85,10 @@ class FlowDriver(private val rule: ComposeContentTestRule, val s: FlowState = Fl
     fun assertAbsent(t: UiText) = assertAbsent(words(t))
 
     /** The Results line "Confidence: <label> (<percent>%)" up to the percentage. */
-    fun confidenceLine(label: UiText): String =
-        context.getString(R.string.results_confidence, words(label), 0).substringBefore('0')
+    fun confidenceLine(label: UiText): String {
+        val marker = 987654321
+        return context.getString(R.string.results_confidence, words(label), marker).substringBefore(marker.toString())
+    }
 
     fun has(text: String, substring: Boolean = true): Boolean =
         rule.onAllNodesWithText(text, substring = substring).fetchSemanticsNodes().isNotEmpty()

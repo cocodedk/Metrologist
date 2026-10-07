@@ -1,5 +1,6 @@
 package com.cocode.measureapp.ui
 
+import com.cocode.measureapp.R
 import com.cocode.measureapp.model.TextKey
 import com.cocode.measureapp.ui.text.stringRes
 import java.io.File
@@ -20,6 +21,13 @@ class UiTextResourcesTest {
     @Test fun everyKeyHasItsOwnStringResource() {
         val ids = TextKey.entries.map { it.stringRes() }
         assertEquals("two keys share a string", ids.size, ids.toSet().size)
+    }
+
+    @Test fun everyKeyIsMappedToItsOwnMsgString() {
+        for (key in TextKey.entries) {
+            val expected = R.string::class.java.getField("msg_" + key.name.lowercase()).getInt(null)
+            assertEquals("$key maps to the wrong string", expected, key.stringRes())
+        }
     }
 
     @Test fun everyKeyIsWordedInStringsXml() {

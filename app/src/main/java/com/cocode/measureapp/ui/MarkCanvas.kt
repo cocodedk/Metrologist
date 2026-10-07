@@ -63,7 +63,9 @@ internal fun MarkCanvas(
         Modifier
             .fillMaxSize()
             .onSizeChanged { canvasSize = Size(it.width.toFloat(), it.height.toFloat()) }
-            .pointerInput(canvasSize) {
+            // Keyed by viewResets too: a Reset makes new zoom and pan states, and a gesture block that
+            // was started before it would keep writing to the old ones.
+            .pointerInput(canvasSize, viewResets) {
                 awaitEachGesture {
                     val down = awaitFirstDown(requireUnconsumed = false)
                     // One finger always grabs the nearest handle; two fingers zoom + pan.
