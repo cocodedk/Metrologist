@@ -45,7 +45,7 @@ receive the shared image.
 
 ## No internet, no tracking
 
-- The app requests **no internet permission**, so it makes no network connections of its own. The only ways data can leave it are the ones you start: Export, and the web links on the "About Metrologist" screen (see "External links" below).
+- The app requests **no internet permission**, so it makes no network connections of its own. Data can leave it only by Export, by the web links on the "About Metrologist" screen (see "External links" below) and, if Android backup is switched on, by Android copying your settings to your Google backup (see "Device backup" below).
 - We use **no analytics, no crash reporting, and no advertising**.
 - There are **no third-party tracking SDKs, no cookies, and no advertising identifiers**.
 - The only runtime permission the app requests is the **camera** — no location, contacts, microphone, or

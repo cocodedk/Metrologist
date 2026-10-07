@@ -5,7 +5,7 @@ What you get:
 • Wall and Floor modes, which the app often picks for you from the tilt
 • Corner handles you can drag, zoom with two fingers, and a magnifier
 • Width, height, area, diagonal and corner angles
-• A confidence score and notes on every result
+• A confidence score on every result, and notes when they are relevant
 • Results in centimetres, metres, or feet and inches
 • Export: share the photo with the measurements written on it, through the Android share sheet
 

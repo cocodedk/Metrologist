@@ -3,7 +3,7 @@
 [![CI](https://github.com/cocodedk/Metrologist/actions/workflows/ci.yml/badge.svg)](https://github.com/cocodedk/Metrologist/actions)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
-Metrologist estimates the width, height, area, diagonal and corner angles of a flat surface, such as a wall, door, window, floor or table, from one photo taken in the app. Lay a reference stick of known length and width on the same surface, enter its length and width in Settings, take the photo, then drag one box onto the four corners of the object and another onto the four outside corners of the stick. Results appear in metres, centimetres, or feet and inches, with a confidence score and notes. They are estimates, so check important sizes with a ruler or tape. You can share an annotated picture of a result with Export.
+Metrologist estimates the width, height, area, diagonal and corner angles of a flat surface, such as a wall, door, window, floor or table, from one photo taken in the app. Lay a reference stick of known length and width on the same surface, enter its length and width in Settings, take the photo, then drag one box onto the four corners of the object and another onto the four outside corners of the stick. Results appear in metres, centimetres, or feet and inches, with a confidence score and, when relevant, notes. They are estimates, so check important sizes with a ruler or tape. You can share an annotated picture of a result with Export.
 
 ## Download
 
@@ -23,13 +23,13 @@ Metrologist estimates the width, height, area, diagonal and corner angles of a f
 
 - **One photo.** No depth sensor or AR kit is needed; one well-framed shot is enough.
 - **Reference stick.** You enter its full length and width in Settings. The stick you can print from the website is 20 × 4 cm, with a red-white-red-white-red centre and a checker border. OpenCV looks for the stick and proposes the red box. You check it and drag its four corners onto the stick's four outside corners.
-- **Two measuring methods, chosen for you.** The rectangle method works from the corners you marked (vanishing-point geometry). The tilt-sensor method works from the phone's gravity reading and an assumption that the surface is a vertical wall or a horizontal floor or table. The app uses only a method whose checks pass, and prefers the one with the higher confidence. If neither works, it says why and what to check.
+- **Two measuring methods, chosen for you.** The rectangle method works from the corners you marked (vanishing-point geometry). The tilt-sensor method works from the phone's gravity reading and an assumption that the surface is a vertical wall or a horizontal floor or table. The app uses only a method whose checks pass. If both pass, a method that does not have to assume a wall faces the camera comes first. Between those, the higher confidence wins, and a tie goes to the rectangle method. If neither works, it says why and what to check.
 - **Scale from the stick.** The length and the width you entered are matched to the long and the short sides of the red box, and the two scales are combined as a length-weighted average. A method that finds them more than 10 percent apart is rejected.
 - **Zoom and magnifier.** Zoom with two fingers; a magnifier appears while you drag a corner.
 - **Results.** Width, height, diagonal, area and the four interior corner angles.
 - **Units.** Metres, centimetres, or feet and inches; change them any time in Settings.
 - **Export.** An annotated picture of the photo and the measurements, shared through the Android share sheet.
-- **Confidence and notes.** Every result shows a confidence label (High, Medium or Low) with a percentage, the corner angles, and notes about the photo. The result screen names the tilt-sensor method when it was used. The score is not a guarantee that the size is right.
+- **Confidence and notes.** Every result shows a confidence label (High, Medium or Low) with a percentage, the corner angles, and notes about the photo when there is something to point out. The result screen names the tilt-sensor method when it was used. The score is not a guarantee that the size is right.
 
 ## How it works
 

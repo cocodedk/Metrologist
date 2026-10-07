@@ -73,7 +73,7 @@
     <string name="msg_note_lens_unavailable">Appen havde ingen oplysninger om linsen på dette kamera.</string>
 
     <!-- The camera could not give a photo -->
-    <string name="msg_capture_start_failed">Fotoet kunne ikke startes. Tryk på Tag foto for at prøve igen.</string>
+    <string name="msg_capture_start_failed">Det lykkedes ikke at tage fotoet. Tryk på Tag foto for at prøve igen.</string>
     <string name="msg_capture_mismatched">Fotoet blev ikke, som det skulle. Tryk på Tag foto for at prøve igen.</string>
     <string name="msg_capture_conversion_failed">Appen kunne ikke læse fotoet. Tryk på Tag foto for at prøve igen.</string>
     <string name="msg_capture_camera_error">Fotoet kunne ikke tages. Tjek kameraet, og tryk så på Tag foto for at prøve igen.</string>

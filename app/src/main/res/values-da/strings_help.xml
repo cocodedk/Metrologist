@@ -19,7 +19,7 @@
     <string name="help_mark_object">Den grønne ramme, mærket Genstand, er til genstanden. Træk dens fire hjørner hen på genstandens fire hjørner.</string>
     <string name="help_mark_stick">Den røde ramme, mærket Stok, er til stokken. Appen prøver selv at finde stokken og lægge rammen om den. Tjek, at rammen følger stokken, og træk i dens hjørner, hvis den ikke gør.</string>
     <string name="help_mark_drag">Træk i et hjørne for at flytte det. Mens du trækker, kommer et forstørrelsesglas frem, så du kan placere hjørnet præcist.</string>
-    <string name="help_mark_zoom">Brug to fingre til at zoome ind eller flytte fotoet, så du kan nå små hjørner.</string>
+    <string name="help_mark_zoom">Brug to fingre til at zoome ind eller flytte fotoet, så du lettere kan placere hjørner, der er svære at nå.</string>
     <string name="help_mark_surface">Hvis du ser et valg af overflade (Væg eller Gulv), så vælg det, du måler på. Appen finder ofte selv ud af det ud fra, hvordan du holdt telefonen.</string>
     <string name="help_mark_buttons">Tryk på Mål op, når begge rammer sidder rigtigt. Nulstil flytter begge rammer til faste startplaceringer (rammen Genstand midt på fotoet, rammen Stok lavt i midten) og nulstiller zoom. Det flytter dem ikke tilbage dertil, hvor appen fandt stokken, eller hvor du havde placeret dem. Tag nyt foto fører dig tilbage til kameraet.</string>
 

@@ -5,7 +5,7 @@ Det får du:
 • Tilstandene Væg og Gulv, som appen ofte vælger for dig ud fra hældningen
 • Hjørner, du kan trække i, zoom med to fingre og et forstørrelsesglas
 • Bredde, højde, areal, diagonal og hjørnevinkler
-• Et sikkerhedsmål og noter til hvert resultat
+• Et sikkerhedsmål til hvert resultat og noter, når der er noget at bemærke
 • Resultater i centimeter, meter eller fod og tommer
 • Eksportér: del fotoet med målene skrevet på, via Androids delemenu
 
