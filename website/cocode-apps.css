@@ -1,0 +1,168 @@
+/* The shared cocode-apps navigation, install block and footer, in Metrologist's own look.
+   Used by index.html and privacy/index.html. The structure comes from css/cocode-nav.css. */
+
+/* ── Navigation ── */
+.site-menu {
+  position: relative;
+  z-index: 1;
+  padding-top: 0.5rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--grid-line);
+}
+
+/* On the privacy page: the same column as .container (760px, 6px reserved for the rail). */
+.site-menu-narrow {
+  width: min(760px, 92vw);
+  margin: 0 auto;
+  padding-left: 6px;
+}
+
+.cocode-nav {
+  gap: 0 1.25rem;
+}
+
+.cocode-nav a {
+  font-family: 'DM Mono', 'Courier New', monospace;
+  font-size: 0.76rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--text-secondary);
+  transition: color 0.22s ease;
+}
+
+.cocode-nav a:hover {
+  color: var(--amber);
+}
+
+.cocode-nav a[aria-current="page"]:not(.brand) {
+  color: var(--text-primary);
+}
+
+.cocode-nav .brand {
+  gap: 0.6rem;
+  justify-content: flex-start;
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-primary);
+}
+
+.cocode-nav .brand img {
+  flex: none;
+  border-radius: 7px;
+}
+
+.cocode-nav a:focus-visible,
+.cocode-footer a:focus-visible,
+.install a:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.skip {
+  background: var(--amber);
+  color: var(--bg-deep);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.8rem;
+  text-decoration: none;
+}
+
+main:focus {
+  outline: 0;
+}
+
+/* ── Install block ── */
+.install-wrap {
+  margin-top: 1.5rem;
+}
+
+.install {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.install li {
+  margin: 0;
+}
+
+.install a,
+.install .fdroid-soon {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  margin: 0;
+  padding: 0.8rem 1.4rem;
+  border-radius: var(--radius-sm);
+  font-family: 'DM Mono', 'Courier New', monospace;
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+}
+
+.install .fdroid {
+  padding: 0;
+}
+
+/* F-Droid first (a dashed "coming" tag until the app is live), the APK is the main button, then Obtainium. */
+.install .fdroid-soon {
+  border: 1px dashed var(--text-dim);
+  color: var(--text-secondary);
+}
+
+.install li:nth-child(2) a {
+  background: var(--staff-red);
+  color: var(--staff-white);
+  font-weight: 500;
+  text-transform: uppercase;
+  transition: background 0.22s ease, box-shadow 0.22s ease;
+}
+
+.install li:nth-child(2) a:hover {
+  background: #e8322e;
+  box-shadow: 0 0 24px rgba(212, 43, 43, 0.45);
+}
+
+.install li:nth-child(n+3) a {
+  border: 1px solid var(--text-dim);
+  color: var(--text-secondary);
+  transition: color 0.22s ease, border-color 0.22s ease;
+}
+
+.install li:nth-child(n+3) a:hover {
+  color: var(--text-primary);
+  border-color: var(--text-secondary);
+}
+
+/* ── Footer ── */
+.site-footer-narrow {
+  width: min(760px, 92vw);
+  margin: 0 auto;
+  padding: 1.25rem 0 2rem 6px;
+}
+
+.cocode-footer {
+  font-family: 'DM Mono', 'Courier New', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.cocode-footer a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.22s ease;
+}
+
+.cocode-footer a:hover {
+  color: var(--amber);
+}
