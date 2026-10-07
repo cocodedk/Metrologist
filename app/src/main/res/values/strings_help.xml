@@ -21,7 +21,7 @@
     <string name="help_mark_drag">Drag a corner to move it. A magnifier appears while you drag, so that you can place the corner precisely.</string>
     <string name="help_mark_zoom">Use two fingers to zoom in or to move the photo, so that you can reach tight corners.</string>
     <string name="help_mark_surface">If you see a Surface choice (Wall or Floor), pick what you are measuring. The app often works this out from how you held the phone.</string>
-    <string name="help_mark_buttons">Tap Measure when both boxes are in place. Reset puts the boxes back where they started. Retake goes back to the camera.</string>
+    <string name="help_mark_buttons">Tap Measure when both boxes are in place. Reset moves both boxes to fixed starting places (the Object box in the middle of the photo, the Stick box low in the middle) and resets the zoom. It does not return them to where the app found the stick, or to where you had put them. Retake goes back to the camera.</string>
 
     <string name="help_settings_title">Settings</string>
     <string name="help_settings_intro">Before your first measurement, open Settings (the gear button) and check these:</string>
